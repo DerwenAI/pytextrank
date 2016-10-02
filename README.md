@@ -1,5 +1,9 @@
 # Python impl for TextRank
 
+A pure Python implementation of *TextRank*, 
+based on the [Mihalcea 2004](http://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf) paper.
+
+
 ## Installation Notes
 
     conda config --add channels https://conda.binstar.org/sloria
@@ -34,10 +38,3 @@ That test case should result as:
 0.0014	  compatibility
 0.0010	  criteria
 ```
-
-## To Be Evaluated
-
-http://stackoverflow.com/questions/9136539/how-do-weighted-edges-affect-pagerank-in-networkx
-https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.link_analysis.pagerank_alg.pagerank.html
-
-https://github.com/ashkonf/PageRank
