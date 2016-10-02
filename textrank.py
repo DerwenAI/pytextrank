@@ -16,7 +16,8 @@ import textblob_aptagger as tag
 DEBUG = False # True
 
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
-Phrase = namedtuple('Phrase', 'rank, ids, text')
+Phrase = namedtuple('Phrase', 'text, rank, ids')
+NormPhrase = namedtuple('NormPhrase', 'phrase, ids, norm_rank, rank')
 
 
 ######################################################################
@@ -282,7 +283,7 @@ def emit_phrase (phrase):
   ids = set(map(lambda w: w[1], phrase))
   text = " ".join(map(lambda w: w[2], phrase)).lower()
 
-  p = Phrase(rank=rank, ids=ids, text=text)
+  p = Phrase(text=text, rank=rank, ids=ids)
 
   if DEBUG:
     print("---", p)
@@ -356,10 +357,28 @@ def normalize_keyphrases (summary):
 
     if not seen:
       known.append(p.ids)
-      key_phrases[p.text] = p.rank
+      key_phrases[p.text] = (p.rank, p.ids,)
 
-  for phrase, rank in sorted(key_phrases.items(), key=itemgetter(1), reverse=True):
-    yield rank / rank_norm, phrase
+  for phrase, (rank, ids) in sorted(key_phrases.items(), key=lambda p: p[1][0], reverse=True):
+    yield Phrase(text=phrase, rank=(rank / rank_norm), ids=ids)
+
+
+def get_kernel (summary):
+  """construct a kernel matrix of the TextRank keyphrases and two forms of ranks"""
+
+  kernel = []
+  known_ids = set([])
+
+  for p in normalize_keyphrases(summary):
+    if len(p.ids) == 1:
+      known_ids.update(p.ids)
+
+    yield NormPhrase(phrase=p.text, ids=list(p.ids), norm_rank=p.rank, rank=0.0)
+
+  for p in summary:
+    if (len(p.ids) == 1) and not p.ids.issubset(known_ids):
+      known_ids.update(p.ids)
+      yield NormPhrase(phrase=p.text, ids=list(p.ids), norm_rank=0.0, rank=p.rank)
 
 
 ######################################################################
