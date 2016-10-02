@@ -3,6 +3,13 @@
 A pure Python implementation of *TextRank*, 
 based on the [Mihalcea 2004](http://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf) paper.
 
+Modifications to the original algorithm include:
+
+  * fixed bug; see [Java impl, 2008](https://github.com/ceteri/textrank)
+  * use of lemmatization instead of stemming
+  * verbs included in the graph (but not in the resulting keyphrases)
+  * normalized keyphrase ranks for summarization
+
 
 ## Installation Notes
 

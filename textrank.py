@@ -258,9 +258,6 @@ def build_graph (json_iter):
 def render_ranks (graph, ranks, img_file="graph.png", show_img=None):
   """render the TextRank graph as an image"""
 
-  for node, rank in sorted(ranks.items(), key=itemgetter(1), reverse=True):
-    print("%0.4f %s" % (rank, node))
-
   nx.draw_networkx(graph)
 
   if img_file:
@@ -293,7 +290,7 @@ def emit_phrase (phrase):
   return p
 
 
-def apply_ranks (ranks, json_iter):
+def summarize_ranks (ranks, json_iter):
   """determine the highest ranked noun phrases"""
 
   global DEBUG, WordNode
@@ -334,7 +331,7 @@ def text_rank (path):
   if DEBUG:
     render_ranks(graph, ranks)
 
-  return apply_ranks(ranks, json_iter(path))
+  return graph, ranks, summarize_ranks(ranks, json_iter(path))
 
 
 ######################################################################

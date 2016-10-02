@@ -10,7 +10,9 @@ import textrank
 
 if __name__ == "__main__":
   path = sys.argv[1]
-  summary = textrank.text_rank(path)
+  graph, ranks, summary = textrank.text_rank(path)
+
+  textrank.render_ranks(graph, ranks)
 
   for rank, phrase in textrank.normalize_keyphrases(summary):
     print("%0.4f\t%s" % (rank, phrase))
