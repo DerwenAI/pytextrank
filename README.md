@@ -8,23 +8,33 @@ Modifications to the original algorithm include:
   * fixed bug; see [Java impl, 2008](https://github.com/ceteri/textrank)
   * use of lemmatization instead of stemming
   * verbs included in the graph (but not in the resulting keyphrases)
-  * normalized keyphrase ranks for summarization
+  * normalized keyphrase ranks used in summarization
 
 
-## Installation Notes
+## Dependencies and Installation
+
+The code here has dependencies on several other projects:
+
+  * [NLTK](http://www.nltk.org/)
+  * [TextBlob](http://textblob.readthedocs.io/)
+  * [NetworkX](http://networkx.readthedocs.io/)
+  * [datasketch](https://github.com/ekzhu/datasketch)
+
+To install:
 
     conda config --add channels https://conda.binstar.org/sloria
     conda install textblob
     sudo python -m nltk.downloader punkt
     sudo python -m nltk.downloader wordnet
+    pip install datasketch -U
 
 
 ## Example Usage
 
 Run a test case based on the Mihalcea paper:
 
-    ./stage1.py dat/mihalcea.json > out.json
-    ./stage2.py out.json
+    ./stage1.py dat/mihalcea.json > out1.json
+    ./stage2.py out1.json > out2.json
 
 That test case should result as:
 

@@ -4,7 +4,7 @@
 import sys
 import textrank
 
-DEBUG = True # False
+DEBUG = False # True
 
 ## Stage 2:
 ##  * summarize key phrases from a parsed document in JSON format (Stage 1)
