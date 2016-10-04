@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 from collections import namedtuple
-from operator import itemgetter
 import hashlib
 import json
 import math
@@ -18,6 +17,7 @@ DEBUG = False # True
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
 Phrase = namedtuple('Phrase', 'text, rank, ids')
 NormPhrase = namedtuple('NormPhrase', 'phrase, ids, norm_rank, rank')
+SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
 
 ######################################################################

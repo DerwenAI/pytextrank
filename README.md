@@ -33,8 +33,9 @@ To install:
 
 Run a test case based on the Mihalcea paper:
 
-    ./stage1.py dat/mihalcea.json > out1.json
+    ./stage1.py dat/mih.json > out1.json
     ./stage2.py out1.json > out2.json
+
 
 That test case should result as:
 
