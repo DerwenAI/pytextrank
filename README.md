@@ -83,5 +83,6 @@ however, this approach is more amenable to:
 
 ## Kudos
 
+[@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl)
