@@ -83,8 +83,9 @@ however, this approach is more amenable to:
 ## TODO: Stay tuned for more...
 
   1. Integrate [sent2vec](https://github.com/ryankiros/skip-thoughts) encoder
-  2. Integrate [keras](https://keras.io/) for deep learning
+  2. Integrate [keras](https://keras.io/) for RNN (deep learning)
   3. LSH for building doc-to-doc graph of semantic similarity (per chapter-ish)
+  4. Docker container for managing the installation/dependencies
 
 ## Kudos
 
