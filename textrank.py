@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 from collections import namedtuple
+from datasketch import MinHash
 import hashlib
 import json
 import math
@@ -14,6 +15,7 @@ import textblob_aptagger as tag
 
 DEBUG = False # True
 
+ParsedGraf = namedtuple('ParsedGraf', 'id, sha1, graf')
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
 Phrase = namedtuple('Phrase', 'text, rank, ids')
 NormPhrase = namedtuple('NormPhrase', 'phrase, ids, norm_rank, rank')
@@ -181,12 +183,7 @@ def parse_graf (doc_id, graf_text, base_idx):
       new_base_idx += 1
       tag_idx += 1
 
-    #"lang": s.detect_language(),
-    markup.append({
-        "id": doc_id,
-        "sha1": digest.hexdigest(),
-        "graf": graf
-        })
+    markup.append(ParsedGraf(id=doc_id, sha1=digest.hexdigest(), graf=graf))
 
   return markup, new_base_idx
 
@@ -379,6 +376,134 @@ def get_kernel (summary):
     if (len(p.ids) == 1) and not p.ids.issubset(known_ids):
       known_ids.update(p.ids)
       yield NormPhrase(phrase=p.text, ids=list(p.ids), norm_rank=0.0, rank=p.rank)
+
+
+######################################################################
+## sentence significance
+
+def mh_digest (data, num_perm=512):
+  """create a MinHash digest"""
+  m = MinHash(num_perm)
+
+  for d in data:
+    m.update(d.encode('utf8'))
+
+  return m
+
+
+def rank_kernel (path):
+  """return a list (matrix-ish) of the key phrases and their ranks"""
+  kernel = []
+
+  for meta in json_iter(path):
+    p = NormPhrase(**meta)
+    m = mh_digest(map(lambda x: str(x), p.ids))
+    kernel.append((p, m,))
+
+  return kernel
+
+
+def find_chunk_sub (tagged_sent, np, i):
+  """not used: np chunking"""
+  for j in iter(range(0, len(np))):
+    w = tagged_sent[i + j]
+
+    if w.raw != np[j]:
+      return None
+
+  return tagged_sent[i:i + len(np)]
+
+
+def find_chunk (tagged_sent, np):
+  """not used: np chunking"""
+  for i in iter(range(0, len(tagged_sent))):
+    parsed_np = find_chunk_sub(tagged_sent, np, i)
+
+    if parsed_np:
+      return parsed_np
+
+
+def np_chunk (tagged_sent, text, key_phrases):
+  """not used: np chunking"""
+  chunks = set(textblob.en.np_extractors.FastNPExtractor().extract(text))
+  #chunks = set(textblob.en.np_extractors.ConllExtractor().extract(text))
+
+  for np_text in chunks:
+    np = np_text.split(" ")
+    parsed_np = find_chunk(tagged_sent, np)
+
+    if parsed_np:
+      m_np = mh_digest([str(w.word_id) for w in parsed_np])
+      key_phrases[np_text.lower()] = sum([m_np.jaccard(m) * (p.norm_rank + p.rank) for p, m in kernel])
+
+
+def top_sentences (kernel, path):
+  """determine distance for each sentence"""
+  key_sent = {}
+  i = 0
+
+  for meta in json_iter(path):
+    graf = meta["graf"]
+    tagged_sent = [WordNode._make(x) for x in graf]
+    text = " ".join([w.raw for w in tagged_sent])
+
+    m_sent = mh_digest([str(w.word_id) for w in tagged_sent])
+    dist = sum([m_sent.jaccard(m) * (p.norm_rank + p.rank) for p, m in kernel])
+    key_sent[text] = (dist, i)
+    i += 1
+
+  for text, (dist, i) in sorted(key_sent.items(), key=lambda x: x[1][0], reverse=True):
+    yield SummarySent(dist=dist, idx=i, text=text)
+
+
+######################################################################
+## document summarization
+
+def limit_keyphrases (path, thresh_func=lambda x: x/10.0):
+  """iterator for the most significant key phrases"""
+  rank_thresh = None
+
+  for meta in json_iter(path):
+    p = NormPhrase(**meta)
+    rank = max(p.norm_rank, p.rank)
+
+    if not rank_thresh:
+      rank_thresh = thresh_func(rank)
+    elif rank < rank_thresh:
+      return
+
+    yield p.phrase
+
+
+def limit_sentences (path, word_limit=100):
+  """iterator for the most significant sentences, up to a word limit"""
+  word_count = 0
+
+  for meta in json_iter(path):
+    p = SummarySent(**meta)
+    sent_text = p.text.split(" ")
+    sent_len = len(sent_text)
+
+    if (word_count + sent_len) > word_limit:
+      break
+    else:
+      word_count += sent_len
+      yield sent_text, p.idx
+
+
+def make_sentence (sent_text):
+  """construct a sentence text, with proper spacing"""
+  lex = []
+  idx = 0
+
+  for word in sent_text:
+    if (idx > 0) and not (word[0] in ",.:;!?-\"'"):
+      lex.append(" ")
+
+    lex.append(word)
+    idx += 1
+
+  return "".join(lex)
 
 
 ######################################################################

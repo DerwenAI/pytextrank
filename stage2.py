@@ -7,8 +7,10 @@ import textrank
 DEBUG = False # True
 
 ## Stage 2:
-##  * summarize key phrases from a parsed document in JSON format (Stage 1)
-##  * output is in JSON format
+##  * summarize key phrases from a parsed document
+##
+## INPUTS: <stage1>
+## OUTPUT: JSON format `NormPhrase(phrase, ids, norm_rank, rank)`
 
 if __name__ == "__main__":
   path = sys.argv[1]

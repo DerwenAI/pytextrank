@@ -2,10 +2,10 @@
 
 A pure Python implementation of *TextRank*, 
 based on the [Mihalcea 2004](http://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf) paper.
-Leading toward integration with the [Text Summarization](http://mike.place/2016/summarization/)
-example by Mike Williams.
+This work leads toward integration with the [Williams 2016](http://mike.place/2016/summarization/)
+talk on *text summarization*.
 
-Modifications to the original algorithm include:
+Modifications to the original Mihalcea algorithm include:
 
   * fixed bug; see [Java impl, 2008](https://github.com/ceteri/textrank)
   * use of lemmatization instead of stemming
@@ -58,10 +58,15 @@ That test case should result as:
 0.0010	  criteria
 ```
 
-Run another test based on the [Williams talk](http://mike.place/2016/summarization/):
+Run another test based on [Williams](http://mike.place/2016/summarization/):
 
     ./stage1.py dat/ars.json > out1.json
     ./stage2.py out1.json > out2.json
-    ./stage3.py out1.json out2.json
+    ./stage3.py out1.json out2.json > out3.json
+    ./stage4.py out2.json out3.json > out4.md
 
-Those results show a summarization similar to that shown on slide 30.
+Those results show a summarization similar to slide 30 of the talk; 
+however, this approach is more amenable to:
+
+  * bootstrapping work with new documents about a specific topic
+  * producing results ready for use in a search engine or recommender system
