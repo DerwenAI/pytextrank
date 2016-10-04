@@ -80,6 +80,11 @@ however, this approach is more amenable to:
   * bootstrapping work with new documents about a specific topic
   * producing results ready for use in a search engine or recommender system
 
+## TODO: Stay tuned for more...
+
+  1. Integrate [sent2vec](https://github.com/ryankiros/skip-thoughts) encoder
+  2. Integrate [keras](https://keras.io/) for deep learning
+  3. LSH for building doc-to-doc graph of semantic similarity (per chapter-ish)
 
 ## Kudos
 
