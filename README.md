@@ -2,6 +2,8 @@
 
 A pure Python implementation of *TextRank*, 
 based on the [Mihalcea 2004](http://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf) paper.
+Leading toward integration with the [Text Summarization](http://mike.place/2016/summarization/)
+example by Mike Williams.
 
 Modifications to the original algorithm include:
 
@@ -36,7 +38,6 @@ Run a test case based on the Mihalcea paper:
     ./stage1.py dat/mih.json > out1.json
     ./stage2.py out1.json > out2.json
 
-
 That test case should result as:
 
 ```
@@ -56,3 +57,11 @@ That test case should result as:
 0.0014	  compatibility
 0.0010	  criteria
 ```
+
+Run another test based on the [Williams talk](http://mike.place/2016/summarization/):
+
+    ./stage1.py dat/ars.json > out1.json
+    ./stage2.py out1.json > out2.json
+    ./stage3.py out1.json out2.json
+
+Those results show a summarization similar to that shown on slide 30.
