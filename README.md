@@ -26,6 +26,7 @@ To install:
 
     conda config --add channels https://conda.binstar.org/sloria
     conda install textblob
+    pip install -U git+https://github.com/sloria/textblob-aptagger.git@dev
     sudo python -m nltk.downloader punkt
     sudo python -m nltk.downloader wordnet
     pip install datasketch -U
