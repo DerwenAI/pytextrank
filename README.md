@@ -15,7 +15,7 @@ Modifications to the original Mihalcea algorithm include:
 
 ## Dependencies and Installation
 
-The code here has dependencies on several other projects:
+This code has dependencies on several other Python projects:
 
   * [NLTK](http://www.nltk.org/)
   * [TextBlob](http://textblob.readthedocs.io/)
@@ -59,15 +59,29 @@ That test case should result as:
 0.0010	  criteria
 ```
 
-Run another test based on [Williams](http://mike.place/2016/summarization/):
+Run another test based on [Williams](http://mike.place/2016/summarization/), using text from a
+*[Wired](https://www.wired.com/2016/03/googles-ai-wins-pivotal-game-two-match-go-grandmaster/)*
+article:
 
     ./stage1.py dat/ars.json > out1.json
     ./stage2.py out1.json > out2.json
     ./stage3.py out1.json out2.json > out3.json
     ./stage4.py out2.json out3.json > out4.md
 
-Those results show a summarization similar to slide 30 of the talk; 
+Which produces as a summary:
+
+> **excerpts:** The surprisingly skillful Google machine, known as AlphaGo, now needs only one more win to claim victory in the match. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict. In his 1996 match with IBM's Deep Blue supercomputer, world chess champion Gary Kasparov lost the first game but then came back to win the second game and, eventually, the match as a whole.
+
+> **keywords:** world chess champion gary kasparov; grandmaster lee sedol; korean-born lee sedol; many other games; google ai lab; skillful google machine; historic best-of-five match; intelligent go-playing computer system; four seasons hotel; other big-name internet companies; top go player; search engine results; more international titles
+
+These results show a summarization similar to slide 30 of the talk; 
 however, this approach is more amenable to:
 
   * bootstrapping work with new documents about a specific topic
   * producing results ready for use in a search engine or recommender system
+
+
+## Kudos
+
+[@williamsmj](https://github.com/williamsmj/),
+[@mattkohl](https://github.com/mattkohl)
