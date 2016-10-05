@@ -21,6 +21,7 @@ This code has dependencies on several other Python projects:
   * [TextBlob](http://textblob.readthedocs.io/)
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
+  * [matlibplot](http://matplotlib.org/)
 
 To install:
 
