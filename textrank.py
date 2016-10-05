@@ -3,6 +3,7 @@
 
 from collections import namedtuple
 from datasketch import MinHash
+from graphviz import Digraph
 import hashlib
 import json
 import math
@@ -253,22 +254,23 @@ def build_graph (json_iter):
   return graph
 
 
-def text_rank (path):
-  """run the TextRank algorithm"""
+def write_dot (graph, ranks, path="graph.dot"):
+  """output the graph in Dot file format"""
 
-  global DEBUG
+  dot = Digraph()
 
-  graph = build_graph(json_iter(path))
-  ranks = nx.pagerank(graph)
+  for node in graph.nodes():
+    dot.node(node, "%0.3f" % (ranks[node]))
 
-  if DEBUG:
-    render_ranks(graph, ranks)
+  for edge in graph.edges():
+    dot.edge(edge[0], edge[1], constraint="false")
 
-  return graph, ranks
+  with open(path, 'w') as f:
+    f.write(dot.source)
 
 
-def render_ranks (graph, ranks, img_file="graph.png", show_img=None):
-  """render the TextRank graph as an image"""
+def render_ranks (graph, ranks, img_file="graph.png", dot_file="graph.dot", show_img=None):
+  """render the TextRank graph for visual formats"""
 
   nx.draw_networkx(graph)
 
@@ -277,6 +279,20 @@ def render_ranks (graph, ranks, img_file="graph.png", show_img=None):
 
   if show_img:
     plt.show()
+
+  if dot_file:
+    write_dot(graph, ranks, path=dot_file)
+
+
+def text_rank (path):
+  """run the TextRank algorithm"""
+
+  graph = build_graph(json_iter(path))
+  ranks = nx.pagerank(graph)
+
+  return graph, ranks
+
+
 
 
 ######################################################################
