@@ -21,6 +21,7 @@ This code has dependencies on several other Python projects:
   * [TextBlob](http://textblob.readthedocs.io/)
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
+  * [graphviz](https://pypi.python.org/pypi/graphviz)
 
 To install:
 
@@ -29,7 +30,8 @@ To install:
     pip install -U git+https://github.com/sloria/textblob-aptagger.git@dev
     sudo python -m nltk.downloader punkt
     sudo python -m nltk.downloader wordnet
-    pip install datasketch -U
+    pip install -U datasketch
+    pip install -U graphviz
 
 
 ## Example Usage
