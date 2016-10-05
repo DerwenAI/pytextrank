@@ -9,6 +9,7 @@ import math
 import matplotlib.pyplot as plt
 import networkx as nx
 import re
+import statistics
 import string
 import textblob
 import textblob_aptagger as tag
@@ -17,8 +18,7 @@ DEBUG = False # True
 
 ParsedGraf = namedtuple('ParsedGraf', 'id, sha1, graf')
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
-Phrase = namedtuple('Phrase', 'text, rank, ids')
-NormPhrase = namedtuple('NormPhrase', 'phrase, ids, norm_rank, rank')
+RankedLexeme = namedtuple('RankedLexeme', 'text, rank, ids, pos')
 SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
 
@@ -107,18 +107,18 @@ def is_not_word (word):
   return PAT_PUNCT.match(word) or PAT_SPACE.match(word)
 
 
-def get_word_id (word):
-  """lookup/assign a unique identify for each word"""
+def get_word_id (root):
+  """lookup/assign a unique identify for each word root"""
 
   global UNIQ_WORDS
 
   # in practice, this should use a microservice via some robust
   # distributed cache, e.g., Cassandra, Redis, etc.
 
-  if word.root not in UNIQ_WORDS:
-    UNIQ_WORDS[word.root] = len(UNIQ_WORDS)
+  if root not in UNIQ_WORDS:
+    UNIQ_WORDS[root] = len(UNIQ_WORDS)
 
-  return UNIQ_WORDS[word.root]
+  return UNIQ_WORDS[root]
 
 
 def parse_graf (doc_id, graf_text, base_idx):
@@ -170,7 +170,7 @@ def parse_graf (doc_id, graf_text, base_idx):
         word = word._replace(root = str(parsed_raw))
 
       if pos_family in POS_KEEPS:
-        word = word._replace(word_id = get_word_id(word), keep = 1)
+        word = word._replace(word_id = get_word_id(word.root), keep = 1)
 
       digest.update(word.root.encode("utf-8"))
 
@@ -253,6 +253,20 @@ def build_graph (json_iter):
   return graph
 
 
+def text_rank (path):
+  """run the TextRank algorithm"""
+
+  global DEBUG
+
+  graph = build_graph(json_iter(path))
+  ranks = nx.pagerank(graph)
+
+  if DEBUG:
+    render_ranks(graph, ranks)
+
+  return graph, ranks
+
+
 def render_ranks (graph, ranks, img_file="graph.png", show_img=None):
   """render the TextRank graph as an image"""
 
@@ -265,117 +279,101 @@ def render_ranks (graph, ranks, img_file="graph.png", show_img=None):
     plt.show()
 
 
-def emit_phrase (phrase):
-  """reconstruct a phrase based on ranks"""
+######################################################################
+## collect key phrases
 
-  global DEBUG, Phrase
+def find_chunk_sub (phrase, np, i):
+  """np chunking - sub"""
+  for j in iter(range(0, len(np))):
+    p = phrase[i + j]
 
-  ## denominator increases the relative rank of phrases
-  size = len(phrase)
-  rank = math.sqrt(sum(map(lambda w: w[0]**2.0, phrase)))
+    if p.text != np[j]:
+      return None
 
-  if size > 1:
-    rank = rank / (float(size) ** -math.e)
-
-  ids = set(map(lambda w: w[1], phrase))
-  text = " ".join(map(lambda w: w[2], phrase)).lower()
-
-  p = Phrase(text=text, rank=rank, ids=ids)
-
-  if DEBUG:
-    print("---", p)
-
-  return p
+  return phrase[i:i + len(np)]
 
 
-def summarize_ranks (ranks, json_iter):
-  """determine the highest ranked noun phrases"""
+def find_chunk (phrase, np):
+  """np chunking"""
+  for i in iter(range(0, len(phrase))):
+    parsed_np = find_chunk_sub(phrase, np, i)
 
-  global DEBUG, WordNode
-  summary = []
+    if parsed_np:
+      return parsed_np
 
-  for meta in json_iter:
-    last_idx = -1
-    phrase = []
+def collect_chunks (phrase):
+  """collect the noun phrases"""
 
-    # schema: word_id, raw, root, pos, keep, idx
+  if (len(phrase) > 1):
+    found = False
+    text = " ".join([rl.text for rl in phrase])
 
-    for w in map(WordNode._make, meta["graf"]):
-      if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] != 'V'):
-        if last_idx >= 0 and (w.idx - last_idx) > 1:
-          summary.append(emit_phrase(phrase))
-          phrase = []
+    for np in textblob.TextBlob(text).noun_phrases:
+      if np != text:
+        found = True
+        yield np, find_chunk(phrase, np.split(" "))
 
-        phrase.append((ranks[w.root], w.word_id, w.raw,))
+    if not found and all([rl.pos[0] != "v" for rl in phrase]):
+      yield text, phrase
+
+
+def normalize_key_phrases (path, ranks):
+  """iterator for the normalized key phrases"""
+
+  # first, collect all the single-word keywords
+  lex = {}
+  max_single_rank = 0.0
+
+  for meta in json_iter(path):
+    sent = [w for w in map(WordNode._make, meta["graf"])]
+    sent_text = " ".join([w.raw for w in sent])
+
+    if DEBUG:
+      print(sent_text)
+
+    for w in sent:
+      if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV"):
+        rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=[w.word_id], pos=w.pos.lower())
 
         if DEBUG:
-          print("%3d %0.4f %s %s %d" % (w.idx, ranks[w.root], w.root, w.raw, last_idx))
+          print(rl)
 
-        last_idx = w.idx
+        lex[str(rl.ids)] = rl
+        max_single_rank = max(max_single_rank, rl.rank)
 
-    summary.append(emit_phrase(phrase))
+    # then collect the noun phrases
+    tail = 0
+    last_idx = sent[0].idx - 1
+    phrase = []
 
-  return summary
+    while tail < len(sent):
+      w = sent[tail]
 
+      if (w.word_id > 0) and (w.root in ranks) and ((w.idx - last_idx) == 1):
+        # keep collecting...
+        rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=[w.word_id], pos=w.pos.lower())
+        phrase.append(rl)
+      else:
+        # just hit a phrase boundary
+        for text, p in collect_chunks(phrase):
+          ids = list(set.union(*[set(rl.ids) for rl in p]))
+          rank = math.sqrt(sum([rl.rank**2.0 for rl in p]))/float(len(p)) + max_single_rank
+          np_rl = RankedLexeme(text=text, rank=rank, ids=ids, pos="np")
 
-def text_rank (path):
-  """run the TextRank algorithm"""
+          if DEBUG:
+            print(np_rl)
 
-  global DEBUG
+          lex[str(np_rl.ids)] = np_rl
 
-  graph = build_graph(json_iter(path))
-  ranks = nx.pagerank(graph)
+        phrase = []
 
-  if DEBUG:
-    render_ranks(graph, ranks)
+      last_idx = w.idx
+      tail += 1
 
-  return graph, ranks, summarize_ranks(ranks, json_iter(path))
+  sum_ranks = sum(rl.rank for rl in lex.values())
 
-
-######################################################################
-## keyphrase summary
-
-def normalize_keyphrases (summary):
-  """normalize the given list of TextRank key phrases"""
-
-  # L1 norm, to scale the keyphrase ranks
-  rank_norm = sum([p.rank for p in summary])
-
-  key_phrases = {}
-  known = []
-
-  for p in sorted(summary, key=lambda x: len(x[2]), reverse=True):
-    seen = False
-
-    for k in known:
-      if p.ids.issubset(k):
-        seen = True
-        break
-
-    if not seen:
-      known.append(p.ids)
-      key_phrases[p.text] = (p.rank, p.ids,)
-
-  for phrase, (rank, ids) in sorted(key_phrases.items(), key=lambda p: p[1][0], reverse=True):
-    yield Phrase(text=phrase, rank=(rank / rank_norm), ids=ids)
-
-
-def get_kernel (summary):
-  """construct a kernel matrix of the TextRank keyphrases and two forms of ranks"""
-
-  kernel = []
-  known_ids = set([])
-
-  for p in normalize_keyphrases(summary):
-    if len(p.ids) == 1:
-      known_ids.update(p.ids)
-
-    yield NormPhrase(phrase=p.text, ids=list(p.ids), norm_rank=p.rank, rank=0.0)
-
-  for p in summary:
-    if (len(p.ids) == 1) and not p.ids.issubset(known_ids):
-      known_ids.update(p.ids)
-      yield NormPhrase(phrase=p.text, ids=list(p.ids), norm_rank=0.0, rank=p.rank)
+  for rl in sorted(lex.values(), key=lambda rl: rl.rank, reverse=True):
+    yield rl._replace(rank=rl.rank / sum_ranks)
 
 
 ######################################################################
@@ -396,45 +394,11 @@ def rank_kernel (path):
   kernel = []
 
   for meta in json_iter(path):
-    p = NormPhrase(**meta)
-    m = mh_digest(map(lambda x: str(x), p.ids))
-    kernel.append((p, m,))
+    rl = RankedLexeme(**meta)
+    m = mh_digest(map(lambda x: str(x), rl.ids))
+    kernel.append((rl, m,))
 
   return kernel
-
-
-def find_chunk_sub (tagged_sent, np, i):
-  """not used: np chunking"""
-  for j in iter(range(0, len(np))):
-    w = tagged_sent[i + j]
-
-    if w.raw != np[j]:
-      return None
-
-  return tagged_sent[i:i + len(np)]
-
-
-def find_chunk (tagged_sent, np):
-  """not used: np chunking"""
-  for i in iter(range(0, len(tagged_sent))):
-    parsed_np = find_chunk_sub(tagged_sent, np, i)
-
-    if parsed_np:
-      return parsed_np
-
-
-def np_chunk (tagged_sent, text, key_phrases):
-  """not used: np chunking"""
-  chunks = set(textblob.en.np_extractors.FastNPExtractor().extract(text))
-  #chunks = set(textblob.en.np_extractors.ConllExtractor().extract(text))
-
-  for np_text in chunks:
-    np = np_text.split(" ")
-    parsed_np = find_chunk(tagged_sent, np)
-
-    if parsed_np:
-      m_np = mh_digest([str(w.word_id) for w in parsed_np])
-      key_phrases[np_text.lower()] = sum([m_np.jaccard(m) * (p.norm_rank + p.rank) for p, m in kernel])
 
 
 def top_sentences (kernel, path):
@@ -448,7 +412,7 @@ def top_sentences (kernel, path):
     text = " ".join([w.raw for w in tagged_sent])
 
     m_sent = mh_digest([str(w.word_id) for w in tagged_sent])
-    dist = sum([m_sent.jaccard(m) * (p.norm_rank + p.rank) for p, m in kernel])
+    dist = sum([m_sent.jaccard(m) * rl.rank for rl, m in kernel])
     key_sent[text] = (dist, i)
     i += 1
 
@@ -459,20 +423,25 @@ def top_sentences (kernel, path):
 ######################################################################
 ## document summarization
 
-def limit_keyphrases (path, thresh_func=lambda x: x/10.0):
+def limit_keyphrases (path, phrase_limit=20):
   """iterator for the most significant key phrases"""
   rank_thresh = None
+  lex = []
 
   for meta in json_iter(path):
-    p = NormPhrase(**meta)
-    rank = max(p.norm_rank, p.rank)
+    rl = RankedLexeme(**meta)
+    lex.append(rl)
 
-    if not rank_thresh:
-      rank_thresh = thresh_func(rank)
-    elif rank < rank_thresh:
-      return
+  rank_thresh = statistics.mean([rl.rank for rl in lex])
+  used = 0
 
-    yield p.phrase
+  for rl in lex:
+    if rl.pos[0] != "v":
+      if (used > phrase_limit) or (rl.rank < rank_thresh):
+        return
+
+      used += 1
+      yield rl.text
 
 
 def limit_sentences (path, word_limit=100):

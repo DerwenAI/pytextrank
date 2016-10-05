@@ -70,9 +70,9 @@ article:
 
 Which produces as a summary:
 
-> **excerpts:** The surprisingly skillful Google machine, known as AlphaGo, now needs only one more win to claim victory in the match. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict. In his 1996 match with IBM's Deep Blue supercomputer, world chess champion Gary Kasparov lost the first game but then came back to win the second game and, eventually, the match as a whole.
+> **excerpts:** After more than four hours of tight play and a rapid-fire endgame, Google's artificially intelligent Go-playing computer system has won a second contest against grandmaster Lee Sedol, taking a two-games-to-none lead in their historic best-of-five match in downtown Seoul. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict.
 
-> **keywords:** world chess champion gary kasparov; grandmaster lee sedol; korean-born lee sedol; many other games; google ai lab; skillful google machine; historic best-of-five match; intelligent go-playing computer system; four seasons hotel; other big-name internet companies; top go player; search engine results; more international titles
+> **keywords:** first game; second game; lee sedol; all-important match; eight-day match; wednesday afternoon; more win; alphago technique; seasons hotel; korean-born lee sedol; google ai lab; grandmaster lee sedol; skillful google machine
 
 These results show a summarization similar to slide 30 of the talk; 
 however, this approach is more amenable to:

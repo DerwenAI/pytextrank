@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import math
 import sys
 import textrank
 
@@ -14,7 +15,7 @@ DEBUG = False # True
 
 if __name__ == "__main__":
   path = sys.argv[1]
-  phrases = "; ".join(textrank.limit_keyphrases(path, thresh_func=lambda x: x**2))
+  phrases = "; ".join(textrank.limit_keyphrases(path, phrase_limit=12))
 
   path = sys.argv[2]
   sent_iter = sorted(textrank.limit_sentences(path, word_limit=150), key=lambda x: x[1])
