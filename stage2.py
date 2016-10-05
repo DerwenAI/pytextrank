@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from collections import namedtuple
-import textblob
-
 import sys
 import textrank
 

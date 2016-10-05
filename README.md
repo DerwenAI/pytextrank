@@ -70,9 +70,10 @@ article:
 
 Which produces as a summary:
 
-> **excerpts:** After more than four hours of tight play and a rapid-fire endgame, Google's artificially intelligent Go-playing computer system has won a second contest against grandmaster Lee Sedol, taking a two-games-to-none lead in their historic best-of-five match in downtown Seoul. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict.
+> **excerpts:** After more than four hours of tight play and a rapid-fire endgame, Google's artificially intelligent Go-playing computer system has won a second contest against grandmaster Lee Sedol, taking a two-games-to-none lead in their historic best-of-five match in downtown Seoul. The surprisingly skillful Google machine, known as AlphaGo, now needs only one more win to claim victory in the match. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict.
 
-> **keywords:** first game; second game; lee sedol; all-important match; eight-day match; wednesday afternoon; more win; alphago technique; seasons hotel; korean-born lee sedol; google ai lab; grandmaster lee sedol; skillful google machine
+> **keywords:** second game; all-important match; more win; seasons hotel; grandmaster lee sedol; alphago technique; wednesday afternoon; skillful google machine; downtown seoul; saturday afternoon; first time; first game; lee sedol
+
 
 These results show a summarization similar to slide 30 of the talk; 
 however, this approach is more amenable to:

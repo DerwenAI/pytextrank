@@ -301,8 +301,8 @@ def find_chunk (phrase, np):
     if parsed_np:
       return parsed_np
 
-def collect_chunks (phrase):
-  """collect the noun phrases"""
+def enumerate_chunks (phrase):
+  """iterate through the noun phrases"""
 
   if (len(phrase) > 1):
     found = False
@@ -317,62 +317,101 @@ def collect_chunks (phrase):
       yield text, phrase
 
 
-def normalize_key_phrases (path, ranks):
-  """iterator for the normalized key phrases"""
+def collect_keyword (sent, ranks):
+  """iterator for collecting the single-word keyphrases"""
 
-  # first, collect all the single-word keywords
-  lex = {}
-  max_single_rank = 0.0
+  for w in sent:
+    if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV"):
+      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower())
+
+      if DEBUG:
+        print(rl)
+
+      yield rl
+
+
+def collect_phrases (sent, ranks):
+  """iterator for collecting the noun phrases"""
+
+  tail = 0
+  last_idx = sent[0].idx - 1
+  phrase = []
+
+  while tail < len(sent):
+    w = sent[tail]
+
+    if (w.word_id > 0) and (w.root in ranks) and ((w.idx - last_idx) == 1):
+      # keep collecting...
+      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=w.word_id, pos=w.pos.lower())
+      phrase.append(rl)
+    else:
+      # just hit a phrase boundary
+      for text, p in enumerate_chunks(phrase):
+        id_list = [rl.ids for rl in p]
+        rank_list = [rl.rank for rl in p]
+        np_rl = RankedLexeme(text=text, rank=rank_list, ids=id_list, pos="np")
+
+        if DEBUG:
+          print(np_rl)
+
+        yield np_rl
+
+      phrase = []
+
+    last_idx = w.idx
+    tail += 1
+
+
+def calc_rms (values):
+  """calculate a root-mean-squared metric for a list of float values"""
+  return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))
+
+
+def normalize_key_phrases (path, ranks):
+  single_lex = {}
+  phrase_lex = {}
 
   for meta in json_iter(path):
     sent = [w for w in map(WordNode._make, meta["graf"])]
-    sent_text = " ".join([w.raw for w in sent])
 
     if DEBUG:
-      print(sent_text)
+      print(" ".join([w.raw for w in sent]))
 
-    for w in sent:
-      if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV"):
-        rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=[w.word_id], pos=w.pos.lower())
+    for rl in collect_keyword(sent, ranks):
+      single_lex[str(rl.ids)] = rl
 
-        if DEBUG:
-          print(rl)
+    for rl in collect_phrases(sent, ranks):
+      phrase_lex[str(rl.ids)] = rl
 
-        lex[str(rl.ids)] = rl
-        max_single_rank = max(max_single_rank, rl.rank)
+  # normalize ranks across single keywords and longer phrases:
+  #  * boost the noun phrases for length
+  #  * penalize the noun phrases for repeated words
+  #  * stack all of the phrases above the single keywords
 
-    # then collect the noun phrases
-    tail = 0
-    last_idx = sent[0].idx - 1
-    phrase = []
+  max_single_rank = max([rl.rank for rl in single_lex.values()])
+  repeated_roots = {}
 
-    while tail < len(sent):
-      w = sent[tail]
+  for rl in sorted(phrase_lex.values(), key=lambda rl: len(rl), reverse=True):
+    rank_list = []
 
-      if (w.word_id > 0) and (w.root in ranks) and ((w.idx - last_idx) == 1):
-        # keep collecting...
-        rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=[w.word_id], pos=w.pos.lower())
-        phrase.append(rl)
+    for i in iter(range(0, len(rl.ids))):
+      id = rl.ids[i]
+
+      if not id in repeated_roots:
+        repeated_roots[id] = 1.0
+        rank_list.append(rl.rank[i])
       else:
-        # just hit a phrase boundary
-        for text, p in collect_chunks(phrase):
-          ids = list(set.union(*[set(rl.ids) for rl in p]))
-          rank = math.sqrt(sum([rl.rank**2.0 for rl in p]))/float(len(p)) + max_single_rank
-          np_rl = RankedLexeme(text=text, rank=rank, ids=ids, pos="np")
+        repeated_roots[id] += 1.0
+        rank_list.append(rl.rank[i] / repeated_roots[id])
 
-          if DEBUG:
-            print(np_rl)
+    phrase_rank = calc_rms(rank_list) + max_single_rank
+    single_lex[str(rl.ids)] = rl._replace(rank = phrase_rank)
 
-          lex[str(np_rl.ids)] = np_rl
+  # scale all the ranks together, so they sum to 1.0
 
-        phrase = []
+  sum_ranks = sum([rl.rank for rl in single_lex.values()])
 
-      last_idx = w.idx
-      tail += 1
-
-  sum_ranks = sum(rl.rank for rl in lex.values())
-
-  for rl in sorted(lex.values(), key=lambda rl: rl.rank, reverse=True):
+  for rl in sorted(single_lex.values(), key=lambda rl: rl.rank, reverse=True):
     yield rl._replace(rank=rl.rank / sum_ranks)
 
 
