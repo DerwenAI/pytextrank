@@ -1,6 +1,7 @@
 dat/raw.txt
 dat/saf.json
 **~
+*.dot
 *.png
 
 # Byte-compiled / optimized / DLL files
