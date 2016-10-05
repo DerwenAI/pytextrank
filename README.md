@@ -21,6 +21,7 @@ This code has dependencies on several other Python projects:
   * [TextBlob](http://textblob.readthedocs.io/)
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
+  * [graphviz](https://pypi.python.org/pypi/graphviz)
   * [matlibplot](http://matplotlib.org/)
 
 To install:
@@ -31,6 +32,8 @@ To install:
     sudo python -m nltk.downloader punkt
     sudo python -m nltk.downloader wordnet
     pip install datasketch -U
+    pip install graphviz
+    pip install matplotlib
 
 
 ## Example Usage
@@ -93,4 +96,5 @@ however, this approach is more amenable to:
 
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
-[@mattkohl](https://github.com/mattkohl)
+[@mattkohl](https://github.com/mattkohl),
+[@HarshGrandeur](https://github.com/HarshGrandeur)
