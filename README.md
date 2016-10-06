@@ -46,21 +46,17 @@ Run a test case based on the Mihalcea paper:
 That test case should result as:
 
 ```
-0.2230	  minimal supporting set
-0.1345	  types systems
-0.1339	  linear diophantine equations
-0.0802	  mixed types
-0.0541	  strict inequations
-0.0505	  nonstrict inequations
-0.0368	  linear constraints
-0.0356	  natural numbers
-0.0252	  corresponding algorithms
-0.0116	  upper bounds
-0.0091	  solutions
-0.0027	  components
-0.0025	  construction
-0.0014	  compatibility
-0.0010	  criteria
+0.0956	types systems
+0.0627	nonstrict inequations
+0.0622	minimal supporting set
+0.0596	mixed types
+0.0571	strict inequations
+0.0568	natural numbers
+0.0568	minimal set
+0.0545	linear diophantine equations
+0.0539	linear constraints
+0.0528	corresponding algorithms
+0.0474	upper bounds
 ```
 
 Run another test based on [Williams](http://mike.place/2016/summarization/), using text from a
