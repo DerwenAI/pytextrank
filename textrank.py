@@ -161,19 +161,19 @@ def parse_graf (doc_id, graf_text, base_idx):
         pos_family = pos_tag[1].lower()[0]
         raw_idx += 1
 
-      word = word._replace(raw = str(parsed_raw))
+      word = word._replace(raw = str(parsed_raw.encode('utf-8')))
 
       if pos_family in POS_LEMMA:
-        word = word._replace(root = str(parsed_raw.singularize().lemmatize(pos_family)).lower())
+        word = word._replace(root = str(parsed_raw.singularize().lemmatize(pos_family).encode('utf-8')).lower())
       elif pos_family != '.':
-        word = word._replace(root = str(parsed_raw).lower())
+        word = word._replace(root = str(parsed_raw.encode('utf-8')).lower())
       else:
-        word = word._replace(root = str(parsed_raw))
+        word = word._replace(root = str(parsed_raw.encode('utf-8')))
 
       if pos_family in POS_KEEPS:
         word = word._replace(word_id = get_word_id(word.root), keep = 1)
 
-      digest.update(word.root.encode("utf-8"))
+      digest.update(word.root)
 
       # schema: word_id, raw, root, pos, keep, idx
       if DEBUG:
