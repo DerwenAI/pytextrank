@@ -83,10 +83,12 @@ however, this approach is more amenable to:
 
 ## TODO: Stay tuned for more...
 
+NB: the output is encoded, in case the input has characters that couldn't be handled otherwise.
+May require some post-processing for your use cases.
+
   1. Integrate [sent2vec](https://github.com/ryankiros/skip-thoughts) encoder
-  2. Integrate [keras](https://keras.io/) for RNN (deep learning)
-  3. LSH for building doc-to-doc graph of semantic similarity (per chapter-ish)
-  4. Docker container for managing the installation/dependencies
+  1. LSH for building doc-to-doc graph of semantic similarity (per chapter-ish)
+  1. Docker container for managing the installation/dependencies
 
 ## Kudos
 

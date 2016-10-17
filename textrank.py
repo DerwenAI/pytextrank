@@ -173,7 +173,7 @@ def parse_graf (doc_id, graf_text, base_idx):
       if pos_family in POS_KEEPS:
         word = word._replace(word_id = get_word_id(word.root), keep = 1)
 
-      digest.update(word.root)
+      digest.update(word.root.encode('utf-8'))
 
       # schema: word_id, raw, root, pos, keep, idx
       if DEBUG:
