@@ -13,12 +13,27 @@ DEBUG = False # True
 ## INPUTS: <stage2> <stage3>
 ## OUTPUT: Markdown format
 
+def de_byte (lexeme):
+  """a cheap hack, b/c unicode is hard"""
+  return lexeme[1:].strip("'")
+
+
+def de_byte_phrase (phrase):
+  """a cheap hack, b/c unicode is hard"""
+  return " ".join([de_byte(l) for l in phrase.split(" ")])
+
+
 if __name__ == "__main__":
   path = sys.argv[1]
-  phrases = "; ".join(textrank.limit_keyphrases(path, phrase_limit=12))
+  phrases = ", ".join([de_byte_phrase(p) for p in textrank.limit_keyphrases(path, phrase_limit=12)])
 
   path = sys.argv[2]
   sent_iter = sorted(textrank.limit_sentences(path, word_limit=150), key=lambda x: x[1])
-  graf_text = " ".join([textrank.make_sentence(sent_text) for sent_text, idx in sent_iter])
+  s = []
+
+  for sent_text, idx in sent_iter:
+    s.append((textrank.make_sentence([de_byte(w) for w in sent_text])))
+
+  graf_text = " ".join(s)
 
   print("**excerpts:** %s\n\n**keywords:** %s" % (graf_text, phrases,))
