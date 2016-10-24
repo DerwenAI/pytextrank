@@ -17,7 +17,6 @@ Modifications to the original Mihalcea algorithm include:
 
 This code has dependencies on several other Python projects:
 
-  * [NLTK](http://www.nltk.org/)
   * [TextBlob](http://textblob.readthedocs.io/)
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
@@ -31,10 +30,12 @@ To install:
     pip install -U git+https://github.com/sloria/textblob-aptagger.git@dev
     sudo python -m nltk.downloader punkt
     sudo python -m nltk.downloader wordnet
+    sudo python -m textblob.download_corpora
+    pip install networkx
+    pip install statistics
     pip install datasketch -U
     pip install graphviz
     pip install matplotlib
-
 
 ## Example Usage
 
