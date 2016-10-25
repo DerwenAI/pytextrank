@@ -15,7 +15,7 @@ import string
 import textblob
 import textblob_aptagger as tag
 
-DEBUG = False # True
+DEBUG = False
 
 ParsedGraf = namedtuple('ParsedGraf', 'id, sha1, graf')
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
@@ -387,7 +387,9 @@ def normalize_key_phrases (path, ranks):
   single_lex = {}
   phrase_lex = {}
 
-  for meta in json_iter(path):
+  if isinstance(path, str):
+      path = json_iter(path)
+  for meta in path:
     sent = [w for w in map(WordNode._make, meta["graf"])]
 
     if DEBUG:
@@ -447,9 +449,14 @@ def mh_digest (data, num_perm=512):
 def rank_kernel (path):
   """return a list (matrix-ish) of the key phrases and their ranks"""
   kernel = []
+  if isinstance(path, str):
+      path = json_iter(path)
 
-  for meta in json_iter(path):
-    rl = RankedLexeme(**meta)
+  for meta in path:
+    if not isinstance(meta, RankedLexeme):
+        rl = RankedLexeme(**meta)
+    else:
+        rl = meta
     m = mh_digest(map(lambda x: str(x), rl.ids))
     kernel.append((rl, m,))
 
@@ -460,8 +467,10 @@ def top_sentences (kernel, path):
   """determine distance for each sentence"""
   key_sent = {}
   i = 0
+  if isinstance(path, str):
+      path = json_iter(path)
 
-  for meta in json_iter(path):
+  for meta in path:
     graf = meta["graf"]
     tagged_sent = [WordNode._make(x) for x in graf]
     text = " ".join([w.raw for w in tagged_sent])
@@ -481,11 +490,14 @@ def top_sentences (kernel, path):
 def limit_keyphrases (path, phrase_limit=20):
   """iterator for the most significant key phrases"""
   rank_thresh = None
-  lex = []
+  if isinstance(path, str):
+    lex = []
 
-  for meta in json_iter(path):
-    rl = RankedLexeme(**meta)
-    lex.append(rl)
+    for meta in json_iter(path):
+      rl = RankedLexeme(**meta)
+      lex.append(rl)
+  else:
+    lex = path
 
   rank_thresh = statistics.mean([rl.rank for rl in lex])
   used = 0
@@ -503,8 +515,13 @@ def limit_sentences (path, word_limit=100):
   """iterator for the most significant sentences, up to a word limit"""
   word_count = 0
 
-  for meta in json_iter(path):
-    p = SummarySent(**meta)
+  if isinstance(path, str):
+      path = json_iter(path)
+  for meta in path:
+    if not isinstance(meta, SummarySent):
+        p = SummarySent(**meta)
+    else:
+        p = meta
     sent_text = p.text.split(" ")
     sent_len = len(sent_text)
 
