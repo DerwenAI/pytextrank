@@ -516,7 +516,11 @@ def limit_keyphrases (path, phrase_limit=20):
     rl = RankedLexeme(**meta)
     lex.append(rl)
 
-  rank_thresh = statistics.mean([rl.rank for rl in lex])
+  if len(lex) > 0:
+    rank_thresh = statistics.mean([rl.rank for rl in lex])
+  else:
+      rank_thresh = 0
+
   used = 0
 
   for rl in lex:
