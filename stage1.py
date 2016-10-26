@@ -13,5 +13,5 @@ import textrank
 if __name__ == "__main__":
   path = sys.argv[1]
 
-  for graf in textrank.parse_doc(textrank.json_iter(path)):
+  for graf in textrank.parse_doc(textrank.json_iter(path), force_encode=False):
     print(textrank.pretty_print(graf._asdict()))

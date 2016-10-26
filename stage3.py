@@ -15,9 +15,9 @@ DEBUG = False # True
 
 if __name__ == "__main__":
   path = sys.argv[2]
-  kernel = textrank.rank_kernel(path)
+  kernel = textrank.rank_kernel(path, force_encode=False)
 
   path = sys.argv[1]
 
-  for s in textrank.top_sentences(kernel, path):
+  for s in textrank.top_sentences(kernel, path, force_encode=False):
     print(textrank.pretty_print(s._asdict()))

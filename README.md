@@ -82,13 +82,16 @@ however, this approach is more amenable to:
   * bootstrapping work with new documents about a specific topic
   * producing results ready for use in a search engine or recommender system
 
+## NB: Unicode
+
+Note the `force_encode` flags on some of the function calls.
+This forces `utf-8` encoding, in case the input has characters that couldn't be handled otherwise.
+That may require some post-processing for your use cases -- 
+see examples functions in the `stage4.py` code.
+This is **turned off** by default.
+
 ## TODO: Stay tuned for more...
 
-NB: the output is encoded, in case the input has characters that couldn't be handled otherwise.
-May require some post-processing for your use cases.
-
-  1. Integrate [sent2vec](https://github.com/ryankiros/skip-thoughts) encoder
-  1. LSH for building doc-to-doc graph of semantic similarity (per chapter-ish)
   1. Docker container for managing the installation/dependencies
 
 ## Kudos

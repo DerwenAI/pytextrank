@@ -122,7 +122,7 @@ def get_word_id (root):
   return UNIQ_WORDS[root]
 
 
-def parse_graf (doc_id, graf_text, base_idx):
+def parse_graf (doc_id, graf_text, base_idx, force_encode=False):
   """CORE ALGORITHM: parse and markup sentences in the given paragraph"""
 
   global DEBUG
@@ -161,19 +161,36 @@ def parse_graf (doc_id, graf_text, base_idx):
         pos_family = pos_tag[1].lower()[0]
         raw_idx += 1
 
-      word = word._replace(raw = str(parsed_raw.encode('utf-8')))
+      if force_encode:
+        word = word._replace(raw = str(parsed_raw).encode('utf-8'))
+      else:
+        word = word._replace(raw = str(parsed_raw))
 
       if pos_family in POS_LEMMA:
-        word = word._replace(root = str(parsed_raw.singularize().lemmatize(pos_family).encode('utf-8')).lower())
+        if force_encode:
+          word = word._replace(root = str(parsed_raw.singularize().lemmatize(pos_family).encode('utf-8')).lower())
+        else:
+          word = word._replace(root = str(parsed_raw.singularize().lemmatize(pos_family)).lower())
+
       elif pos_family != '.':
-        word = word._replace(root = str(parsed_raw.encode('utf-8')).lower())
+        if force_encode:
+          word = word._replace(root = str(parsed_raw.encode('utf-8')).lower())
+        else:
+          word = word._replace(root = str(parsed_raw).lower())
       else:
-        word = word._replace(root = str(parsed_raw.encode('utf-8')))
+        if force_encode:
+          word = word._replace(root = str(parsed_raw.encode('utf-8')))
+        else:
+          word = word._replace(root = str(parsed_raw))
 
       if pos_family in POS_KEEPS:
         word = word._replace(word_id = get_word_id(word.root), keep = 1)
 
-      digest.update(word.root.encode('utf-8'))
+      if force_encode:
+        # already encoded...
+        digest.update(word.root)
+      else:
+        digest.update(word.root.encode('utf-8'))
 
       # schema: word_id, raw, root, pos, keep, idx
       if DEBUG:
@@ -189,7 +206,7 @@ def parse_graf (doc_id, graf_text, base_idx):
   return markup, new_base_idx
 
 
-def parse_doc (json_iter):
+def parse_doc (json_iter, force_encode=False):
   """parse one document to prep for TextRank"""
 
   global DEBUG
@@ -201,7 +218,7 @@ def parse_doc (json_iter):
       if DEBUG:
         print("graf_text:", graf_text)
 
-      grafs, new_base_idx = parse_graf(meta["id"], graf_text, base_idx)
+      grafs, new_base_idx = parse_graf(meta["id"], graf_text, base_idx, force_encode)
       base_idx = new_base_idx
 
       for graf in grafs:
@@ -363,14 +380,15 @@ def collect_phrases (sent, ranks):
     else:
       # just hit a phrase boundary
       for text, p in enumerate_chunks(phrase):
-        id_list = [rl.ids for rl in p]
-        rank_list = [rl.rank for rl in p]
-        np_rl = RankedLexeme(text=text, rank=rank_list, ids=id_list, pos="np")
+        if p:
+          id_list = [rl.ids for rl in p]
+          rank_list = [rl.rank for rl in p]
+          np_rl = RankedLexeme(text=text, rank=rank_list, ids=id_list, pos="np")
 
-        if DEBUG:
-          print(np_rl)
+          if DEBUG:
+            print(np_rl)
 
-        yield np_rl
+          yield np_rl
 
       phrase = []
 
@@ -404,7 +422,13 @@ def normalize_key_phrases (path, ranks):
   #  * penalize the noun phrases for repeated words
   #  * stack all of the phrases above the single keywords
 
-  max_single_rank = max([rl.rank for rl in single_lex.values()])
+  rank_list = [rl.rank for rl in single_lex.values()]
+
+  if len(rank_list) < 1:
+    max_single_rank = 0
+  else:
+    max_single_rank = max(rank_list)
+
   repeated_roots = {}
 
   for rl in sorted(phrase_lex.values(), key=lambda rl: len(rl), reverse=True):
@@ -434,29 +458,34 @@ def normalize_key_phrases (path, ranks):
 ######################################################################
 ## sentence significance
 
-def mh_digest (data, num_perm=512):
+def mh_digest (data, force_encode=False):
   """create a MinHash digest"""
+  num_perm = 512
   m = MinHash(num_perm)
 
   for d in data:
-    m.update(d.encode('utf8'))
+    if force_encode:
+      # already encoded...
+      m.update(d)
+    else:
+      m.update(d.encode('utf8'))
 
   return m
 
 
-def rank_kernel (path):
+def rank_kernel (path, force_encode=False):
   """return a list (matrix-ish) of the key phrases and their ranks"""
   kernel = []
 
   for meta in json_iter(path):
     rl = RankedLexeme(**meta)
-    m = mh_digest(map(lambda x: str(x), rl.ids))
+    m = mh_digest(map(lambda x: str(x), rl.ids), force_encode)
     kernel.append((rl, m,))
 
   return kernel
 
 
-def top_sentences (kernel, path):
+def top_sentences (kernel, path, force_encode=False):
   """determine distance for each sentence"""
   key_sent = {}
   i = 0
@@ -466,7 +495,7 @@ def top_sentences (kernel, path):
     tagged_sent = [WordNode._make(x) for x in graf]
     text = " ".join([w.raw for w in tagged_sent])
 
-    m_sent = mh_digest([str(w.word_id) for w in tagged_sent])
+    m_sent = mh_digest([str(w.word_id) for w in tagged_sent], force_encode)
     dist = sum([m_sent.jaccard(m) * rl.rank for rl, m in kernel])
     key_sent[text] = (dist, i)
     i += 1

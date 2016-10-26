@@ -25,14 +25,14 @@ def de_byte_phrase (phrase):
 
 if __name__ == "__main__":
   path = sys.argv[1]
-  phrases = ", ".join([de_byte_phrase(p) for p in textrank.limit_keyphrases(path, phrase_limit=12)])
+  phrases = ", ".join([p for p in textrank.limit_keyphrases(path, phrase_limit=12)])
 
   path = sys.argv[2]
   sent_iter = sorted(textrank.limit_sentences(path, word_limit=150), key=lambda x: x[1])
   s = []
 
   for sent_text, idx in sent_iter:
-    s.append((textrank.make_sentence([de_byte(w) for w in sent_text])))
+    s.append((textrank.make_sentence([w for w in sent_text])))
 
   graf_text = " ".join(s)
 
