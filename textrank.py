@@ -19,7 +19,7 @@ DEBUG = False # True
 
 ParsedGraf = namedtuple('ParsedGraf', 'id, sha1, graf')
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
-RankedLexeme = namedtuple('RankedLexeme', 'text, rank, ids, pos')
+RankedLexeme = namedtuple('RankedLexeme', 'text, rank, ids, pos, count')
 SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
 
@@ -355,7 +355,7 @@ def collect_keyword (sent, ranks):
 
   for w in sent:
     if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV"):
-      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower())
+      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower(), count=1)
 
       if DEBUG:
         print(rl)
@@ -375,7 +375,7 @@ def collect_phrases (sent, ranks):
 
     if (w.word_id > 0) and (w.root in ranks) and ((w.idx - last_idx) == 1):
       # keep collecting...
-      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=w.word_id, pos=w.pos.lower())
+      rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=w.word_id, pos=w.pos.lower(), count=1)
       phrase.append(rl)
     else:
       # just hit a phrase boundary
@@ -383,7 +383,7 @@ def collect_phrases (sent, ranks):
         if p:
           id_list = [rl.ids for rl in p]
           rank_list = [rl.rank for rl in p]
-          np_rl = RankedLexeme(text=text, rank=rank_list, ids=id_list, pos="np")
+          np_rl = RankedLexeme(text=text, rank=rank_list, ids=id_list, pos="np", count=1)
 
           if DEBUG:
             print(np_rl)
@@ -412,10 +412,22 @@ def normalize_key_phrases (path, ranks):
       print(" ".join([w.raw for w in sent]))
 
     for rl in collect_keyword(sent, ranks):
-      single_lex[str(rl.ids)] = rl
+      id = str(rl.ids)
+
+      if id not in single_lex:
+        single_lex[id] = rl
+      else:
+        prev_lex = single_lex[id]
+        single_lex[id] = rl._replace(count = prev_lex.count + 1)
 
     for rl in collect_phrases(sent, ranks):
-      phrase_lex[str(rl.ids)] = rl
+      id = str(rl.ids)
+
+      if id not in phrase_lex:
+        phrase_lex[id] = rl
+      else:
+        prev_lex = phrase_lex[id]
+        phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
 
   # normalize ranks across single keywords and longer phrases:
   #  * boost the noun phrases for length
