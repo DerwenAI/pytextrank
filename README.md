@@ -21,21 +21,18 @@ This code has dependencies on several other Python projects:
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
   * [graphviz](https://pypi.python.org/pypi/graphviz)
-  * [matlibplot](http://matplotlib.org/)
 
 To install:
 
-    conda config --add channels https://conda.binstar.org/sloria
-    conda install textblob
+    pip install textblob
     pip install -U git+https://github.com/sloria/textblob-aptagger.git@dev
-    sudo python -m nltk.downloader punkt
-    sudo python -m nltk.downloader wordnet
-    sudo python -m textblob.download_corpora
+    python -m nltk.downloader punkt
+    python -m nltk.downloader wordnet
+    python -m textblob.download_corpora
     pip install networkx
     pip install statistics
     pip install datasketch -U
     pip install graphviz
-    pip install matplotlib
 
 ## Example Usage
 

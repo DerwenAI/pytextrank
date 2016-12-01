@@ -7,7 +7,6 @@ from graphviz import Digraph
 import hashlib
 import json
 import math
-import matplotlib.pyplot as plt
 import networkx as nx
 import re
 import statistics
@@ -286,19 +285,17 @@ def write_dot (graph, ranks, path="graph.dot"):
     f.write(dot.source)
 
 
-def render_ranks (graph, ranks, img_file="graph.png", dot_file="graph.dot", show_img=None):
+def render_ranks (graph, ranks, dot_file="graph.dot"):
   """render the TextRank graph for visual formats"""
-
-  nx.draw_networkx(graph)
-
-  if img_file:
-    plt.savefig(img_file)
-
-  if show_img:
-    plt.show()
 
   if dot_file:
     write_dot(graph, ranks, path=dot_file)
+
+  ## b/c matplotlib sucks
+  #import matplotlib.pyplot as plt
+  #nx.draw_networkx(graph)
+  #plt.savefig(img_file)
+  #plt.show()
 
 
 def text_rank (path):
