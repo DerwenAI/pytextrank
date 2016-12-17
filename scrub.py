@@ -3,8 +3,9 @@
 
 import sys
 import textrank
+import unicode
 
-DEBUG = True # False
+DEBUG = False # True
 
 ## "It scrubs its unreadable characters out of its text stream...
 ## Then it generates a JSON doc again."
@@ -15,10 +16,11 @@ if __name__ == "__main__":
 
   with open(path, 'r') as f:
     for line in f.readlines():
-      line = line.strip().replace('“', '"').replace('”', '"')
+      line = line.strip()
+      line = line.replace('“', '"').replace('”', '"')
+      line = line.replace("’", "'").replace("’", "'").replace("`", "'")
       line = line.replace('…', '...').replace('–', '-')
-      line = line.replace("’", "'").replace("`", "'")
-
+      unicodedata.normalize('NFKD', lines).encode('ascii', 'ignore')
       lines.append(line)
 
   j = {}
