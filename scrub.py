@@ -3,7 +3,7 @@
 
 import sys
 import textrank
-import unicode
+import unicodedata
 
 DEBUG = False # True
 
