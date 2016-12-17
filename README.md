@@ -18,6 +18,7 @@ Modifications to the original Mihalcea algorithm include:
 This code has dependencies on several other Python projects:
 
   * [TextBlob](http://textblob.readthedocs.io/)
+  * [spaCy](https://spacy.io/docs/usage/)
   * [NetworkX](http://networkx.readthedocs.io/)
   * [datasketch](https://github.com/ekzhu/datasketch)
   * [graphviz](https://pypi.python.org/pypi/graphviz)
@@ -29,10 +30,15 @@ To install:
     python -m nltk.downloader punkt
     python -m nltk.downloader wordnet
     python -m textblob.download_corpora
+    pip install -U spacy
+    python -m spacy.en.download all
     pip install networkx
     pip install statistics
     pip install datasketch -U
     pip install graphviz
+
+NB: the runtime depends on a local file called `stop.txt` which contains a list of *stopwords*.
+
 
 ## Example Usage
 
@@ -41,36 +47,43 @@ Run a test case based on the Mihalcea paper:
     ./stage1.py dat/mih.json > out1.json
     ./stage2.py out1.json > out2.json
 
-That test case should result as:
 
 ```
-0.0956	types systems
-0.0627	nonstrict inequations
-0.0622	minimal supporting set
-0.0596	mixed types
-0.0571	strict inequations
-0.0568	natural numbers
-0.0568	minimal set
-0.0545	linear diophantine equations
-0.0539	linear constraints
-0.0528	corresponding algorithms
-0.0474	upper bounds
+0.1286	types systems
+0.0922	mixed types
+0.0711	minimal set
+0.0643	systems
+0.0546	strict inequations
+0.0474	considered
+0.0461	types
+0.0368	natural numbers
+0.0355	minimal supporting set
+0.0355	set
+0.0351	solutions
+0.0321	linear diophantine equations
+0.0291	linear constraints
+0.0286	solving
+0.0275	corresponding algorithms
 ```
+
+NB: results for this implementation are intended more to be used as *feature vectors*, 
+not as academic paper summaries.
+
 
 Run another test based on [Williams](http://mike.place/2016/summarization/), using text from a
 *[Wired](https://www.wired.com/2016/03/googles-ai-wins-pivotal-game-two-match-go-grandmaster/)*
 article:
 
-    ./stage1.py dat/ars.json > out1.json
+    ./stage1.py dat/lee.json > out1.json
     ./stage2.py out1.json > out2.json
     ./stage3.py out1.json out2.json > out3.json
     ./stage4.py out2.json out3.json > out4.md
 
 Which produces as a summary:
 
-> **excerpts:** After more than four hours of tight play and a rapid-fire endgame, Google's artificially intelligent Go-playing computer system has won a second contest against grandmaster Lee Sedol, taking a two-games-to-none lead in their historic best-of-five match in downtown Seoul. The surprisingly skillful Google machine, known as AlphaGo, now needs only one more win to claim victory in the match. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict.
+> **excerpts:** The surprisingly skillful Google machine, known as AlphaGo, now needs only one more win to claim victory in the match. The Korean-born Lee Sedol will go down in defeat unless he takes each of the match's last three games. Game Three is set for Saturday afternoon inside Seoul's Four Seasons hotel. Lee Sedol is widely-regarded as the top Go player of the last decade, after winning more international titles than all but one other player. Although AlphaGo topped Lee Sedol in the match's first game on Wednesday afternoon, the outcome of Game Two was no easier to predict. In his 1996 match with IBM's Deep Blue supercomputer, world chess champion Gary Kasparov lost the first game but then came back to win the second game and, eventually, the match as a whole. 
 
-> **keywords:** second game; all-important match; more win; seasons hotel; grandmaster lee sedol; alphago technique; wednesday afternoon; skillful google machine; downtown seoul; saturday afternoon; first time; first game; lee sedol
+> **keywords:** first game, google ai lab, all-important match, lee sedol, more win, alphago, wednesday, seoul, seasons hotel, world chess champion gary kasparov, afternoon, game, second game
 
 
 These results show a summarization similar to slide 30 of the talk; 

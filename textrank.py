@@ -9,6 +9,7 @@ import json
 import math
 import networkx as nx
 import re
+import spacy
 import statistics
 import string
 import textblob
@@ -21,6 +22,7 @@ WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
 RankedLexeme = namedtuple('RankedLexeme', 'text, rank, ids, pos, count')
 SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
+SPACY_NLP = spacy.load('en')
 
 ######################################################################
 ## filter the novel text versus quoted text in an email message
@@ -101,6 +103,17 @@ POS_KEEPS = ['v', 'n', 'j']
 POS_LEMMA = ['v', 'n']
 TAGGER = tag.PerceptronTagger()
 UNIQ_WORDS = { ".": 0 }
+
+def load_stopwords (file):
+  stopwords = set([])
+
+  with open(file, "r") as f:
+    for line in f.readlines():
+      stopwords.add(line.strip().lower())
+
+  return stopwords
+
+STOPWORDS = load_stopwords("stop.txt")
 
 
 def is_not_word (word):
@@ -331,6 +344,7 @@ def find_chunk (phrase, np):
     if parsed_np:
       return parsed_np
 
+
 def enumerate_chunks (phrase):
   """iterate through the noun phrases"""
 
@@ -349,15 +363,65 @@ def enumerate_chunks (phrase):
 
 def collect_keyword (sent, ranks):
   """iterator for collecting the single-word keyphrases"""
+  global STOPWORDS
 
   for w in sent:
-    if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV"):
+    if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV") and (w.root not in STOPWORDS):
       rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower(), count=1)
 
       if DEBUG:
         print(rl)
 
       yield rl
+
+
+def find_entity (sent, ranks, ent, i):
+  if i >= len(sent):
+    return None, None
+  else:
+    for j in iter(range(0, len(ent))):
+      w = sent[i + j]
+
+      if w.raw != ent[j]:
+        return find_entity(sent, ranks, ent, i + 1)
+
+    w_ranks = []
+    w_ids = []
+
+    for w in sent[i:i + len(ent)]:
+      w_ids.append(w.word_id)
+
+      if w.root in ranks:
+        w_ranks.append(ranks[w.root])
+      else:
+        w_ranks.append(0.0)
+
+    return w_ranks, w_ids
+
+
+def collect_entities (sent, ranks):
+  """iterator for collecting the named-entities"""
+  global DEBUG, SPACY_NLP, STOPWORDS
+
+  sent_text = " ".join([w.raw for w in sent])
+
+  if DEBUG:
+    print("sent:", sent_text)
+
+  for ent in SPACY_NLP(sent_text).ents:
+    if DEBUG:
+      print("NER:", ent.label_, ent.text)
+
+    if (ent.label_ not in ["CARDINAL"]) and (ent.text.lower() not in STOPWORDS):
+      w_ranks, w_ids = find_entity(sent, ranks, ent.text.split(" "), 0)
+
+      if w_ranks and w_ids:
+        rl = RankedLexeme(text=ent.text.lower(), rank=w_ranks, ids=w_ids, pos="np", count=1)
+
+        if DEBUG:
+          print(rl)
+
+        yield rl
 
 
 def collect_phrases (sent, ranks):
@@ -395,7 +459,8 @@ def collect_phrases (sent, ranks):
 
 def calc_rms (values):
   """calculate a root-mean-squared metric for a list of float values"""
-  return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))
+  #return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))
+  return max(values)
 
 
 def normalize_key_phrases (path, ranks):
@@ -405,9 +470,6 @@ def normalize_key_phrases (path, ranks):
   for meta in json_iter(path):
     sent = [w for w in map(WordNode._make, meta["graf"])]
 
-    if DEBUG:
-      print(" ".join([w.raw for w in sent]))
-
     for rl in collect_keyword(sent, ranks):
       id = str(rl.ids)
 
@@ -416,6 +478,15 @@ def normalize_key_phrases (path, ranks):
       else:
         prev_lex = single_lex[id]
         single_lex[id] = rl._replace(count = prev_lex.count + 1)
+
+    for rl in collect_entities(sent, ranks):
+      id = str(rl.ids)
+
+      if id not in phrase_lex:
+        phrase_lex[id] = rl
+      else:
+        prev_lex = phrase_lex[id]
+        phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
 
     for rl in collect_phrases(sent, ranks):
       id = str(rl.ids)
@@ -429,7 +500,6 @@ def normalize_key_phrases (path, ranks):
   # normalize ranks across single keywords and longer phrases:
   #  * boost the noun phrases for length
   #  * penalize the noun phrases for repeated words
-  #  * stack all of the phrases above the single keywords
 
   rank_list = [rl.rank for rl in single_lex.values()]
 
@@ -453,7 +523,7 @@ def normalize_key_phrases (path, ranks):
         repeated_roots[id] += 1.0
         rank_list.append(rl.rank[i] / repeated_roots[id])
 
-    phrase_rank = calc_rms(rank_list) + max_single_rank
+    phrase_rank = calc_rms(rank_list)
     single_lex[str(rl.ids)] = rl._replace(rank = phrase_rank)
 
   # scale all the ranks together, so they sum to 1.0
