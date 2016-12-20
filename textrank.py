@@ -531,7 +531,12 @@ def normalize_key_phrases (path, ranks):
   sum_ranks = sum([rl.rank for rl in single_lex.values()])
 
   for rl in sorted(single_lex.values(), key=lambda rl: rl.rank, reverse=True):
-    yield rl._replace(rank=rl.rank / sum_ranks)
+    if sum_ranks > 0.0:
+      rl = rl._replace(rank=rl.rank / sum_ranks)
+    elif rl.rank == 0.0:
+      rl = rl._replace(rank=0.1)
+
+    yield rl
 
 
 ######################################################################
