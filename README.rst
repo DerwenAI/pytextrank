@@ -31,7 +31,7 @@ This code has dependencies on several other Python projects:
 -  `datasketch <https://github.com/ekzhu/datasketch>`_
 -  `graphviz <https://pypi.python.org/pypi/graphviz>`_
 
-To install from `PyPi <https://pypi.python.org/pypi/pytextrank>`_
+To install from `PyPi <https://pypi.python.org/pypi/pytextrank>`_:
 
 ::
 
@@ -44,13 +44,6 @@ To install from this Git repo:
 
     pip install -r requirements.txt
 
-The runtime depends on a local file called ``stop.txt`` which contains
-a list of *stopwords*.
-
-
-Install model
--------------
-
 After installation you need to download a language model:
 
 ::
@@ -59,6 +52,10 @@ After installation you need to download a language model:
     python -m nltk.downloader wordnet
     python -m textblob.download_corpora
     python -m spacy.en.download all
+
+Also, the runtime depends on a local file called ``stop.txt`` which
+contains a list of *stopwords*. You can override this in the
+`normalize_key_phrases()` call.
 
 
 Example Usage
