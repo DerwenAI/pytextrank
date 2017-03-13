@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+from pytextrank import json_iter, parse_doc, pretty_print
 import sys
-import textrank
 
 ## Stage 1:
 ##  * perform statistical parsing/tagging on a document in JSON format
@@ -11,7 +11,7 @@ import textrank
 ## OUTPUT: JSON format `ParsedGraf(id, sha1, graf)`
 
 if __name__ == "__main__":
-  path = sys.argv[1]
+  path_stage0 = sys.argv[1]
 
-  for graf in textrank.parse_doc(textrank.json_iter(path), force_encode=False):
-    print(textrank.pretty_print(graf._asdict()))
+  for graf in parse_doc(json_iter(path_stage0), force_encode=False):
+    print(pretty_print(graf._asdict()))

@@ -4,16 +4,18 @@
 from collections import namedtuple
 from datasketch import MinHash
 from graphviz import Digraph
+from textblob_aptagger import PerceptronTagger
 import hashlib
 import json
 import math
 import networkx as nx
+import os
+import os.path
 import re
 import spacy
 import statistics
 import string
 import textblob
-import textblob_aptagger as tag
 
 DEBUG = False # True
 
@@ -22,7 +24,6 @@ WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
 RankedLexeme = namedtuple('RankedLexeme', 'text, rank, ids, pos, count')
 SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
-SPACY_NLP = spacy.load('en')
 
 ######################################################################
 ## filter the novel text versus quoted text in an email message
@@ -101,19 +102,8 @@ PAT_SPACE = re.compile(r'\_+$')
 
 POS_KEEPS = ['v', 'n', 'j']
 POS_LEMMA = ['v', 'n']
-TAGGER = tag.PerceptronTagger()
+POS_TAGGER = None
 UNIQ_WORDS = { ".": 0 }
-
-def load_stopwords (file):
-  stopwords = set([])
-
-  with open(file, "r") as f:
-    for line in f.readlines():
-      stopwords.add(line.strip().lower())
-
-  return stopwords
-
-STOPWORDS = load_stopwords("stop.txt")
 
 
 def is_not_word (word):
@@ -134,11 +124,11 @@ def get_word_id (root):
   return UNIQ_WORDS[root]
 
 
-def parse_graf (doc_id, graf_text, base_idx, force_encode=False):
+def parse_graf (doc_id, graf_text, base_idx, pos_tagger, force_encode=False):
   """CORE ALGORITHM: parse and markup sentences in the given paragraph"""
 
   global DEBUG
-  global POS_KEEPS, POS_LEMMA, TAGGER
+  global POS_KEEPS, POS_LEMMA
 
   markup = []
   new_base_idx = base_idx
@@ -147,7 +137,7 @@ def parse_graf (doc_id, graf_text, base_idx, force_encode=False):
     graf = []
     digest = hashlib.sha1()
 
-    tagged_sent = TAGGER.tag(str(sent))
+    tagged_sent = pos_tagger.tag(str(sent))
     tag_idx = 0
     raw_idx = 0
 
@@ -218,10 +208,16 @@ def parse_graf (doc_id, graf_text, base_idx, force_encode=False):
   return markup, new_base_idx
 
 
-def parse_doc (json_iter, force_encode=False):
+def parse_doc (json_iter, pos_tagger=None, force_encode=False):
   """parse one document to prep for TextRank"""
 
-  global DEBUG
+  global DEBUG, POS_TAGGER
+
+  # set up the PoS tagger, defaults to PerceptronTagger from TextBlob
+  if not pos_tagger:
+    if not POS_TAGGER:
+      POS_TAGGER = PerceptronTagger()
+    pos_tagger = POS_TAGGER
 
   for meta in json_iter:
     base_idx = 0
@@ -230,7 +226,7 @@ def parse_doc (json_iter, force_encode=False):
       if DEBUG:
         print("graf_text:", graf_text)
 
-      grafs, new_base_idx = parse_graf(meta["id"], graf_text, base_idx, force_encode)
+      grafs, new_base_idx = parse_graf(meta["id"], graf_text, base_idx, pos_tagger, force_encode)
       base_idx = new_base_idx
 
       for graf in grafs:
@@ -304,7 +300,7 @@ def render_ranks (graph, ranks, dot_file="graph.dot"):
   if dot_file:
     write_dot(graph, ranks, path=dot_file)
 
-  ## b/c matplotlib sucks
+  ## omitted since matplotlib isn't reliable enough
   #import matplotlib.pyplot as plt
   #nx.draw_networkx(graph)
   #plt.savefig(img_file)
@@ -320,10 +316,43 @@ def text_rank (path):
   return graph, ranks
 
 
-
-
 ######################################################################
 ## collect key phrases
+
+SPACY_NLP = None
+STOPWORDS = None
+
+
+def load_stopwords (stop_file):
+  stopwords = set([])
+
+  # provide a default if needed
+  if not stop_file:
+    stop_file = "stop.txt"
+
+  # check whether the path is fully qualified
+  if os.path.isfile(stop_file):
+    stop_path = stop_file
+
+  # check for the file in the current working directory
+  else:
+    cwd = os.getcwd()
+    stop_path = os.path.join(cwd, stop_file)
+
+    # check for the file in the same directory as this code module
+    if not os.path.isfile(stop_path):
+      loc = os.path.realpath( os.path.join(cwd, os.path.dirname(__file__)) )
+      stop_path = os.path.join(loc, stop_file)
+
+  try:
+    with open(stop_path, "r") as f:
+      for line in f.readlines():
+        stopwords.add(line.strip().lower())
+  except FileNotFoundError:
+    pass
+
+  return stopwords
+
 
 def find_chunk_sub (phrase, np, i):
   """np chunking - sub"""
@@ -361,12 +390,10 @@ def enumerate_chunks (phrase):
       yield text, phrase
 
 
-def collect_keyword (sent, ranks):
+def collect_keyword (sent, ranks, stopwords):
   """iterator for collecting the single-word keyphrases"""
-  global STOPWORDS
-
   for w in sent:
-    if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV") and (w.root not in STOPWORDS):
+    if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV") and (w.root not in stopwords):
       rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower(), count=1)
 
       if DEBUG:
@@ -399,20 +426,20 @@ def find_entity (sent, ranks, ent, i):
     return w_ranks, w_ids
 
 
-def collect_entities (sent, ranks):
+def collect_entities (sent, ranks, stopwords, spacy_nlp):
   """iterator for collecting the named-entities"""
-  global DEBUG, SPACY_NLP, STOPWORDS
+  global DEBUG
 
   sent_text = " ".join([w.raw for w in sent])
 
   if DEBUG:
     print("sent:", sent_text)
 
-  for ent in SPACY_NLP(sent_text).ents:
+  for ent in spacy_nlp(sent_text).ents:
     if DEBUG:
       print("NER:", ent.label_, ent.text)
 
-    if (ent.label_ not in ["CARDINAL"]) and (ent.text.lower() not in STOPWORDS):
+    if (ent.label_ not in ["CARDINAL"]) and (ent.text.lower() not in stopwords):
       w_ranks, w_ids = find_entity(sent, ranks, ent.text.split(" "), 0)
 
       if w_ranks and w_ids:
@@ -463,14 +490,33 @@ def calc_rms (values):
   return max(values)
 
 
-def normalize_key_phrases (path, ranks):
+def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None):
+  """collect keyphrases, named entities, etc., while removing stop words"""
+
+  global STOPWORDS, SPACY_NLP
+
+  # set up the stop words
+  if (type(stopwords) is list) or (type(stopwords) is set):
+    # explicit conversion to a set, for better performance
+    stopwords = set(stopwords)
+  else:
+    if not STOPWORDS:
+      STOPWORDS = load_stopwords(stopwords)
+    stopwords = STOPWORDS
+
+  # set up the spaCy NLP parser
+  if not spacy_nlp:
+    if not SPACY_NLP:
+      SPACY_NLP = spacy.load("en")
+    spacy_nlp = SPACY_NLP
+
   single_lex = {}
   phrase_lex = {}
 
   for meta in json_iter(path):
     sent = [w for w in map(WordNode._make, meta["graf"])]
 
-    for rl in collect_keyword(sent, ranks):
+    for rl in collect_keyword(sent, ranks, stopwords):
       id = str(rl.ids)
 
       if id not in single_lex:
@@ -479,7 +525,7 @@ def normalize_key_phrases (path, ranks):
         prev_lex = single_lex[id]
         single_lex[id] = rl._replace(count = prev_lex.count + 1)
 
-    for rl in collect_entities(sent, ranks):
+    for rl in collect_entities(sent, ranks, stopwords, spacy_nlp):
       id = str(rl.ids)
 
       if id not in phrase_lex:

@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+from pytextrank import pretty_print, rank_kernel, top_sentences
 import sys
-import textrank
-
-DEBUG = False # True
 
 ## Stage 3:
 ##  * calculate a significance weight for each sentence, using MinHash to
@@ -14,10 +12,10 @@ DEBUG = False # True
 ## OUTPUT: JSON format `SummarySent(dist, idx, text)`
 
 if __name__ == "__main__":
-  path = sys.argv[2]
-  kernel = textrank.rank_kernel(path, force_encode=False)
+  path_stage1 = sys.argv[1]
+  path_stage2 = sys.argv[2]
 
-  path = sys.argv[1]
+  kernel = rank_kernel(path_stage2, force_encode=False)
 
-  for s in textrank.top_sentences(kernel, path, force_encode=False):
-    print(textrank.pretty_print(s._asdict()))
+  for s in top_sentences(kernel, path_stage1, force_encode=False):
+    print(pretty_print(s._asdict()))
