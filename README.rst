@@ -1,7 +1,7 @@
 Python impl for TextRank
 ========================
 
-A pure Python implementation of *TextRank*, based on the 
+Python implementation of *TextRank*, based on the 
 `Mihalcea 2004 <http://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf>`_
 paper.
 
@@ -31,7 +31,7 @@ This code has dependencies on several other Python projects:
 -  `datasketch <https://github.com/ekzhu/datasketch>`_
 -  `graphviz <https://pypi.python.org/pypi/graphviz>`_
 
-To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
+To install from `PyPi <https://pypi.python.org/pypi/pytextrank>`_
 
 ::
 
