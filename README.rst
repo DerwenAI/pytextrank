@@ -31,7 +31,14 @@ This code has dependencies on several other Python projects:
 -  `datasketch <https://github.com/ekzhu/datasketch>`_
 -  `graphviz <https://pypi.python.org/pypi/graphviz>`_
 
-To install:
+To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
+
+::
+
+    pip install pytextrank
+
+
+To install from this Git repo:
 
 ::
 
@@ -67,5 +74,6 @@ Kudos
 `@williamsmj <https://github.com/williamsmj/>`_
 `@eugenep <https://github.com/eugenep/>`_
 `@mattkohl <https://github.com/mattkohl>`_
+`@vanita5 <https://github.com/vanita5>`_
 `@HarshGrandeur <https://github.com/HarshGrandeur>`_
 `@mnowotka <https://github.com/mnowotka>`_
