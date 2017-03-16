@@ -74,3 +74,4 @@ Kudos
 `@vanita5 <https://github.com/vanita5>`_
 `@HarshGrandeur <https://github.com/HarshGrandeur>`_
 `@mnowotka <https://github.com/mnowotka>`_
+`@kjam <https://github.com/kjam>`_
