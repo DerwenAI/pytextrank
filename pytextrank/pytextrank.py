@@ -4,6 +4,7 @@
 from collections import namedtuple
 from datasketch import MinHash
 from graphviz import Digraph
+from textblob import TextBlob
 from textblob_aptagger import PerceptronTagger
 import hashlib
 import json
@@ -15,7 +16,6 @@ import re
 import spacy
 import statistics
 import string
-import textblob
 
 DEBUG = False
 
@@ -133,11 +133,18 @@ def parse_graf (doc_id, graf_text, base_idx, pos_tagger, force_encode=False):
   markup = []
   new_base_idx = base_idx
 
-  for sent in textblob.TextBlob(graf_text).sentences:
+  for sent in TextBlob(graf_text).sentences:
     graf = []
     digest = hashlib.sha1()
 
+    ## The GitHub repo states that `textblob_aptagger` is deprecated
+    ## as of TextBlob 0.11.0 in lieu of using NLTK's averaged
+    ## perceptron tagger by default, and no longer necessary.
+    ## Nonetheless, the NLTK tagger **DOES NOT TAG PUNCTUATION**.
+    ## Bad NLTK, bad.
+    #tagged_sent = sent.tags
     tagged_sent = pos_tagger.tag(str(sent))
+
     tag_idx = 0
     raw_idx = 0
 
@@ -381,7 +388,7 @@ def enumerate_chunks (phrase):
     found = False
     text = " ".join([rl.text for rl in phrase])
 
-    for np in textblob.TextBlob(text).noun_phrases:
+    for np in TextBlob(text).noun_phrases:
       if np != text:
         found = True
         yield np, find_chunk(phrase, np.split(" "))
