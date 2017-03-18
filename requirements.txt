@@ -1,5 +1,5 @@
 textblob==0.11.1
-textblob-aptagger=0.2.2
+textblob-aptagger==0.2.2
 
 spacy==1.3.0
 
