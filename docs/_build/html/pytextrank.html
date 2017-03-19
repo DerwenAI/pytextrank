@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pytextrank package &mdash; PyTextRank 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="PyTextRank 1.0.1 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pytextrank-package">
+<h1>pytextrank package<a class="headerlink" href="#pytextrank-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="pytextrank-pytextrank-module">
+<h2>pytextrank.pytextrank module<a class="headerlink" href="#pytextrank-pytextrank-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pytextrank">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pytextrank" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pytextrank.ParsedGraf">
+<em class="property">class </em><code class="descclassname">pytextrank.</code><code class="descname">ParsedGraf</code><span class="sig-paren">(</span><em>id</em>, <em>sha1</em>, <em>graf</em><span class="sig-paren">)</span><a class="headerlink" href="#pytextrank.ParsedGraf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="pytextrank.ParsedGraf.graf">
+<code class="descname">graf</code><a class="headerlink" href="#pytextrank.ParsedGraf.graf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.ParsedGraf.id">
+<code class="descname">id</code><a class="headerlink" href="#pytextrank.ParsedGraf.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.ParsedGraf.sha1">
+<code class="descname">sha1</code><a class="headerlink" href="#pytextrank.ParsedGraf.sha1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytextrank.RankedLexeme">
+<em class="property">class </em><code class="descclassname">pytextrank.</code><code class="descname">RankedLexeme</code><span class="sig-paren">(</span><em>text</em>, <em>rank</em>, <em>ids</em>, <em>pos</em>, <em>count</em><span class="sig-paren">)</span><a class="headerlink" href="#pytextrank.RankedLexeme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="pytextrank.RankedLexeme.count">
+<code class="descname">count</code><a class="headerlink" href="#pytextrank.RankedLexeme.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.RankedLexeme.ids">
+<code class="descname">ids</code><a class="headerlink" href="#pytextrank.RankedLexeme.ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.RankedLexeme.pos">
+<code class="descname">pos</code><a class="headerlink" href="#pytextrank.RankedLexeme.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.RankedLexeme.rank">
+<code class="descname">rank</code><a class="headerlink" href="#pytextrank.RankedLexeme.rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.RankedLexeme.text">
+<code class="descname">text</code><a class="headerlink" href="#pytextrank.RankedLexeme.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytextrank.SummarySent">
+<em class="property">class </em><code class="descclassname">pytextrank.</code><code class="descname">SummarySent</code><span class="sig-paren">(</span><em>dist</em>, <em>idx</em>, <em>text</em><span class="sig-paren">)</span><a class="headerlink" href="#pytextrank.SummarySent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="pytextrank.SummarySent.dist">
+<code class="descname">dist</code><a class="headerlink" href="#pytextrank.SummarySent.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.SummarySent.idx">
+<code class="descname">idx</code><a class="headerlink" href="#pytextrank.SummarySent.idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.SummarySent.text">
+<code class="descname">text</code><a class="headerlink" href="#pytextrank.SummarySent.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pytextrank.WordNode">
+<em class="property">class </em><code class="descclassname">pytextrank.</code><code class="descname">WordNode</code><span class="sig-paren">(</span><em>word_id</em>, <em>raw</em>, <em>root</em>, <em>pos</em>, <em>keep</em>, <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#pytextrank.WordNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="pytextrank.WordNode.idx">
+<code class="descname">idx</code><a class="headerlink" href="#pytextrank.WordNode.idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.WordNode.keep">
+<code class="descname">keep</code><a class="headerlink" href="#pytextrank.WordNode.keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.WordNode.pos">
+<code class="descname">pos</code><a class="headerlink" href="#pytextrank.WordNode.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.WordNode.raw">
+<code class="descname">raw</code><a class="headerlink" href="#pytextrank.WordNode.raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.WordNode.root">
+<code class="descname">root</code><a class="headerlink" href="#pytextrank.WordNode.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pytextrank.WordNode.word_id">
+<code class="descname">word_id</code><a class="headerlink" href="#pytextrank.WordNode.word_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.build_graph">
+<code class="descclassname">pytextrank.</code><code class="descname">build_graph</code><span class="sig-paren">(</span><em>json_iter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#build_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.build_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct the TextRank graph from parsed paragraphs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.calc_rms">
+<code class="descclassname">pytextrank.</code><code class="descname">calc_rms</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#calc_rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.calc_rms" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate a root-mean-squared metric for a list of float values</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.collect_entities">
+<code class="descclassname">pytextrank.</code><code class="descname">collect_entities</code><span class="sig-paren">(</span><em>sent</em>, <em>ranks</em>, <em>stopwords</em>, <em>spacy_nlp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#collect_entities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.collect_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for collecting the named-entities</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.collect_keyword">
+<code class="descclassname">pytextrank.</code><code class="descname">collect_keyword</code><span class="sig-paren">(</span><em>sent</em>, <em>ranks</em>, <em>stopwords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#collect_keyword"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.collect_keyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for collecting the single-word keyphrases</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.collect_phrases">
+<code class="descclassname">pytextrank.</code><code class="descname">collect_phrases</code><span class="sig-paren">(</span><em>sent</em>, <em>ranks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#collect_phrases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.collect_phrases" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for collecting the noun phrases</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.enumerate_chunks">
+<code class="descclassname">pytextrank.</code><code class="descname">enumerate_chunks</code><span class="sig-paren">(</span><em>phrase</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#enumerate_chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.enumerate_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterate through the noun phrases</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.filter_quotes">
+<code class="descclassname">pytextrank.</code><code class="descname">filter_quotes</code><span class="sig-paren">(</span><em>text</em>, <em>is_email=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#filter_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.filter_quotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>filter the quoted text out of a message</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.find_chunk">
+<code class="descclassname">pytextrank.</code><code class="descname">find_chunk</code><span class="sig-paren">(</span><em>phrase</em>, <em>np</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#find_chunk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.find_chunk" title="Permalink to this definition">¶</a></dt>
+<dd><p>np chunking</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.find_chunk_sub">
+<code class="descclassname">pytextrank.</code><code class="descname">find_chunk_sub</code><span class="sig-paren">(</span><em>phrase</em>, <em>np</em>, <em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#find_chunk_sub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.find_chunk_sub" title="Permalink to this definition">¶</a></dt>
+<dd><p>np chunking - sub</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.find_entity">
+<code class="descclassname">pytextrank.</code><code class="descname">find_entity</code><span class="sig-paren">(</span><em>sent</em>, <em>ranks</em>, <em>ent</em>, <em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#find_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.find_entity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.get_tiles">
+<code class="descclassname">pytextrank.</code><code class="descname">get_tiles</code><span class="sig-paren">(</span><em>graf</em>, <em>size=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#get_tiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.get_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate word pairs for the TextRank graph</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.get_word_id">
+<code class="descclassname">pytextrank.</code><code class="descname">get_word_id</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#get_word_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.get_word_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>lookup/assign a unique identify for each word root</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.is_not_word">
+<code class="descclassname">pytextrank.</code><code class="descname">is_not_word</code><span class="sig-paren">(</span><em>word</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#is_not_word"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.is_not_word" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.json_iter">
+<code class="descclassname">pytextrank.</code><code class="descname">json_iter</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#json_iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.json_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for JSON-per-line in a file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.limit_keyphrases">
+<code class="descclassname">pytextrank.</code><code class="descname">limit_keyphrases</code><span class="sig-paren">(</span><em>path</em>, <em>phrase_limit=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#limit_keyphrases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.limit_keyphrases" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for the most significant key phrases</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.limit_sentences">
+<code class="descclassname">pytextrank.</code><code class="descname">limit_sentences</code><span class="sig-paren">(</span><em>path</em>, <em>word_limit=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#limit_sentences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.limit_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator for the most significant sentences, up to a word limit</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.load_stopwords">
+<code class="descclassname">pytextrank.</code><code class="descname">load_stopwords</code><span class="sig-paren">(</span><em>stop_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#load_stopwords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.load_stopwords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.make_sentence">
+<code class="descclassname">pytextrank.</code><code class="descname">make_sentence</code><span class="sig-paren">(</span><em>sent_text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#make_sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.make_sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>construct a sentence text, with proper spacing</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.mh_digest">
+<code class="descclassname">pytextrank.</code><code class="descname">mh_digest</code><span class="sig-paren">(</span><em>data</em>, <em>force_encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#mh_digest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.mh_digest" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a MinHash digest</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.normalize_key_phrases">
+<code class="descclassname">pytextrank.</code><code class="descname">normalize_key_phrases</code><span class="sig-paren">(</span><em>path</em>, <em>ranks</em>, <em>stopwords=None</em>, <em>spacy_nlp=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#normalize_key_phrases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.normalize_key_phrases" title="Permalink to this definition">¶</a></dt>
+<dd><p>collect keyphrases, named entities, etc., while removing stop words</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.parse_doc">
+<code class="descclassname">pytextrank.</code><code class="descname">parse_doc</code><span class="sig-paren">(</span><em>json_iter</em>, <em>pos_tagger=None</em>, <em>force_encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#parse_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.parse_doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>parse one document to prep for TextRank</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.parse_graf">
+<code class="descclassname">pytextrank.</code><code class="descname">parse_graf</code><span class="sig-paren">(</span><em>doc_id</em>, <em>graf_text</em>, <em>base_idx</em>, <em>pos_tagger</em>, <em>force_encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#parse_graf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.parse_graf" title="Permalink to this definition">¶</a></dt>
+<dd><p>CORE ALGORITHM: parse and markup sentences in the given paragraph</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.pretty_print">
+<code class="descclassname">pytextrank.</code><code class="descname">pretty_print</code><span class="sig-paren">(</span><em>obj</em>, <em>indent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#pretty_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.pretty_print" title="Permalink to this definition">¶</a></dt>
+<dd><p>pretty print a JSON object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.rank_kernel">
+<code class="descclassname">pytextrank.</code><code class="descname">rank_kernel</code><span class="sig-paren">(</span><em>path</em>, <em>force_encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#rank_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.rank_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a list (matrix-ish) of the key phrases and their ranks</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.render_ranks">
+<code class="descclassname">pytextrank.</code><code class="descname">render_ranks</code><span class="sig-paren">(</span><em>graph</em>, <em>ranks</em>, <em>dot_file='graph.dot'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#render_ranks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.render_ranks" title="Permalink to this definition">¶</a></dt>
+<dd><p>render the TextRank graph for visual formats</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.split_grafs">
+<code class="descclassname">pytextrank.</code><code class="descname">split_grafs</code><span class="sig-paren">(</span><em>lines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#split_grafs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.split_grafs" title="Permalink to this definition">¶</a></dt>
+<dd><p>segment the raw text into paragraphs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.text_rank">
+<code class="descclassname">pytextrank.</code><code class="descname">text_rank</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#text_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.text_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>run the TextRank algorithm</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.top_sentences">
+<code class="descclassname">pytextrank.</code><code class="descname">top_sentences</code><span class="sig-paren">(</span><em>kernel</em>, <em>path</em>, <em>force_encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#top_sentences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.top_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>determine distance for each sentence</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pytextrank.write_dot">
+<code class="descclassname">pytextrank.</code><code class="descname">write_dot</code><span class="sig-paren">(</span><em>graph</em>, <em>ranks</em>, <em>path='graph.dot'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytextrank.html#write_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pytextrank.write_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>output the graph in Dot file format</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pytextrank package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#pytextrank-pytextrank-module">pytextrank.pytextrank module</a></li>
+<li><a class="reference internal" href="#module-pytextrank">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pytextrank.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Paco Nathan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/pytextrank.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

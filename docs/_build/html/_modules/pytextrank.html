@@ -1,0 +1,831 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pytextrank &mdash; PyTextRank 1.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="PyTextRank 1.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pytextrank</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: utf-8</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">datasketch</span> <span class="kn">import</span> <span class="n">MinHash</span>
+<span class="kn">from</span> <span class="nn">graphviz</span> <span class="kn">import</span> <span class="n">Digraph</span>
+<span class="kn">from</span> <span class="nn">textblob</span> <span class="kn">import</span> <span class="n">TextBlob</span>
+<span class="kn">from</span> <span class="nn">textblob_aptagger</span> <span class="kn">import</span> <span class="n">PerceptronTagger</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="n">ParsedGraf</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;ParsedGraf&#39;</span><span class="p">,</span> <span class="s1">&#39;id, sha1, graf&#39;</span><span class="p">)</span>
+<span class="n">WordNode</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;WordNode&#39;</span><span class="p">,</span> <span class="s1">&#39;word_id, raw, root, pos, keep, idx&#39;</span><span class="p">)</span>
+<span class="n">RankedLexeme</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;RankedLexeme&#39;</span><span class="p">,</span> <span class="s1">&#39;text, rank, ids, pos, count&#39;</span><span class="p">)</span>
+<span class="n">SummarySent</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;SummarySent&#39;</span><span class="p">,</span> <span class="s1">&#39;dist, idx, text&#39;</span><span class="p">)</span>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## filter the novel text versus quoted text in an email message</span>
+
+<span class="n">PAT_FORWARD</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">\-+ Forwarded message \-+</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">PAT_REPLIED</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">On.*\d+.*</span><span class="se">\n</span><span class="s2">?wrote\:</span><span class="se">\n</span><span class="s2">+\&gt;&quot;</span><span class="p">)</span>
+<span class="n">PAT_UNSUBSC</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">\-+</span><span class="se">\n</span><span class="s2">To unsubscribe,.*</span><span class="se">\n</span><span class="s2">For additional commands,.*&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="split_grafs"><a class="viewcode-back" href="../pytextrank.html#pytextrank.split_grafs">[docs]</a><span class="k">def</span> <span class="nf">split_grafs</span> <span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;segment the raw text into paragraphs&quot;&quot;&quot;</span>
+
+  <span class="n">graf</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">graf</span><span class="p">)</span>
+        <span class="n">graf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">graf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">yield</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">graf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="filter_quotes"><a class="viewcode-back" href="../pytextrank.html#pytextrank.filter_quotes">[docs]</a><span class="k">def</span> <span class="nf">filter_quotes</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">is_email</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;filter the quoted text out of a message&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">DEBUG</span>
+  <span class="k">global</span> <span class="n">PAT_FORWARD</span><span class="p">,</span> <span class="n">PAT_REPLIED</span><span class="p">,</span> <span class="n">PAT_UNSUBSC</span>
+
+  <span class="k">if</span> <span class="n">is_email</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">printable</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="s2">&quot;text:&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="c1"># strip off quoted text in a forward</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">PAT_FORWARD</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">m</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">text</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># strip off quoted text in a reply</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">PAT_REPLIED</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">m</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">text</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># strip off any trailing unsubscription notice</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">PAT_UNSUBSC</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+      <span class="n">text</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+  <span class="c1"># replace any remaining quoted text with blank lines</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">):</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_grafs</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## parse and markup text paragraphs for semantic analysis</span>
+
+<span class="n">PAT_PUNCT</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^\W+$&#39;</span><span class="p">)</span>
+<span class="n">PAT_SPACE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\_+$&#39;</span><span class="p">)</span>
+
+<span class="n">POS_KEEPS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">]</span>
+<span class="n">POS_LEMMA</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
+<span class="n">POS_TAGGER</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">UNIQ_WORDS</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+
+
+<div class="viewcode-block" id="is_not_word"><a class="viewcode-back" href="../pytextrank.html#pytextrank.is_not_word">[docs]</a><span class="k">def</span> <span class="nf">is_not_word</span> <span class="p">(</span><span class="n">word</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">PAT_PUNCT</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="ow">or</span> <span class="n">PAT_SPACE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">word</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_word_id"><a class="viewcode-back" href="../pytextrank.html#pytextrank.get_word_id">[docs]</a><span class="k">def</span> <span class="nf">get_word_id</span> <span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;lookup/assign a unique identify for each word root&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">UNIQ_WORDS</span>
+
+  <span class="c1"># in practice, this should use a microservice via some robust</span>
+  <span class="c1"># distributed cache, e.g., Cassandra, Redis, etc.</span>
+
+  <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">UNIQ_WORDS</span><span class="p">:</span>
+    <span class="n">UNIQ_WORDS</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">UNIQ_WORDS</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">UNIQ_WORDS</span><span class="p">[</span><span class="n">root</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="parse_graf"><a class="viewcode-back" href="../pytextrank.html#pytextrank.parse_graf">[docs]</a><span class="k">def</span> <span class="nf">parse_graf</span> <span class="p">(</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">graf_text</span><span class="p">,</span> <span class="n">base_idx</span><span class="p">,</span> <span class="n">pos_tagger</span><span class="p">,</span> <span class="n">force_encode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;CORE ALGORITHM: parse and markup sentences in the given paragraph&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">DEBUG</span>
+  <span class="k">global</span> <span class="n">POS_KEEPS</span><span class="p">,</span> <span class="n">POS_LEMMA</span>
+
+  <span class="n">markup</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">new_base_idx</span> <span class="o">=</span> <span class="n">base_idx</span>
+
+  <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">TextBlob</span><span class="p">(</span><span class="n">graf_text</span><span class="p">)</span><span class="o">.</span><span class="n">sentences</span><span class="p">:</span>
+    <span class="n">graf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+
+    <span class="c1">## The GitHub repo states that `textblob_aptagger` is deprecated</span>
+    <span class="c1">## as of TextBlob 0.11.0 in lieu of using NLTK&#39;s averaged</span>
+    <span class="c1">## perceptron tagger by default, and no longer necessary.</span>
+    <span class="c1">## Nonetheless, the NLTK tagger **DOES NOT TAG PUNCTUATION**.</span>
+    <span class="c1">## Bad NLTK, bad.</span>
+    <span class="c1">#tagged_sent = sent.tags</span>
+    <span class="n">tagged_sent</span> <span class="o">=</span> <span class="n">pos_tagger</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sent</span><span class="p">))</span>
+
+    <span class="n">tag_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">raw_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">tagged_sent</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">tag_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tagged_sent</span><span class="p">):</span>
+      <span class="n">pos_tag</span> <span class="o">=</span> <span class="n">tagged_sent</span><span class="p">[</span><span class="n">tag_idx</span><span class="p">]</span>
+      <span class="n">word</span> <span class="o">=</span> <span class="n">WordNode</span><span class="p">(</span><span class="n">word_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">root</span><span class="o">=</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">new_base_idx</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;IDX&quot;</span><span class="p">,</span> <span class="n">tag_idx</span><span class="p">,</span> <span class="n">pos_tag</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;reg&quot;</span><span class="p">,</span> <span class="n">is_not_word</span><span class="p">(</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;   &quot;</span><span class="p">,</span> <span class="n">raw_idx</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">words</span><span class="p">),</span> <span class="n">sent</span><span class="o">.</span><span class="n">words</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">graf</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">is_not_word</span><span class="p">(</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="n">pos_tag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;SYM&quot;</span><span class="p">):</span>
+        <span class="n">parsed_raw</span> <span class="o">=</span> <span class="n">pos_tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos_family</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos_family</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="n">raw_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent</span><span class="o">.</span><span class="n">words</span><span class="p">):</span>
+        <span class="n">parsed_raw</span> <span class="o">=</span> <span class="n">sent</span><span class="o">.</span><span class="n">words</span><span class="p">[</span><span class="n">raw_idx</span><span class="p">]</span>
+        <span class="n">pos_family</span> <span class="o">=</span> <span class="n">pos_tag</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">raw_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+      <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">raw</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="p">))</span>
+
+      <span class="k">if</span> <span class="n">pos_family</span> <span class="ow">in</span> <span class="n">POS_LEMMA</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="o">.</span><span class="n">singularize</span><span class="p">()</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">pos_family</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="o">.</span><span class="n">singularize</span><span class="p">()</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">pos_family</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+      <span class="k">elif</span> <span class="n">pos_family</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">root</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parsed_raw</span><span class="p">))</span>
+
+      <span class="k">if</span> <span class="n">pos_family</span> <span class="ow">in</span> <span class="n">POS_KEEPS</span><span class="p">:</span>
+        <span class="n">word</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">word_id</span> <span class="o">=</span> <span class="n">get_word_id</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">root</span><span class="p">),</span> <span class="n">keep</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+        <span class="c1"># already encoded...</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+      <span class="c1"># schema: word_id, raw, root, pos, keep, idx</span>
+      <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+
+      <span class="n">graf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+
+      <span class="n">new_base_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">tag_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">markup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ParsedGraf</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">sha1</span><span class="o">=</span><span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="n">graf</span><span class="o">=</span><span class="n">graf</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="n">markup</span><span class="p">,</span> <span class="n">new_base_idx</span></div>
+
+
+<div class="viewcode-block" id="parse_doc"><a class="viewcode-back" href="../pytextrank.html#pytextrank.parse_doc">[docs]</a><span class="k">def</span> <span class="nf">parse_doc</span> <span class="p">(</span><span class="n">json_iter</span><span class="p">,</span> <span class="n">pos_tagger</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">force_encode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;parse one document to prep for TextRank&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">DEBUG</span><span class="p">,</span> <span class="n">POS_TAGGER</span>
+
+  <span class="c1"># set up the PoS tagger, defaults to PerceptronTagger from TextBlob</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">pos_tagger</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">POS_TAGGER</span><span class="p">:</span>
+      <span class="n">POS_TAGGER</span> <span class="o">=</span> <span class="n">PerceptronTagger</span><span class="p">()</span>
+    <span class="n">pos_tagger</span> <span class="o">=</span> <span class="n">POS_TAGGER</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">json_iter</span><span class="p">:</span>
+    <span class="n">base_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">graf_text</span> <span class="ow">in</span> <span class="n">filter_quotes</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span> <span class="n">is_email</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;graf_text:&quot;</span><span class="p">,</span> <span class="n">graf_text</span><span class="p">)</span>
+
+      <span class="n">grafs</span><span class="p">,</span> <span class="n">new_base_idx</span> <span class="o">=</span> <span class="n">parse_graf</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">graf_text</span><span class="p">,</span> <span class="n">base_idx</span><span class="p">,</span> <span class="n">pos_tagger</span><span class="p">,</span> <span class="n">force_encode</span><span class="p">)</span>
+      <span class="n">base_idx</span> <span class="o">=</span> <span class="n">new_base_idx</span>
+
+      <span class="k">for</span> <span class="n">graf</span> <span class="ow">in</span> <span class="n">grafs</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">graf</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## graph analytics</span>
+
+<div class="viewcode-block" id="get_tiles"><a class="viewcode-back" href="../pytextrank.html#pytextrank.get_tiles">[docs]</a><span class="k">def</span> <span class="nf">get_tiles</span> <span class="p">(</span><span class="n">graf</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;generate word pairs for the TextRank graph&quot;&quot;&quot;</span>
+
+  <span class="n">keeps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">word_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">graf</span><span class="p">))</span>
+  <span class="n">keeps_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keeps</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keeps_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="n">w0</span> <span class="o">=</span> <span class="n">keeps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">keeps_len</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">size</span><span class="p">))):</span>
+      <span class="n">w1</span> <span class="o">=</span> <span class="n">keeps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="n">w1</span><span class="o">.</span><span class="n">idx</span> <span class="o">-</span> <span class="n">w0</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">size</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">w0</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">w1</span><span class="o">.</span><span class="n">root</span><span class="p">,)</span></div>
+
+
+<div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../pytextrank.html#pytextrank.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span> <span class="p">(</span><span class="n">json_iter</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;construct the TextRank graph from parsed paragraphs&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">DEBUG</span><span class="p">,</span> <span class="n">WordNode</span>
+
+  <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">json_iter</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;graf&quot;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">get_tiles</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">WordNode</span><span class="o">.</span><span class="n">_make</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;graf&quot;</span><span class="p">])):</span>
+      <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+      <span class="k">for</span> <span class="n">word_id</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="o">.</span><span class="n">has_node</span><span class="p">(</span><span class="n">word_id</span><span class="p">):</span>
+          <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">word_id</span><span class="p">)</span>
+
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">edge</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+      <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">graph</span></div>
+
+
+<div class="viewcode-block" id="write_dot"><a class="viewcode-back" href="../pytextrank.html#pytextrank.write_dot">[docs]</a><span class="k">def</span> <span class="nf">write_dot</span> <span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;graph.dot&quot;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;output the graph in Dot file format&quot;&quot;&quot;</span>
+
+  <span class="n">dot</span> <span class="o">=</span> <span class="n">Digraph</span><span class="p">()</span>
+
+  <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+    <span class="n">dot</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%0.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]))</span>
+
+  <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+    <span class="n">dot</span><span class="o">.</span><span class="n">edge</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">constraint</span><span class="o">=</span><span class="s2">&quot;false&quot;</span><span class="p">)</span>
+
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="o">.</span><span class="n">source</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="render_ranks"><a class="viewcode-back" href="../pytextrank.html#pytextrank.render_ranks">[docs]</a><span class="k">def</span> <span class="nf">render_ranks</span> <span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">dot_file</span><span class="o">=</span><span class="s2">&quot;graph.dot&quot;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;render the TextRank graph for visual formats&quot;&quot;&quot;</span>
+
+  <span class="k">if</span> <span class="n">dot_file</span><span class="p">:</span>
+    <span class="n">write_dot</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">dot_file</span><span class="p">)</span></div>
+
+  <span class="c1">## omitted since matplotlib isn&#39;t reliable enough</span>
+  <span class="c1">#import matplotlib.pyplot as plt</span>
+  <span class="c1">#nx.draw_networkx(graph)</span>
+  <span class="c1">#plt.savefig(img_file)</span>
+  <span class="c1">#plt.show()</span>
+
+
+<div class="viewcode-block" id="text_rank"><a class="viewcode-back" href="../pytextrank.html#pytextrank.text_rank">[docs]</a><span class="k">def</span> <span class="nf">text_rank</span> <span class="p">(</span><span class="n">path</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;run the TextRank algorithm&quot;&quot;&quot;</span>
+
+  <span class="n">graph</span> <span class="o">=</span> <span class="n">build_graph</span><span class="p">(</span><span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+  <span class="n">ranks</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">pagerank</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">graph</span><span class="p">,</span> <span class="n">ranks</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## collect key phrases</span>
+
+<span class="n">SPACY_NLP</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">STOPWORDS</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="load_stopwords"><a class="viewcode-back" href="../pytextrank.html#pytextrank.load_stopwords">[docs]</a><span class="k">def</span> <span class="nf">load_stopwords</span> <span class="p">(</span><span class="n">stop_file</span><span class="p">):</span>
+  <span class="n">stopwords</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+
+  <span class="c1"># provide a default if needed</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">stop_file</span><span class="p">:</span>
+    <span class="n">stop_file</span> <span class="o">=</span> <span class="s2">&quot;stop.txt&quot;</span>
+
+  <span class="c1"># check whether the path is fully qualified</span>
+  <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">stop_file</span><span class="p">):</span>
+    <span class="n">stop_path</span> <span class="o">=</span> <span class="n">stop_file</span>
+
+  <span class="c1"># check for the file in the current working directory</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">stop_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">stop_file</span><span class="p">)</span>
+
+    <span class="c1"># check for the file in the same directory as this code module</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">stop_path</span><span class="p">):</span>
+      <span class="n">loc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="p">)</span>
+      <span class="n">stop_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">stop_file</span><span class="p">)</span>
+
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stop_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+        <span class="n">stopwords</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+  <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+  <span class="k">return</span> <span class="n">stopwords</span></div>
+
+
+<div class="viewcode-block" id="find_chunk_sub"><a class="viewcode-back" href="../pytextrank.html#pytextrank.find_chunk_sub">[docs]</a><span class="k">def</span> <span class="nf">find_chunk_sub</span> <span class="p">(</span><span class="n">phrase</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;np chunking - sub&quot;&quot;&quot;</span>
+  <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="p">))):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">phrase</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">text</span> <span class="o">!=</span> <span class="n">np</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+      <span class="k">return</span> <span class="bp">None</span>
+
+  <span class="k">return</span> <span class="n">phrase</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="find_chunk"><a class="viewcode-back" href="../pytextrank.html#pytextrank.find_chunk">[docs]</a><span class="k">def</span> <span class="nf">find_chunk</span> <span class="p">(</span><span class="n">phrase</span><span class="p">,</span> <span class="n">np</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;np chunking&quot;&quot;&quot;</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">phrase</span><span class="p">))):</span>
+    <span class="n">parsed_np</span> <span class="o">=</span> <span class="n">find_chunk_sub</span><span class="p">(</span><span class="n">phrase</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parsed_np</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">parsed_np</span></div>
+
+
+<div class="viewcode-block" id="enumerate_chunks"><a class="viewcode-back" href="../pytextrank.html#pytextrank.enumerate_chunks">[docs]</a><span class="k">def</span> <span class="nf">enumerate_chunks</span> <span class="p">(</span><span class="n">phrase</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterate through the noun phrases&quot;&quot;&quot;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">rl</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">phrase</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">np</span> <span class="ow">in</span> <span class="n">TextBlob</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">noun_phrases</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">np</span> <span class="o">!=</span> <span class="n">text</span><span class="p">:</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">yield</span> <span class="n">np</span><span class="p">,</span> <span class="n">find_chunk</span><span class="p">(</span><span class="n">phrase</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">([</span><span class="n">rl</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;v&quot;</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">phrase</span><span class="p">]):</span>
+      <span class="k">yield</span> <span class="n">text</span><span class="p">,</span> <span class="n">phrase</span></div>
+
+
+<div class="viewcode-block" id="collect_keyword"><a class="viewcode-back" href="../pytextrank.html#pytextrank.collect_keyword">[docs]</a><span class="k">def</span> <span class="nf">collect_keyword</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for collecting the single-word keyphrases&quot;&quot;&quot;</span>
+  <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">root</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;NV&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">):</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">rank</span><span class="o">=</span><span class="n">ranks</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">root</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
+
+      <span class="k">yield</span> <span class="n">rl</span></div>
+
+
+<div class="viewcode-block" id="find_entity"><a class="viewcode-back" href="../pytextrank.html#pytextrank.find_entity">[docs]</a><span class="k">def</span> <span class="nf">find_entity</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">ent</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ent</span><span class="p">))):</span>
+      <span class="n">w</span> <span class="o">=</span> <span class="n">sent</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">raw</span> <span class="o">!=</span> <span class="n">ent</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">find_entity</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">ent</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">w_ranks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">w_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ent</span><span class="p">)]:</span>
+      <span class="n">w_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">root</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+        <span class="n">w_ranks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ranks</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">root</span><span class="p">])</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_ranks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">w_ranks</span><span class="p">,</span> <span class="n">w_ids</span></div>
+
+
+<div class="viewcode-block" id="collect_entities"><a class="viewcode-back" href="../pytextrank.html#pytextrank.collect_entities">[docs]</a><span class="k">def</span> <span class="nf">collect_entities</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">,</span> <span class="n">spacy_nlp</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for collecting the named-entities&quot;&quot;&quot;</span>
+  <span class="k">global</span> <span class="n">DEBUG</span>
+
+  <span class="n">sent_text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">w</span><span class="o">.</span><span class="n">raw</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sent</span><span class="p">])</span>
+
+  <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;sent:&quot;</span><span class="p">,</span> <span class="n">sent_text</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">ent</span> <span class="ow">in</span> <span class="n">spacy_nlp</span><span class="p">(</span><span class="n">sent_text</span><span class="p">)</span><span class="o">.</span><span class="n">ents</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="s2">&quot;NER:&quot;</span><span class="p">,</span> <span class="n">ent</span><span class="o">.</span><span class="n">label_</span><span class="p">,</span> <span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">label_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CARDINAL&quot;</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">):</span>
+      <span class="n">w_ranks</span><span class="p">,</span> <span class="n">w_ids</span> <span class="o">=</span> <span class="n">find_entity</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">w_ranks</span> <span class="ow">and</span> <span class="n">w_ids</span><span class="p">:</span>
+        <span class="n">rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">ent</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">rank</span><span class="o">=</span><span class="n">w_ranks</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="n">w_ids</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+          <span class="k">print</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
+
+        <span class="k">yield</span> <span class="n">rl</span></div>
+
+
+<div class="viewcode-block" id="collect_phrases"><a class="viewcode-back" href="../pytextrank.html#pytextrank.collect_phrases">[docs]</a><span class="k">def</span> <span class="nf">collect_phrases</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for collecting the noun phrases&quot;&quot;&quot;</span>
+
+  <span class="n">tail</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">last_idx</span> <span class="o">=</span> <span class="n">sent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="n">phrase</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">while</span> <span class="n">tail</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">sent</span><span class="p">[</span><span class="n">tail</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">root</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">w</span><span class="o">.</span><span class="n">idx</span> <span class="o">-</span> <span class="n">last_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="c1"># keep collecting...</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">raw</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">rank</span><span class="o">=</span><span class="n">ranks</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">root</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">w</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+      <span class="n">phrase</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># just hit a phrase boundary</span>
+      <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">enumerate_chunks</span><span class="p">(</span><span class="n">phrase</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">:</span>
+          <span class="n">id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
+          <span class="n">rank_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
+          <span class="n">np_rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank_list</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="n">id_list</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+          <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">np_rl</span><span class="p">)</span>
+
+          <span class="k">yield</span> <span class="n">np_rl</span>
+
+      <span class="n">phrase</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">last_idx</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">idx</span>
+    <span class="n">tail</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="calc_rms"><a class="viewcode-back" href="../pytextrank.html#pytextrank.calc_rms">[docs]</a><span class="k">def</span> <span class="nf">calc_rms</span> <span class="p">(</span><span class="n">values</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;calculate a root-mean-squared metric for a list of float values&quot;&quot;&quot;</span>
+  <span class="c1">#return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))</span>
+  <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="normalize_key_phrases"><a class="viewcode-back" href="../pytextrank.html#pytextrank.normalize_key_phrases">[docs]</a><span class="k">def</span> <span class="nf">normalize_key_phrases</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">stopwords</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">spacy_nlp</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;collect keyphrases, named entities, etc., while removing stop words&quot;&quot;&quot;</span>
+
+  <span class="k">global</span> <span class="n">STOPWORDS</span><span class="p">,</span> <span class="n">SPACY_NLP</span>
+
+  <span class="c1"># set up the stop words</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stopwords</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stopwords</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">set</span><span class="p">):</span>
+    <span class="c1"># explicit conversion to a set, for better performance</span>
+    <span class="n">stopwords</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">STOPWORDS</span><span class="p">:</span>
+      <span class="n">STOPWORDS</span> <span class="o">=</span> <span class="n">load_stopwords</span><span class="p">(</span><span class="n">stopwords</span><span class="p">)</span>
+    <span class="n">stopwords</span> <span class="o">=</span> <span class="n">STOPWORDS</span>
+
+  <span class="c1"># set up the spaCy NLP parser</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">spacy_nlp</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">SPACY_NLP</span><span class="p">:</span>
+      <span class="n">SPACY_NLP</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+    <span class="n">spacy_nlp</span> <span class="o">=</span> <span class="n">SPACY_NLP</span>
+
+  <span class="c1"># collect keyphrases</span>
+  <span class="n">single_lex</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">phrase_lex</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+    <span class="n">sent</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">WordNode</span><span class="o">.</span><span class="n">_make</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;graf&quot;</span><span class="p">])]</span>
+
+    <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">collect_keyword</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">):</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">single_lex</span><span class="p">:</span>
+        <span class="n">single_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">prev_lex</span> <span class="o">=</span> <span class="n">single_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">single_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">count</span> <span class="o">=</span> <span class="n">prev_lex</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">collect_entities</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">,</span> <span class="n">spacy_nlp</span><span class="p">):</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">phrase_lex</span><span class="p">:</span>
+        <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">prev_lex</span> <span class="o">=</span> <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">count</span> <span class="o">=</span> <span class="n">prev_lex</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">collect_phrases</span><span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">ranks</span><span class="p">):</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">phrase_lex</span><span class="p">:</span>
+        <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">prev_lex</span> <span class="o">=</span> <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">phrase_lex</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">count</span> <span class="o">=</span> <span class="n">prev_lex</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+  <span class="c1"># normalize ranks across single keywords and longer phrases:</span>
+  <span class="c1">#  * boost the noun phrases for length</span>
+  <span class="c1">#  * penalize the noun phrases for repeated words</span>
+
+  <span class="n">rank_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">single_lex</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rank_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">max_single_rank</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">max_single_rank</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rank_list</span><span class="p">)</span>
+
+  <span class="n">repeated_roots</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">phrase_lex</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rl</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">rl</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="n">rank_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">))):</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="ow">not</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">repeated_roots</span><span class="p">:</span>
+        <span class="n">repeated_roots</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">rank_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">repeated_roots</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        <span class="n">rank_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">repeated_roots</span><span class="p">[</span><span class="nb">id</span><span class="p">])</span>
+
+    <span class="n">phrase_rank</span> <span class="o">=</span> <span class="n">calc_rms</span><span class="p">(</span><span class="n">rank_list</span><span class="p">)</span>
+    <span class="n">single_lex</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">)]</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">rank</span> <span class="o">=</span> <span class="n">phrase_rank</span><span class="p">)</span>
+
+  <span class="c1"># scale all the ranks together, so they sum to 1.0</span>
+
+  <span class="n">sum_ranks</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">single_lex</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+
+  <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">single_lex</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">rl</span><span class="p">:</span> <span class="n">rl</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sum_ranks</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="o">/</span> <span class="n">sum_ranks</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">rank</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="k">yield</span> <span class="n">rl</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## sentence significance</span>
+
+<div class="viewcode-block" id="mh_digest"><a class="viewcode-back" href="../pytextrank.html#pytextrank.mh_digest">[docs]</a><span class="k">def</span> <span class="nf">mh_digest</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">force_encode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;create a MinHash digest&quot;&quot;&quot;</span>
+  <span class="n">num_perm</span> <span class="o">=</span> <span class="mi">512</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">MinHash</span><span class="p">(</span><span class="n">num_perm</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">force_encode</span><span class="p">:</span>
+      <span class="c1"># already encoded...</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">))</span>
+
+  <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="rank_kernel"><a class="viewcode-back" href="../pytextrank.html#pytextrank.rank_kernel">[docs]</a><span class="k">def</span> <span class="nf">rank_kernel</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">force_encode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;return a list (matrix-ish) of the key phrases and their ranks&quot;&quot;&quot;</span>
+  <span class="n">kernel</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">RankedLexeme</span><span class="p">):</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">meta</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">mh_digest</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">rl</span><span class="o">.</span><span class="n">ids</span><span class="p">))</span>
+    <span class="n">kernel</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rl</span><span class="p">,</span> <span class="n">m</span><span class="p">,))</span>
+
+  <span class="k">return</span> <span class="n">kernel</span></div>
+
+
+<div class="viewcode-block" id="top_sentences"><a class="viewcode-back" href="../pytextrank.html#pytextrank.top_sentences">[docs]</a><span class="k">def</span> <span class="nf">top_sentences</span> <span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">force_encode</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;determine distance for each sentence&quot;&quot;&quot;</span>
+  <span class="n">key_sent</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+    <span class="n">graf</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;graf&quot;</span><span class="p">]</span>
+    <span class="n">tagged_sent</span> <span class="o">=</span> <span class="p">[</span><span class="n">WordNode</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">graf</span><span class="p">]</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">w</span><span class="o">.</span><span class="n">raw</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">tagged_sent</span><span class="p">])</span>
+
+    <span class="n">m_sent</span> <span class="o">=</span> <span class="n">mh_digest</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">word_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">tagged_sent</span><span class="p">],</span> <span class="n">force_encode</span><span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">m_sent</span><span class="o">.</span><span class="n">jaccard</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="k">for</span> <span class="n">rl</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">kernel</span><span class="p">])</span>
+    <span class="n">key_sent</span><span class="p">[</span><span class="n">text</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">key_sent</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">yield</span> <span class="n">SummarySent</span><span class="p">(</span><span class="n">dist</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## document summarization</span>
+
+<div class="viewcode-block" id="limit_keyphrases"><a class="viewcode-back" href="../pytextrank.html#pytextrank.limit_keyphrases">[docs]</a><span class="k">def</span> <span class="nf">limit_keyphrases</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">phrase_limit</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for the most significant key phrases&quot;&quot;&quot;</span>
+  <span class="n">rank_thresh</span> <span class="o">=</span> <span class="bp">None</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">lex</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+      <span class="n">rl</span> <span class="o">=</span> <span class="n">RankedLexeme</span><span class="p">(</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span>
+      <span class="n">lex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">lex</span> <span class="o">=</span> <span class="n">path</span>
+
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lex</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">rank_thresh</span> <span class="o">=</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">lex</span><span class="p">])</span>
+  <span class="k">else</span><span class="p">:</span>
+      <span class="n">rank_thresh</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="n">used</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">lex</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">rl</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;v&quot;</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">used</span> <span class="o">&gt;</span> <span class="n">phrase_limit</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rl</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="n">rank_thresh</span><span class="p">):</span>
+        <span class="k">return</span>
+
+      <span class="n">used</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">yield</span> <span class="n">rl</span><span class="o">.</span><span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="limit_sentences"><a class="viewcode-back" href="../pytextrank.html#pytextrank.limit_sentences">[docs]</a><span class="k">def</span> <span class="nf">limit_sentences</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">word_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for the most significant sentences, up to a word limit&quot;&quot;&quot;</span>
+  <span class="n">word_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">json_iter</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">SummarySent</span><span class="p">):</span>
+      <span class="n">p</span> <span class="o">=</span> <span class="n">SummarySent</span><span class="p">(</span><span class="o">**</span><span class="n">meta</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">p</span> <span class="o">=</span> <span class="n">meta</span>
+
+    <span class="n">sent_text</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">sent_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sent_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">word_count</span> <span class="o">+</span> <span class="n">sent_len</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">word_limit</span><span class="p">:</span>
+      <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">word_count</span> <span class="o">+=</span> <span class="n">sent_len</span>
+      <span class="k">yield</span> <span class="n">sent_text</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">idx</span></div>
+
+
+<div class="viewcode-block" id="make_sentence"><a class="viewcode-back" href="../pytextrank.html#pytextrank.make_sentence">[docs]</a><span class="k">def</span> <span class="nf">make_sentence</span> <span class="p">(</span><span class="n">sent_text</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;construct a sentence text, with proper spacing&quot;&quot;&quot;</span>
+  <span class="n">lex</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sent_text</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;,.:;!?-</span><span class="se">\&quot;</span><span class="s2">&#39;&quot;</span><span class="p">):</span>
+      <span class="n">lex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+    <span class="n">lex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lex</span><span class="p">)</span></div>
+
+
+<span class="c1">######################################################################</span>
+<span class="c1">## common utilities</span>
+
+<div class="viewcode-block" id="json_iter"><a class="viewcode-back" href="../pytextrank.html#pytextrank.json_iter">[docs]</a><span class="k">def</span> <span class="nf">json_iter</span> <span class="p">(</span><span class="n">path</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;iterator for JSON-per-line in a file&quot;&quot;&quot;</span>
+
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+      <span class="k">yield</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pretty_print"><a class="viewcode-back" href="../pytextrank.html#pytextrank.pretty_print">[docs]</a><span class="k">def</span> <span class="nf">pretty_print</span> <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;pretty print a JSON object&quot;&quot;&quot;</span>
+
+  <span class="k">if</span> <span class="n">indent</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Paco Nathan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
