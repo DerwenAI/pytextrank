@@ -23,14 +23,6 @@ Inspired by `Williams 2016 <http://mike.place/2016/summarization/>`_
 talk on *text summarization*.
 
 
-Documentation
--------------
-
-|build-status| |docs|
-
-Docs are available online at `pytextrank.readthedocs.io <http://pytextrank.readthedocs.io/>`_
-
-
 Example Usage
 -------------
 
