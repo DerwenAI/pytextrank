@@ -5,7 +5,7 @@ from collections import namedtuple
 from datasketch import MinHash
 from graphviz import Digraph
 from textblob import TextBlob
-from textblob_aptagger import PerceptronTagger
+from nltk.tag.perceptron import PerceptronTagger
 import hashlib
 import json
 import math
