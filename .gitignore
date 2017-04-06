@@ -1,6 +1,9 @@
 # misc.
 graph.png
 
+# docs -- in progress
+docs/
+
 # Compiled python modules.
 *.pyc
 
