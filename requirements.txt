@@ -1,7 +1,6 @@
 textblob==0.11.1
-git+git://github.com/sloria/textblob-aptagger.git@dev
 
-spacy==1.3.0
+spacy==1.8.2
 
 networkx==1.11
 

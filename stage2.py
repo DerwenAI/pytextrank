@@ -11,10 +11,10 @@ import sys
 ## OUTPUT: JSON format `RankedLexeme(text, rank, ids, pos)`
 
 if __name__ == "__main__":
-  path_stage1 = sys.argv[1]
+    path_stage1 = sys.argv[1]
 
-  graph, ranks = text_rank(path_stage1)
-  render_ranks(graph, ranks)
+    graph, ranks = text_rank(path_stage1)
+    render_ranks(graph, ranks)
 
-  for rl in normalize_key_phrases(path_stage1, ranks):
-    print(pretty_print(rl._asdict()))
+    for rl in normalize_key_phrases(path_stage1, ranks):
+        print(pretty_print(rl._asdict()))

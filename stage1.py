@@ -11,7 +11,7 @@ import sys
 ## OUTPUT: JSON format `ParsedGraf(id, sha1, graf)`
 
 if __name__ == "__main__":
-  path_stage0 = sys.argv[1]
+    path_stage0 = sys.argv[1]
 
-  for graf in parse_doc(json_iter(path_stage0), force_encode=False):
-    print(pretty_print(graf._asdict()))
+    for graf in parse_doc(json_iter(path_stage0)):
+        print(pretty_print(graf._asdict()))
