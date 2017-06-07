@@ -7,7 +7,8 @@
 ### Improved
 
  * replaced use of TextBlob with spaCy
- * updated other dependencies
+ * updated other Py dependencies
+ * better handling for UTF-8
 
 ## 1.0.1
 
