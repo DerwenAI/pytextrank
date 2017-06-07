@@ -1,30 +1,36 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import pytextrank
 import sys
-import textrank
 import unicodedata
 
 DEBUG = False # True
 
-## "It scrubs its unreadable characters out of its text stream...
-## Then it generates a JSON doc again."
+def cleanup_text (text):
+    """
+    It scrubs the unreadable characters out of its stream...
+    Or it gets the debugger again.
+    """
+    x = " ".join(map(lambda x: x.strip(), text.split("\n"))).strip()
+
+    x = x.replace('“', '"').replace('”', '"')
+    x = x.replace("‘", "'").replace("’", "'")
+    x = x.replace('…', '...').replace('–', '-')
+
+    x = str(unicodedata.normalize('NFKD', x).encode('ascii', 'ignore'))
+
+    return x
+
 
 if __name__ == "__main__":
-  path = sys.argv[1]
-  lines = []
+    path = sys.argv[1]
 
-  with open(path, 'r') as f:
-    for line in f.readlines():
-      line = line.strip()
-      line = line.replace('“', '"').replace('”', '"')
-      line = line.replace("’", "'").replace("’", "'").replace("`", "'")
-      line = line.replace('…', '...').replace('–', '-')
-      unicodedata.normalize('NFKD', lines).encode('ascii', 'ignore')
-      lines.append(line)
+    with open(path) as f:
+        text = f.read()
 
-  j = {}
-  j["id"] = "777"
-  j["text"] = " ".join(lines)
+        j = {}
+        j["id"] = "777"
+        j["text"] = cleanup_text(text)
 
-  print(textrank.pretty_print(j))
+        print(pytextrank.pretty_print(j))
