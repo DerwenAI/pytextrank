@@ -34,7 +34,6 @@ Dependencies and Installation
 
 This code has dependencies on several other Python projects:
 
--  `TextBlob <http://textblob.readthedocs.io/>`_
 -  `spaCy <https://spacy.io/docs/usage/>`_
 -  `NetworkX <http://networkx.readthedocs.io/>`_
 -  `datasketch <https://github.com/ekzhu/datasketch>`_
@@ -57,10 +56,7 @@ After installation you need to download a language model:
 
 ::
 
-    python -m nltk.downloader punkt
-    python -m nltk.downloader wordnet
-    python -m textblob.download_corpora
-    python -m spacy.en.download all
+    python -m spacy download en
 
 Also, the runtime depends on a local file called ``stop.txt`` which
 contains a list of *stopwords*. You can override this in the

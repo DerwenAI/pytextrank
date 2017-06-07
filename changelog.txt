@@ -1,5 +1,14 @@
 # pytextrank changelog
 
+## 1.1.0
+
+2017-06-07
+
+### Improved
+
+ * replaced use of TextBlob with spaCy
+ * updated other dependencies
+
 ## 1.0.1
 
 2017-03-15

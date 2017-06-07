@@ -4,7 +4,6 @@
 from collections import namedtuple
 from datasketch import MinHash
 from graphviz import Digraph
-from textblob import TextBlob
 import hashlib
 import json
 import math
@@ -412,18 +411,19 @@ def find_chunk (phrase, np):
             return parsed_np
 
 
-def enumerate_chunks (phrase):
+def enumerate_chunks (phrase, spacy_nlp):
     """
     iterate through the noun phrases
     """
     if (len(phrase) > 1):
         found = False
         text = " ".join([rl.text for rl in phrase])
+        doc = spacy_nlp(text.strip(), parse=True)
 
-        for np in TextBlob(text).noun_phrases:
-            if np != text:
+        for np in doc.noun_chunks:
+            if np.text != text:
                 found = True
-                yield np, find_chunk(phrase, np.split(" "))
+                yield np.text, find_chunk(phrase, np.text.split(" "))
 
         if not found and all([rl.pos[0] != "v" for rl in phrase]):
             yield text, phrase
@@ -493,7 +493,7 @@ def collect_entities (sent, ranks, stopwords, spacy_nlp):
                 yield rl
 
 
-def collect_phrases (sent, ranks):
+def collect_phrases (sent, ranks, spacy_nlp):
     """
     iterator for collecting the noun phrases
     """
@@ -510,7 +510,7 @@ def collect_phrases (sent, ranks):
             phrase.append(rl)
         else:
             # just hit a phrase boundary
-            for text, p in enumerate_chunks(phrase):
+            for text, p in enumerate_chunks(phrase, spacy_nlp):
                 if p:
                     id_list = [rl.ids for rl in p]
                     rank_list = [rl.rank for rl in p]
@@ -587,7 +587,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None):
                 prev_lex = phrase_lex[id]
                 phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
 
-        for rl in collect_phrases(sent, ranks):
+        for rl in collect_phrases(sent, ranks, spacy_nlp):
             id = str(rl.ids)
 
             if id not in phrase_lex:

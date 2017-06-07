@@ -1,11 +1,9 @@
-textblob==0.11.1
-
 spacy==1.8.2
 
 networkx==1.11
 
-datasketch==0.2.4
+datasketch==1.2.1
 
-graphviz==0.5.1
+graphviz==0.7.1
 
 statistics==1.0.3.5
