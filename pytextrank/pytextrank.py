@@ -536,7 +536,7 @@ def calc_rms (values):
     return max(values)
 
 
-def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None):
+def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner=True):
     """
     collect keyphrases, named entities, etc., while removing stop words
     """
@@ -578,14 +578,15 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None):
                 prev_lex = single_lex[id]
                 single_lex[id] = rl._replace(count = prev_lex.count + 1)
 
-        for rl in collect_entities(sent, ranks, stopwords, spacy_nlp):
-            id = str(rl.ids)
+        if not skip_ner:
+            for rl in collect_entities(sent, ranks, stopwords, spacy_nlp):
+                id = str(rl.ids)
 
-            if id not in phrase_lex:
-                phrase_lex[id] = rl
-            else:
-                prev_lex = phrase_lex[id]
-                phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
+                if id not in phrase_lex:
+                    phrase_lex[id] = rl
+                else:
+                    prev_lex = phrase_lex[id]
+                    phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
 
         for rl in collect_phrases(sent, ranks, spacy_nlp):
             id = str(rl.ids)
