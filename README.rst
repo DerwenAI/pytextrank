@@ -64,9 +64,10 @@ contains a list of *stopwords*. You can override this in the
 
 License
 -------
-*PyTextRank* has an `Apache 2.0 <https://github.com/ceteri/pytextrank/blob/master/LICENSE>`_ license.
-
-Please let us know if you find this useful, and tell us about use cases, what else you'd like to see integrated, etc.
+*PyTextRank* has an `Apache 2.0 <https://github.com/ceteri/pytextrank/blob/master/LICENSE>`_ 
+license, so you can use it for commercial applications.
+Please let us know if you find this useful, and tell us about use cases, 
+what else you'd like to see integrated, etc.
 
 Here's a Bibtex entry if you ever need to cite *PyTextRank* in a research paper:
 
@@ -74,8 +75,8 @@ Here's a Bibtex entry if you ever need to cite *PyTextRank* in a research paper:
 
     @Misc{PyTextRank,
     author =   {Nathan, Paco},
-    title =    { {P}yTextRank, a {P}ython implementation of TextRank for text document NLP parsing and summarization},
-    howpublished = {\url{https://pypi.python.org/pypi/pytextrank}},
+    title =    {PyTextRank, a Python implementation of TextRank for text document NLP parsing and summarization},
+    howpublished = {\url{https://github.com/ceteri/pytextrank/}},
     year = {2016}
     }
 
