@@ -64,7 +64,7 @@ contains a list of *stopwords*. You can override this in the
 
 License
 -------
-*PyTextRank* has an `Apache 2.0 <https://github.com/ceteri/pytextrank/blob/master/LICENSE`_ license.
+*PyTextRank* has an `Apache 2.0 <https://github.com/ceteri/pytextrank/blob/master/LICENSE>`_ license.
 
 Please let us know if you find this useful, and tell us about use cases, what else you'd like to see integrated, etc.
 
