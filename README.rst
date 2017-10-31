@@ -90,4 +90,4 @@ Kudos
 `@HarshGrandeur <https://github.com/HarshGrandeur>`_
 `@mnowotka <https://github.com/mnowotka>`_
 `@kjam <https://github.com/kjam>`_
-`@dvsrepo <https://github.com/dvsrepo`_
+`@dvsrepo <https://github.com/dvsrepo>`_
