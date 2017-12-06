@@ -304,9 +304,9 @@ def build_graph (json_iter):
                 if not graph.has_node(word_id):
                     graph.add_node(word_id)
 
-            try:
+            if "edge" in dir(graph):
                 graph.edge[pair[0]][pair[1]]["weight"] += 1.0
-            except KeyError:
+            else:
                 graph.add_edge(pair[0], pair[1], weight=1.0)
 
     return graph
