@@ -15,7 +15,7 @@ import spacy
 import statistics
 import string
 
-DEBUG = False # True
+DEBUG = False  # True
 
 ParsedGraf = namedtuple('ParsedGraf', 'id, sha1, graf')
 WordNode = namedtuple('WordNode', 'word_id, raw, root, pos, keep, idx')
@@ -24,14 +24,14 @@ SummarySent = namedtuple('SummarySent', 'dist, idx, text')
 
 
 ######################################################################
-## filter the novel text versus quoted text in an email message
+# filter the novel text versus quoted text in an email message
 
 PAT_FORWARD = re.compile("\n\-+ Forwarded message \-+\n")
 PAT_REPLIED = re.compile("\nOn.*\d+.*\n?wrote\:\n+\>")
 PAT_UNSUBSC = re.compile("\n\-+\nTo unsubscribe,.*\nFor additional commands,.*")
 
 
-def split_grafs (lines):
+def split_grafs(lines):
     """
     segment the raw text into paragraphs
     """
@@ -51,7 +51,7 @@ def split_grafs (lines):
         yield "\n".join(graf)
 
 
-def filter_quotes (text, is_email=True):
+def filter_quotes(text, is_email=True):
     """
     filter the quoted text out of a message
     """
@@ -95,21 +95,21 @@ def filter_quotes (text, is_email=True):
 
 
 ######################################################################
-## parse and markup text paragraphs for semantic analysis
+# parse and markup text paragraphs for semantic analysis
 
 PAT_PUNCT = re.compile(r'^\W+$')
 PAT_SPACE = re.compile(r'\_+$')
 
 POS_KEEPS = ['v', 'n', 'j']
 POS_LEMMA = ['v', 'n']
-UNIQ_WORDS = { ".": 0 }
+UNIQ_WORDS = {".": 0}
 
 
-def is_not_word (word):
+def is_not_word(word):
     return PAT_PUNCT.match(word) or PAT_SPACE.match(word)
 
 
-def get_word_id (root):
+def get_word_id(root):
     """
     lookup/assign a unique identify for each word root
     """
@@ -123,7 +123,7 @@ def get_word_id (root):
     return UNIQ_WORDS[root]
 
 
-def fix_microsoft (foo):
+def fix_microsoft(foo):
     """
     fix special case for `c#`, `f#`, etc.; thanks Microsoft
     """
@@ -133,7 +133,7 @@ def fix_microsoft (foo):
     while i < len(foo):
         text, lemma, pos, tag = foo[i]
 
-        if (text == "#") and (i > 0):
+        if(text == "#") and(i > 0):
             prev_tok = bar[-1]
 
             prev_tok[0] += "#"
@@ -148,7 +148,7 @@ def fix_microsoft (foo):
     return bar
 
 
-def fix_hypenation (foo):
+def fix_hypenation(foo):
     """
     fix hyphenation in the word list for a parsed sentence
     """
@@ -158,7 +158,7 @@ def fix_hypenation (foo):
     while i < len(foo):
         text, lemma, pos, tag = foo[i]
 
-        if (tag == "HYPH") and (i > 0) and (i < len(foo) - 1):
+        if(tag == "HYPH") and(i > 0) and(i < len(foo) - 1):
             prev_tok = bar[-1]
             next_tok = foo[i + 1]
 
@@ -174,7 +174,7 @@ def fix_hypenation (foo):
     return bar
 
 
-def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
+def parse_graf(doc_id, graf_text, base_idx, spacy_nlp=None):
     """
     CORE ALGORITHM: parse and markup sentences in the given paragraph
     """
@@ -190,7 +190,7 @@ def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
 
     markup = []
     new_base_idx = base_idx
-    doc = spacy_nlp(graf_text, parse=True)
+    doc = spacy_nlp(graf_text)
 
     for span in doc.sents:
         graf = []
@@ -217,7 +217,7 @@ def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
         for tok_text, tok_lemma, tok_pos, tok_tag in corrected_words:
             word = WordNode(word_id=0, raw=tok_text, root=tok_text.lower(), pos=tok_tag, keep=0, idx=new_base_idx)
 
-            if is_not_word(tok_text) or (tok_tag == "SYM"):
+            if is_not_word(tok_text) or(tok_tag == "SYM"):
                 # a punctuation, or other symbol
                 pos_family = '.'
                 word = word._replace(pos=pos_family)
@@ -245,13 +245,13 @@ def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
     return markup, new_base_idx
 
 
-def parse_doc (json_iter):
+def parse_doc(docs):
     """
     parse one document to prep for TextRank
     """
     global DEBUG
 
-    for meta in json_iter:
+    for meta in docs:
         base_idx = 0
 
         for graf_text in filter_quotes(meta["text"], is_email=False):
@@ -266,9 +266,9 @@ def parse_doc (json_iter):
 
 
 ######################################################################
-## graph analytics
+# graph analytics
 
-def get_tiles (graf, size=3):
+def get_tiles(graf, size=3):
     """
     generate word pairs for the TextRank graph
     """
@@ -281,11 +281,11 @@ def get_tiles (graf, size=3):
         for j in iter(range(i + 1, min(keeps_len, i + 1 + size))):
             w1 = keeps[j]
 
-            if (w1.idx - w0.idx) <= size:
-                yield (w0.root, w1.root,)
+            if(w1.idx - w0.idx) <= size:
+                yield(w0.root, w1.root,)
 
 
-def build_graph (json_iter):
+def build_graph(json_iter):
     """
     construct the TextRank graph from parsed paragraphs
     """
@@ -312,14 +312,14 @@ def build_graph (json_iter):
     return graph
 
 
-def write_dot (graph, ranks, path="graph.dot"):
+def write_dot(graph, ranks, path="graph.dot"):
     """
     output the graph in Dot file format
     """
     dot = Digraph()
 
     for node in graph.nodes():
-        dot.node(node, "%s %0.3f" % (node, ranks[node]))
+        dot.node(node, "%s %0.3f" %(node, ranks[node]))
 
     for edge in graph.edges():
         dot.edge(edge[0], edge[1], constraint="false")
@@ -328,38 +328,32 @@ def write_dot (graph, ranks, path="graph.dot"):
         f.write(dot.source)
 
 
-def render_ranks (graph, ranks, dot_file="graph.dot"):
+def render_ranks(graph, ranks, dot_file="graph.dot"):
     """
     render the TextRank graph for visual formats
     """
     if dot_file:
         write_dot(graph, ranks, path=dot_file)
 
-    ## omitted since matplotlib isn't reliable enough
-    #import matplotlib.pyplot as plt
-    #nx.draw_networkx(graph)
-    #plt.savefig(img_file)
-    #plt.show()
 
-
-def text_rank (path):
+def text_rank(grafs):
     """
     run the TextRank algorithm
     """
-    graph = build_graph(json_iter(path))
+    graph = build_graph(grafs)
     ranks = nx.pagerank(graph)
 
     return graph, ranks
 
 
 ######################################################################
-## collect key phrases
+# collect key phrases
 
 SPACY_NLP = None
 STOPWORDS = None
 
 
-def load_stopwords (stop_file):
+def load_stopwords(stop_file):
     stopwords = set([])
 
     # provide a default if needed
@@ -390,7 +384,7 @@ def load_stopwords (stop_file):
     return stopwords
 
 
-def find_chunk_sub (phrase, np, i):
+def find_chunk_sub(phrase, np, i):
     for j in iter(range(0, len(np))):
         p = phrase[i + j]
 
@@ -400,7 +394,7 @@ def find_chunk_sub (phrase, np, i):
     return phrase[i:i + len(np)]
 
 
-def find_chunk (phrase, np):
+def find_chunk(phrase, np):
     """
     leverage noun phrase chunking
     """
@@ -411,14 +405,14 @@ def find_chunk (phrase, np):
             return parsed_np
 
 
-def enumerate_chunks (phrase, spacy_nlp):
+def enumerate_chunks(phrase, spacy_nlp):
     """
     iterate through the noun phrases
     """
-    if (len(phrase) > 1):
+    if len(phrase) > 1:
         found = False
         text = " ".join([rl.text for rl in phrase])
-        doc = spacy_nlp(text.strip(), parse=True)
+        doc = spacy_nlp(text.strip())
 
         for np in doc.noun_chunks:
             if np.text != text:
@@ -429,12 +423,12 @@ def enumerate_chunks (phrase, spacy_nlp):
             yield text, phrase
 
 
-def collect_keyword (sent, ranks, stopwords):
+def collect_keyword(sent, ranks, stopwords):
     """
     iterator for collecting the single-word keyphrases
     """
     for w in sent:
-        if (w.word_id > 0) and (w.root in ranks) and (w.pos[0] in "NV") and (w.root not in stopwords):
+        if(w.word_id > 0) and(w.root in ranks) and(w.pos[0] in "NV") and(w.root not in stopwords):
             rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root]/2.0, ids=[w.word_id], pos=w.pos.lower(), count=1)
 
             if DEBUG:
@@ -443,7 +437,7 @@ def collect_keyword (sent, ranks, stopwords):
             yield rl
 
 
-def find_entity (sent, ranks, ent, i):
+def find_entity(sent, ranks, ent, i):
     if i >= len(sent):
         return None, None
     else:
@@ -467,7 +461,7 @@ def find_entity (sent, ranks, ent, i):
         return w_ranks, w_ids
 
 
-def collect_entities (sent, ranks, stopwords, spacy_nlp):
+def collect_entities(sent, ranks, stopwords, spacy_nlp):
     """
     iterator for collecting the named-entities
     """
@@ -481,7 +475,7 @@ def collect_entities (sent, ranks, stopwords, spacy_nlp):
         if DEBUG:
             print("NER:", ent.label_, ent.text)
 
-        if (ent.label_ not in ["CARDINAL"]) and (ent.text.lower() not in stopwords):
+        if(ent.label_ not in ["CARDINAL"]) and(ent.text.lower() not in stopwords):
             w_ranks, w_ids = find_entity(sent, ranks, ent.text.split(" "), 0)
 
             if w_ranks and w_ids:
@@ -493,7 +487,7 @@ def collect_entities (sent, ranks, stopwords, spacy_nlp):
                 yield rl
 
 
-def collect_phrases (sent, ranks, spacy_nlp):
+def collect_phrases(sent, ranks, spacy_nlp):
     """
     iterator for collecting the noun phrases
     """
@@ -504,7 +498,7 @@ def collect_phrases (sent, ranks, spacy_nlp):
     while tail < len(sent):
         w = sent[tail]
 
-        if (w.word_id > 0) and (w.root in ranks) and ((w.idx - last_idx) == 1):
+        if(w.word_id > 0) and(w.root in ranks) and((w.idx - last_idx) == 1):
             # keep collecting...
             rl = RankedLexeme(text=w.raw.lower(), rank=ranks[w.root], ids=w.word_id, pos=w.pos.lower(), count=1)
             phrase.append(rl)
@@ -527,23 +521,23 @@ def collect_phrases (sent, ranks, spacy_nlp):
         tail += 1
 
 
-def calc_rms (values):
+def calc_rms(values):
     """
     calculate a root-mean-squared metric for a list of float values
     """
-    #return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))
+    # return math.sqrt(sum([x**2.0 for x in values])) / float(len(values))
     # take the max() which works fine
     return max(values)
 
 
-def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner=True):
+def normalize_key_phrases(grafs, ranks, stopwords=None, spacy_nlp=None, skip_ner=True):
     """
     collect keyphrases, named entities, etc., while removing stop words
     """
     global STOPWORDS, SPACY_NLP
 
     # set up the stop words
-    if (type(stopwords) is list) or (type(stopwords) is set):
+    if(type(stopwords) is list) or(type(stopwords) is set):
         # explicit conversion to a set, for better performance
         stopwords = set(stopwords)
     else:
@@ -563,10 +557,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
     single_lex = {}
     phrase_lex = {}
 
-    if isinstance(path, str):
-        path = json_iter(path)
-
-    for meta in path:
+    for meta in grafs:
         sent = [w for w in map(WordNode._make, meta["graf"])]
 
         for rl in collect_keyword(sent, ranks, stopwords):
@@ -576,7 +567,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
                 single_lex[id] = rl
             else:
                 prev_lex = single_lex[id]
-                single_lex[id] = rl._replace(count = prev_lex.count + 1)
+                single_lex[id] = rl._replace(count=prev_lex.count + 1)
 
         if not skip_ner:
             for rl in collect_entities(sent, ranks, stopwords, spacy_nlp):
@@ -586,7 +577,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
                     phrase_lex[id] = rl
                 else:
                     prev_lex = phrase_lex[id]
-                    phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
+                    phrase_lex[id] = rl._replace(count=prev_lex.count + 1)
 
         for rl in collect_phrases(sent, ranks, spacy_nlp):
             id = str(rl.ids)
@@ -595,7 +586,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
                 phrase_lex[id] = rl
             else:
                 prev_lex = phrase_lex[id]
-                phrase_lex[id] = rl._replace(count = prev_lex.count + 1)
+                phrase_lex[id] = rl._replace(count=prev_lex.count + 1)
 
     # normalize ranks across single keywords and longer phrases:
     #    * boost the noun phrases based on their length
@@ -639,9 +630,9 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
 
 
 ######################################################################
-## sentence significance
+# sentence significance
 
-def mh_digest (data):
+def mh_digest(data):
     """
     create a MinHash digest
     """
@@ -654,16 +645,13 @@ def mh_digest (data):
     return m
 
 
-def rank_kernel (path):
+def rank_kernel(rank_lists):
     """
-    return a list (matrix-ish) of the key phrases and their ranks
+    return a list(matrix-ish) of the key phrases and their ranks
     """
     kernel = []
 
-    if isinstance(path, str):
-        path = json_iter(path)
-
-    for meta in path:
+    for meta in rank_lists:
         if not isinstance(meta, RankedLexeme):
             rl = RankedLexeme(**meta)
         else:
@@ -675,74 +663,62 @@ def rank_kernel (path):
     return kernel
 
 
-def top_sentences (kernel, path):
+def top_sentences(kernel, grafs):
     """
     determine distance for each sentence
     """
     key_sent = {}
     i = 0
 
-    if isinstance(path, str):
-        path = json_iter(path)
-
-    for meta in path:
+    for meta in grafs:
         graf = meta["graf"]
         tagged_sent = [WordNode._make(x) for x in graf]
         text = " ".join([w.raw for w in tagged_sent])
 
         m_sent = mh_digest([str(w.word_id) for w in tagged_sent])
         dist = sum([m_sent.jaccard(m) * rl.rank for rl, m in kernel])
-        key_sent[text] = (dist, i)
+        key_sent[text] =(dist, i)
         i += 1
 
-    for text, (dist, i) in sorted(key_sent.items(), key=lambda x: x[1][0], reverse=True):
+    for text,(dist, i) in sorted(key_sent.items(), key=lambda x: x[1][0], reverse=True):
         yield SummarySent(dist=dist, idx=i, text=text)
 
 
 ######################################################################
-## document summarization
+# document summarization
 
-def limit_keyphrases (path, phrase_limit=20):
+def limit_keyphrases(rank_list, phrase_limit=20):
     """
     iterator for the most significant key phrases
     """
-    rank_thresh = None
-
-    if isinstance(path, str):
-        lex = []
-
-        for meta in json_iter(path):
-            rl = RankedLexeme(**meta)
-            lex.append(rl)
-    else:
-        lex = path
+    lex = []
+    for meta in rank_list:
+        rl = RankedLexeme(**meta)
+        lex.append(rl)
 
     if len(lex) > 0:
         rank_thresh = statistics.mean([rl.rank for rl in lex])
     else:
-            rank_thresh = 0
+        rank_thresh = 0
 
     used = 0
 
     for rl in lex:
         if rl.pos[0] != "v":
-            if (used > phrase_limit) or (rl.rank < rank_thresh):
+            if(used > phrase_limit) or(rl.rank < rank_thresh):
                 return
 
             used += 1
             yield rl.text.replace(" - ", "-")
 
 
-def limit_sentences (path, word_limit=100):
+def limit_sentences(sents, word_limit=100):
     """
     iterator for the most significant sentences, up to a specified limit
     """
     word_count = 0
 
-    if isinstance(path, str):
-        path = json_iter(path)
-
-    for meta in path:
+    for meta in sents:
         if not isinstance(meta, SummarySent):
             p = SummarySent(**meta)
         else:
@@ -751,14 +727,14 @@ def limit_sentences (path, word_limit=100):
         sent_text = p.text.strip().split(" ")
         sent_len = len(sent_text)
 
-        if (word_count + sent_len) > word_limit:
+        if(word_count + sent_len) > word_limit:
             break
         else:
             word_count += sent_len
             yield sent_text, p.idx
 
 
-def make_sentence (sent_text):
+def make_sentence(sent_text):
     """
     construct a sentence text, with proper spacing
     """
@@ -767,7 +743,7 @@ def make_sentence (sent_text):
 
     for word in sent_text:
         if len(word) > 0:
-            if (idx > 0) and not (word[0] in ",.:;!?-\"'"):
+            if(idx > 0) and not(word[0] in ",.:;!?-\"'"):
                 lex.append(" ")
 
             lex.append(word)
@@ -778,9 +754,9 @@ def make_sentence (sent_text):
 
 
 ######################################################################
-## common utilities
+# common utilities
 
-def json_iter (path):
+def json_iter(path):
     """
     iterator for JSON-per-line in a file pattern
     """
@@ -789,7 +765,7 @@ def json_iter (path):
             yield json.loads(line)
 
 
-def pretty_print (obj, indent=False):
+def pretty_print(obj, indent=False):
     """
     pretty print a JSON object
     """
