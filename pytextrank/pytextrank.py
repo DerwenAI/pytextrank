@@ -709,7 +709,7 @@ def limit_keyphrases(rank_list, phrase_limit=20):
                 return
 
             used += 1
-            yield rl.text.replace(" - ", "-")
+            yield rl.text.replace(" - ", "-"), rl.rank
 
 
 def limit_sentences(sents, word_limit=100):

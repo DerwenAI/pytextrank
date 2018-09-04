@@ -15,7 +15,7 @@ someothertext = 'Amazon.com, Inc. is located in Seattle, WA and was founded July
     'south of Vancouver, BC. Other notable Seattle - based companies are Starbucks and Boeing.'
 
 docs = [{
-    'text': someothertext,
+    'text': sometext,
     'id': 777}]
 
 grafs = [{'graf': graf.graf} for graf in pytextrank.parse_doc(docs)]
@@ -23,7 +23,7 @@ graph, ranks = pytextrank.text_rank(grafs)
 rank_list = [rl._asdict() for rl in pytextrank.normalize_key_phrases(grafs, ranks, skip_ner=False)]
 kernel = pytextrank.rank_kernel(rank_list)
 sents = [s._asdict() for s in pytextrank.top_sentences(kernel, grafs)]
-phrases = [p for p in pytextrank.limit_keyphrases(rank_list, phrase_limit=6)]
+phrases = [p[0] for p in pytextrank.limit_keyphrases(rank_list, phrase_limit=6)]
 
 sent_iter = sorted(pytextrank.limit_sentences(sents, word_limit=150), key=lambda x: x[1])
 sents = [pytextrank.make_sentence(sent_text) for sent_text, idx in sent_iter]
