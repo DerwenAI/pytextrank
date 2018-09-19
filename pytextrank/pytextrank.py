@@ -184,7 +184,7 @@ def parse_graf(doc_id, graf_text, base_idx, spacy_nlp=None):
     # set up the spaCy NLP parser
     if not spacy_nlp:
         if not SPACY_NLP:
-            SPACY_NLP = spacy.load("en")
+            SPACY_NLP = spacy.load("en_core_web_md")
 
         spacy_nlp = SPACY_NLP
 
