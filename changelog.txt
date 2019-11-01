@@ -1,5 +1,14 @@
 # pytextrank changelog
 
+## 1.2.0
+
+2019-11-01
+
+### Improved
+
+ * updated to fix for current versions of `spaCy` and `networkX` -- kudos @dimmu
+ * removed deprecated argument -- kudos @laxatives
+
 ## 1.1.0
 
 2017-06-07
