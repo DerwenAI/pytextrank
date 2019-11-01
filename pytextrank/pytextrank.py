@@ -190,7 +190,7 @@ def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
 
     markup = []
     new_base_idx = base_idx
-    doc = spacy_nlp(graf_text, parse=True)
+    doc = spacy_nlp(graf_text)
 
     for span in doc.sents:
         graf = []
@@ -305,7 +305,7 @@ def build_graph (json_iter):
                     graph.add_node(word_id)
 
             try:
-                graph.edge[pair[0]][pair[1]]["weight"] += 1.0
+                graph.adj[pair[0]][pair[1]]["weight"] += 1.0
             except KeyError:
                 graph.add_edge(pair[0], pair[1], weight=1.0)
 
@@ -418,7 +418,7 @@ def enumerate_chunks (phrase, spacy_nlp):
     if (len(phrase) > 1):
         found = False
         text = " ".join([rl.text for rl in phrase])
-        doc = spacy_nlp(text.strip(), parse=True)
+        doc = spacy_nlp(text.strip())
 
         for np in doc.noun_chunks:
             if np.text != text:
