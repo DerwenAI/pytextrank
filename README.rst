@@ -92,3 +92,5 @@ Kudos
 `@mnowotka <https://github.com/mnowotka>`_
 `@kjam <https://github.com/kjam>`_
 `@dvsrepo <https://github.com/dvsrepo>`_
+`@dimmu <https://github.com/dimmu>`_
+`@laxatives <https://github.com/laxatives>`_
