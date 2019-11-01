@@ -184,7 +184,7 @@ def parse_graf (doc_id, graf_text, base_idx, spacy_nlp=None):
     # set up the spaCy NLP parser
     if not spacy_nlp:
         if not SPACY_NLP:
-            SPACY_NLP = spacy.load("en")
+            SPACY_NLP = spacy.load("en_core_web_sm")
 
         spacy_nlp = SPACY_NLP
 
@@ -305,7 +305,7 @@ def build_graph (json_iter):
                     graph.add_node(word_id)
 
             if "edge" in dir(graph):
-                graph.edge[pair[0]][pair[1]]["weight"] += 1.0
+                graph.adj[pair[0]][pair[1]]["weight"] += 1.0
             else:
                 graph.add_edge(pair[0], pair[1], weight=1.0)
 
@@ -555,7 +555,7 @@ def normalize_key_phrases (path, ranks, stopwords=None, spacy_nlp=None, skip_ner
     # set up the spaCy NLP parser
     if not spacy_nlp:
         if not SPACY_NLP:
-            SPACY_NLP = spacy.load("en")
+            SPACY_NLP = spacy.load("en_core_web_sm")
 
         spacy_nlp = SPACY_NLP
 

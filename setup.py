@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='pytextrank',
-      version='1.1.0',
+      version='1.2.0',
       description='Python implimentation of TextRank for text document NLP parsing and summarization',
       long_description=readme(),
       classifiers=[
