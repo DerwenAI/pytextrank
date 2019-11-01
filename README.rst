@@ -56,7 +56,7 @@ After installation you need to download a language model:
 
 ::
 
-    python -m spacy download en
+    python -m spacy download en_core_web_sm
 
 Also, the runtime depends on a local file called ``stop.txt`` which
 contains a list of *stopwords*. You can override this in the
