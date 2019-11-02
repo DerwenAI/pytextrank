@@ -23,10 +23,14 @@ Inspired by `Williams 2016 <http://mike.place/2016/summarization/>`_
 talk on *text summarization*.
 
 
-Example Usage
--------------
+Usage
+-----
 
-See `PyTextRank wiki <https://github.com/ceteri/pytextrank/wiki/Examples>`_
+See the `PyTextRank wiki <https://github.com/DerwenAI/pytextrank/wiki>`_ for example usage.
+
+Use the `GH issues <https://github.com/DerwenAI/pytextrank/issues>`_ here or search 
+`related discussions on StackOverflow <https://stackoverflow.com/search?q=pytextrank>`_ 
+if you need to troubleshoot any problems.
 
 
 Dependencies and Installation
