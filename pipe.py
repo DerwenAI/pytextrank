@@ -7,179 +7,211 @@ import logging
 import networkx as nx
 import spacy
 import sys
-
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-LOGGER = logging.getLogger("PyTR")
-
-POS_KEPT = ["ADJ", "NOUN", "PROPN", "VERB"]
+import time
 
 
-def increment_edge (graph, node0, node1):
+class TextRank:
     """
-    increment the weight for an edge between the two given nodes
-    creating the edge first if needed
+    Python implementation of TextRank by Milhacea, et al.,
+    as a spaCy extension, used to extract the top-ranked
+    phrases from a text document.
     """
 
-    if LOGGER:
-        LOGGER.debug("link {} {}".format(node0, node1))
+    _EDGE_WEIGHT = 1.0
+    _POS_KEPT = ["ADJ", "NOUN", "PROPN", "VERB"]
+    _TOKEN_LOOKBACK = 3
     
-    if graph.has_edge(node0, node1):
-        graph[node0][node1]["weight"] += 1.0
-    else:
-        graph.add_edge(node0, node1, weight=1.0)
+
+    def __init__ (self, edge_weight=_EDGE_WEIGHT, logger=None, pos_kept=_POS_KEPT, token_lookback=_TOKEN_LOOKBACK):
+        self.edge_weight = edge_weight
+        self.logger = logger
+        self.pos_kept = pos_kept
+        self.token_lookback = token_lookback
+        self.reset()
 
 
-def link_sentence (doc, sent, lemma_graph, seen_lemma):
-    """
-    link nodes and edges into the lemma graph for one parsed sentence
-    """
-
-    visited_tokens = []
-    visited_nodes = []
-
-    for i in range(sent.start, sent.end):
-        token = doc[i]
-
-        if token.pos_ in POS_KEPT:
-            key = (token.lemma_, token.pos_)
-
-            if key not in seen_lemma:
-                seen_lemma[key] = set([token.i])
-            else:
-                seen_lemma[key].add(token.i)
-
-            node_id = list(seen_lemma.keys()).index(key)
-
-            if not node_id in lemma_graph:
-                lemma_graph.add_node(node_id)
-
-            if LOGGER:
-                LOGGER.debug("visit {} {}".format(visited_tokens, visited_nodes))
-                LOGGER.debug("range {}".format(list(range(len(visited_tokens) - 1, -1, -1))))
-            
-            for prev_token in range(len(visited_tokens) - 1, -1, -1):
-                if LOGGER:
-                    LOGGER.debug("prev_tok {} {}".format(prev_token, (token.i - visited_tokens[prev_token])))
-                
-                if (token.i - visited_tokens[prev_token]) <= 3:
-                    increment_edge(lemma_graph, node_id, visited_nodes[prev_token])
-                else:
-                    break
-
-            if LOGGER:
-                LOGGER.debug(" -- {} {} {} {} {} {}".format(token.i, token.text, token.lemma_, token.pos_, visited_tokens, visited_nodes))
-
-            visited_tokens.append(token.i)
-            visited_nodes.append(node_id)
+    def reset (self):
+        """
+        reset the data structures to default values, removing any state
+        """
+        self.counts = {}
+        self.lemma_graph = nx.Graph()
+        self.phrases = {}
+        self.ranks = {}
+        self.seen_lemma = {}
 
 
-def collect_phrases (chunk, phrases, counts, seen_lemma, ranks):
-    """
-    collect the top-ranked phrases from the lemma graph
-    """
-
-    chunk_len = chunk.end - chunk.start + 1
-    sq_sum_rank = 0.0
-    non_lemma = 0
-    compound_key = set([])
-
-    for i in range(chunk.start, chunk.end):
-        token = doc[i]
-        key = (token.lemma_, token.pos_)
-        
-        if key in seen_lemma:
-            node_id = list(seen_lemma.keys()).index(key)
-            rank = ranks[node_id]
-            sq_sum_rank += rank
-            compound_key.add(key)
-        
-            if LOGGER:
-                LOGGER.debug(" {} {} {} {}".format(token.lemma_, token.pos_, node_id, rank))
+    def increment_edge (self, graph, node0, node1):
+        """
+        increment the weight for an edge between the two given nodes,
+        creating the edge first if needed
+        """
+        if self.logger:
+            self.logger.debug("link {} {}".format(node0, node1))
+    
+        if graph.has_edge(node0, node1):
+            graph[node0][node1]["weight"] += self.edge_weight
         else:
-            non_lemma += 1
+            graph.add_edge(node0, node1, weight=self.edge_weight)
+
+
+    def link_sentence (self, doc, sent):
+        """
+        link nodes and edges into the lemma graph for one parsed sentence
+        """
+        visited_tokens = []
+        visited_nodes = []
+
+        for i in range(sent.start, sent.end):
+            token = doc[i]
+
+            if token.pos_ in self.pos_kept:
+                key = (token.lemma_, token.pos_)
+
+                if key not in self.seen_lemma:
+                    self.seen_lemma[key] = set([token.i])
+                else:
+                    self.seen_lemma[key].add(token.i)
+
+                node_id = list(self.seen_lemma.keys()).index(key)
+
+                if not node_id in self.lemma_graph:
+                    self.lemma_graph.add_node(node_id)
+
+                if self.logger:
+                    self.logger.debug("visit {} {}".format(
+                        visited_tokens, visited_nodes
+                    ))
+                    self.logger.debug("range {}".format(
+                        list(range(len(visited_tokens) - 1, -1, -1))
+                    ))
+            
+                for prev_token in range(len(visited_tokens) - 1, -1, -1):
+                    if self.logger:
+                        self.logger.debug("prev_tok {} {}".format(
+                            prev_token, (token.i - visited_tokens[prev_token])
+                        ))
+                
+                    if (token.i - visited_tokens[prev_token]) <= self.token_lookback:
+                        self.increment_edge(self.lemma_graph, node_id, visited_nodes[prev_token])
+                    else:
+                        break
+
+                if self.logger:
+                    self.logger.debug(" -- {} {} {} {} {} {}".format(
+                        token.i, token.text, token.lemma_, token.pos_, visited_tokens, visited_nodes
+                    ))
+
+                visited_tokens.append(token.i)
+                visited_nodes.append(node_id)
+
+
+    def collect_phrases (self, chunk):
+        """
+        collect the top-ranked phrases from the lemma graph
+        """
+        chunk_len = chunk.end - chunk.start + 1
+        sq_sum_rank = 0.0
+        non_lemma = 0
+        compound_key = set([])
+
+        for i in range(chunk.start, chunk.end):
+            token = doc[i]
+            key = (token.lemma_, token.pos_)
+        
+            if key in self.seen_lemma:
+                node_id = list(self.seen_lemma.keys()).index(key)
+                rank = self.ranks[node_id]
+                sq_sum_rank += rank
+                compound_key.add(key)
+        
+                if self.logger:
+                    self.logger.debug(" {} {} {} {}".format(
+                        token.lemma_, token.pos_, node_id, rank
+                    ))
+            else:
+                non_lemma += 1
     
-    # although the noun chunking is greedy, we discount the ranks using a
-    # point estimate based on the number of non-lemma tokens within a phrase
+        # although the noun chunking is greedy, we discount the ranks using a
+        # point estimate based on the number of non-lemma tokens within a phrase
 
-    non_lemma_discount = chunk_len / (chunk_len + (2.0 * non_lemma) + 1.0)
+        non_lemma_discount = chunk_len / (chunk_len + (2.0 * non_lemma) + 1.0)
 
-    # use root mean square (RMS) to normalize the contributions of all the tokens
+        # use root mean square (RMS) to normalize the contributions of all the tokens
 
-    phrase_rank = sqrt(sq_sum_rank / (chunk_len + non_lemma))
-    phrase_rank *= non_lemma_discount
+        phrase_rank = sqrt(sq_sum_rank / (chunk_len + non_lemma))
+        phrase_rank *= non_lemma_discount
 
-    # remove spurious punctuation
+        # remove spurious punctuation
 
-    phrase = chunk.text.lower().replace("'", "")
+        phrase = chunk.text.lower().replace("'", "")
 
-    # create a unique key for the the phrase based on its lemma components
+        # create a unique key for the the phrase based on its lemma components
 
-    compound_key = tuple(sorted(list(compound_key)))
+        compound_key = tuple(sorted(list(compound_key)))
     
-    if not compound_key in phrases:
-        phrases[compound_key] = set([ (phrase, phrase_rank) ])
-        counts[compound_key] = 1
-    else:
-        phrases[compound_key].add( (phrase, phrase_rank) )
-        counts[compound_key] += 1
+        if not compound_key in self.phrases:
+            self.phrases[compound_key] = set([ (phrase, phrase_rank) ])
+            self.counts[compound_key] = 1
+        else:
+            self.phrases[compound_key].add( (phrase, phrase_rank) )
+            self.counts[compound_key] += 1
 
-    if LOGGER:
-        LOGGER.debug("{} {} {} {} {} {}".format(phrase_rank, chunk.text, chunk.start, chunk.end, chunk_len, counts[compound_key]))
+        if self.logger:
+            self.logger.debug("{} {} {} {} {} {}".format(
+                phrase_rank, chunk.text, chunk.start, chunk.end, chunk_len, self.counts[compound_key]
+            ))
 
 
-def text_rank (doc):
-    """
-    iterate through the sentences to construct the lemma graph, returning
-    the top-ranked phrases
-    """
+    def text_rank (self, doc):
+        """
+        iterate through the sentences to construct the lemma graph,
+        returning the top-ranked phrases
+        """
+        for sent in doc.sents:
+            self.link_sentence(doc, sent)
+            #break # only test one sentence
 
-    lemma_graph = nx.Graph()
-    seen_lemma = {}
+        if self.logger:
+            self.logger.debug(self.seen_lemma)
 
-    for sent in doc.sents:
-        link_sentence(doc, sent, lemma_graph, seen_lemma)
-        #break # only test one sentence
+        # to run the algorithm, we use PageRank – which approximates
+        # eigenvalue centrality – to calculate ranks for each of the
+        # nodes in the lemma graph
 
-    if LOGGER:
-        LOGGER.debug(seen_lemma)
+        self.ranks = nx.pagerank(self.lemma_graph)
 
-    # to run the algorithm, we use PageRank – which is
-    # approximately eigenvalue centrality – to calculate ranks for
-    # each of the nodes in the lemma graph
+        # collect the top-ranked phrases based on both the noun chunks
+        # and the named entities
 
-    ranks = nx.pagerank(lemma_graph)
+        for chunk in doc.noun_chunks:
+            self.collect_phrases(chunk)
 
-    # collect the top-ranked phrases based on both the noun chunks and
-    # the named entities
+        for ent in doc.ents:
+            self.collect_phrases(ent)
 
-    phrases = {}
-    counts = {}
+        # since noun chunks can be expressed in different ways (e.g., may
+        # have articles or prepositions), we need to find a minimum span
+        # for each phrase based on combinations of lemmas
 
-    for chunk in doc.noun_chunks:
-        collect_phrases(chunk, phrases, counts, seen_lemma, ranks)
+        min_phrases = {}
 
-    for ent in doc.ents:
-        collect_phrases(ent, phrases, counts, seen_lemma, ranks)
-
-    # since noun chunks can be expressed in different ways (e.g., may
-    # have articles or prepositions), we need to find a minimum span
-    # for each phrase based on combinations of lemmas
-
-    min_phrases = {}
-
-    for compound_key, rank_tuples in phrases.items():
-        l = list(rank_tuples)
-        l.sort(key=itemgetter(1), reverse=True)
+        for compound_key, rank_tuples in self.phrases.items():
+            l = list(rank_tuples)
+            l.sort(key=itemgetter(1), reverse=True)
     
-        phrase, rank = l[0]
-        count = counts[compound_key]
+            phrase, rank = l[0]
+            count = self.counts[compound_key]
     
-        min_phrases[phrase] = (rank, count)
+            min_phrases[phrase] = (rank, count)
 
-    # yield results
-    phrase_iter = iter([(p, r, c) for p, (r, c) in sorted(min_phrases.items(), key=lambda x: x[1][0], reverse=True)])
+        # yield results
 
-    return phrase_iter, lemma_graph
+        phrase_iter = iter([
+            (p, r, c) for p, (r, c) in sorted(min_phrases.items(), key=lambda x: x[1][0], reverse=True)
+        ])
+
+        return phrase_iter
 
 
 if __name__ == "__main__":
@@ -188,7 +220,16 @@ if __name__ == "__main__":
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
 
-    phrase_iter, lemma_graph = text_rank(doc)
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    logger = logging.getLogger("PyTR")
+
+    tr = TextRank(logger=None)
+
+    start = time.time()
+    phrase_iter = tr.text_rank(doc)
+    end = time.time()
     
     for phrase, rank, count in phrase_iter:
         print("{:.4f} {:5d}  {}".format(rank, count, phrase))
+
+    print("\nelapsed time: {} ms".format((end - start) * 1000))
