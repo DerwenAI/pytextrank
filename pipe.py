@@ -8,15 +8,14 @@ import networkx as nx
 import spacy
 import sys
 import time
+import unicodedata
 
 
 class TextRank:
     """
-    Python implementation of TextRank by Milhacea, et al.,
-    as a spaCy extension, used to extract the top-ranked
-    phrases from a text document.
+    Python impl of TextRank by Milhacea, et al., as a spaCy extension,
+    used to extract the top-ranked phrases from a text document
     """
-
     _EDGE_WEIGHT = 1.0
     _POS_KEPT = ["ADJ", "NOUN", "PROPN", "VERB"]
     _TOKEN_LOOKBACK = 3
@@ -39,6 +38,29 @@ class TextRank:
         self.phrases = {}
         self.ranks = {}
         self.seen_lemma = {}
+
+
+    @classmethod
+    def cleanup_text (cls, text):
+        """
+        it scrubs the garble from its stream...
+        or it gets the debugger again
+        """
+        x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
+
+        x = x.replace('“', '"').replace('”', '"')
+        x = x.replace("‘", "'").replace("’", "'").replace("`", "'")
+        x = x.replace("…", "...").replace("–", "-")
+
+        x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("ascii"))
+
+        # some content returns text in bytes rather than as a str ?
+        try:
+            assert type(x).__name__ == "str"
+        except AssertionError:
+            print("not a string?", type(line), line)
+
+            return x
 
 
     def increment_edge (self, graph, node0, node1):
@@ -225,11 +247,11 @@ if __name__ == "__main__":
 
     tr = TextRank(logger=None)
 
-    start = time.time()
+    t0 = time.time()
     phrase_iter = tr.text_rank(doc)
-    end = time.time()
+    t1 = time.time()
     
     for phrase, rank, count in phrase_iter:
         print("{:.4f} {:5d}  {}".format(rank, count, phrase))
 
-    print("\nelapsed time: {} ms".format((end - start) * 1000))
+    print("\nelapsed time: {} ms".format((t1 - t0) * 1000))

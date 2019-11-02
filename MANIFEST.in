@@ -1,4 +1,3 @@
-include README.rst
+include README.md
 include changelog.txt
-include pytextrank/stop.txt
 
