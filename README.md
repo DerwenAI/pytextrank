@@ -120,17 +120,17 @@ For other example usage, see the
 [PyTextRank wiki](https://github.com/DerwenAI/pytextrank/wiki).
 If you need to troubleshoot any problems:
 
-  - use [GitHub issues](https://github.com/DerwenAI/pytextrank/issues)
-    (recommended)
+  - use [GitHub issues](https://github.com/DerwenAI/pytextrank/issues) (most recommended)
   - search [related discussions on StackOverflow](https://stackoverflow.com/search?q=pytextrank)
+  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (copy @pacoid)
 
 For related course materials and training, please check for calendar updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
 
-Let us know if you find this useful, tell us about use cases, describe
-what else you would like to see integrated, etc.
-If you have inquiries about related consulting work in machine learning,
-natural language, knowledge graph, and other AI applications, contact 
+Let us know if you find this package useful, tell us about use cases, 
+describe what else you would like to see integrated, etc.
+For inquiries about consulting work in machine learning, natural language,
+knowledge graph, and other AI applications, contact 
 [Derwen, Inc.](https://derwen.ai/contact)
 
 
