@@ -39,9 +39,9 @@ and
 [WordNet](https://spacy.io/universe/project/spacy-wordnet)
 both provide means for inferring links among entities, and can be applied
 even in cases where those links are not explicit within the text.
-Consider a paragraph that mentions `cats` and `kittens`: there is an implied
-semantic relation between the two nouns since the lemma `kitten` is a hyponym
-of the lemma `cat` so an inferred link can be added between them.
+Consider a paragraph that mentions `cats` and `kittens` in different sentences: 
+there is an implied semantic relation between the two nouns since the lemma `kitten` is a
+hyponym of the lemma `cat` such that an inferred link can be added between them.
 Purpose-built knowledge graphs can be applied to enrich the lemma graph for
 specific use cases.
 
@@ -49,13 +49,11 @@ This has an additional benefit of linking parsed and annotated documents
 into more structured data, and can also be used to support
 [*knowledge graph construction*](https://www.akbc.ws/).
 
-The *TextRank* algorithm used here is based on research published in:
-
-  - ["TextRank: Bringing Order into Text"](https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf)  
+The *TextRank* algorithm used here is based on research published in:  
+["TextRank: Bringing Order into Text"](https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf)  
 [**Rada Mihalcea**](https://web.eecs.umich.edu/~mihalcea/), 
 [**Paul Tarau**](https://www.cse.unt.edu/~tarau/);  
-[*Empirical Methods in Natural Language Processing*](https://www.researchgate.net/publication/200044196_TextRank_Bringing_Order_into_Texts)  
-(2004)
+[*Empirical Methods in Natural Language Processing*](https://www.researchgate.net/publication/200044196_TextRank_Bringing_Order_into_Texts) (2004)
 
 Several modifications in **PyTextRank** improve on the algorithm originally
 described in the paper:
@@ -95,7 +93,29 @@ pip install -r requirements.txt
 
 ## Usage
 
-For example usage, see the 
+```
+import spacy
+import pytextrank
+
+# example text
+text = "Compatibility of systems of linear constraints over the set of natural numbers. Criteria of compatibility of a system of linear Diophantine equations, strict inequations, and nonstrict inequations are considered. Upper bounds for components of a minimal set of solutions and algorithms of construction of minimal generating sets of solutions for all types of systems are given. These criteria and the corresponding algorithms for constructing a minimal supporting set of solutions can be used in solving all the considered types systems and systems of mixed types."
+
+# load a spacy model, depending on language, scale, etc.
+nlp = spacy.load("en_core_web_sm")
+
+# add PyTextRank to the spaCy pipline
+tr = pytextrank.TextRank()
+nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
+
+doc = nlp(text)
+
+# examine the top-ranked phrases in the document
+for p in doc._.phrases:
+    print("{:.4f} {:5d}  {}".format(p.rank, p.count, p.text))
+    print(p.chunks)
+```
+
+For other example usage, see the 
 [PyTextRank wiki](https://github.com/DerwenAI/pytextrank/wiki).
 If you need to troubleshoot any problems:
 
@@ -103,8 +123,7 @@ If you need to troubleshoot any problems:
     (recommended)
   - search [related discussions on StackOverflow](https://stackoverflow.com/search?q=pytextrank)
 
-For course materials and training, please check for calendar updates
-in the article
+For related course materials and training, please check for calendar updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
 
 Let us know if you find this useful, tell us about use cases, describe
@@ -148,4 +167,4 @@ Many thanks to contributors:
 [@dimmu](https://github.com/dimmu), 
 and for support from [Derwen, Inc.](https://derwen.ai/)
 
-![noam](noam.jpg)
+[![thx noam](docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
