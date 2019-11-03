@@ -416,11 +416,11 @@ class TextRank:
         for node_id in self.lemma_graph.nodes():
             text = keys[node_id][0].lower()
             rank = self.ranks[node_id]
-            label = "{} {:.3f}".format(text, rank)
-            dot.node(node_id, label)
+            label = "{} ({:.4f})".format(text, rank)
+            dot.node(str(node_id), label)
 
         for edge in self.lemma_graph.edges():
-            dot.edge(edge[0], edge[1], constraint="false")
+            dot.edge(str(edge[0]), str(edge[1]), constraint="false")
 
         with open(path, "w") as f:
             f.write(dot.source)

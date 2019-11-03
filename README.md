@@ -76,6 +76,7 @@ Prerequisites:
 - [Python 3.x](https://www.python.org/downloads/)
 - [spaCy](https://spacy.io/docs/usage/)
 - [NetworkX](http://networkx.readthedocs.io/)
+- [GraphViz](https://graphviz.readthedocs.io/)
 
 To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 
@@ -100,7 +101,7 @@ import pytextrank
 # example text
 text = "Compatibility of systems of linear constraints over the set of natural numbers. Criteria of compatibility of a system of linear Diophantine equations, strict inequations, and nonstrict inequations are considered. Upper bounds for components of a minimal set of solutions and algorithms of construction of minimal generating sets of solutions for all types of systems are given. These criteria and the corresponding algorithms for constructing a minimal supporting set of solutions can be used in solving all the considered types systems and systems of mixed types."
 
-# load a spacy model, depending on language, scale, etc.
+# load a spaCy model, depending on language, scale, etc.
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank to the spaCy pipline

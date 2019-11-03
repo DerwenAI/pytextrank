@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="pytextrank",
     version="2.0.0",
-    description="Python implementation of TextRank for extracting top-ranked phrases from a text document",
+    description="Python implementation of TextRank for phrase extraction and summarization of text documents",
     long_description=readme(),
     long_description_content_type="text/markdown",
     keywords="textrank, parsing, extractive summarization, natural language processing, nlp, knowledge graph, graph algorithms, text analytics",
@@ -32,6 +32,7 @@ setuptools.setup(
     license="MIT",
     packages=setuptools.find_packages(),
     install_requires=[
+          "graphviz",
           "networkx",
           "spacy",
     ],

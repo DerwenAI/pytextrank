@@ -1,2 +1,4 @@
+graphviz >= 0.13
 networkx >= 2.0
 spacy >= 2.0
+
