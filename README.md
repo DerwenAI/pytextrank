@@ -157,10 +157,12 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
   - include the unit tests
   - add extractive summarization to the pipeline component
   - load 2.0.0rc1 to PyPi
+  - update the wiki for version 2.x
+  - PR to propose adding PyTR to spaCy Universe
   - build a conda package
-  - update the wiki for v2.x
-  - show example of `spacy-wordnet` to enrich the lemma graph
+  - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
+  - generate a phrase graph, with entity linking to DBpedia
   - fix Sphinx errors, to generate docs
 
 
