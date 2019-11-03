@@ -3,6 +3,7 @@
 
 from collections import defaultdict 
 from math import sqrt
+from spacy.tokens import Doc
 import logging
 import networkx as nx
 import spacy
@@ -42,23 +43,30 @@ def maniacal_scrubber (text):
     return x
 
 
-class Phrase:
+class CollectedPhrase:
     """
-    represents one extracted phrase
+    represents one phrase during the collection process
     """
 
     def __init__ (self, chunk, scrubber):
         self.sq_sum_rank = 0.0
         self.non_lemma = 0
         
-        self.start = chunk.start
-        self.end = chunk.end
-
+        self.chunk = chunk
         self.text = scrubber(chunk.text)
 
 
     def __repr__ (self):
-        return "{:.4f} ({},{}) {} {}".format(self.rank, self.start, self.end, self.text, self.key)
+        return "{:.4f} ({},{}) {} {}".format(
+            self.rank, self.chunk.start, self.chunk.end, self.text, self.key
+        )
+
+
+    def range (self):
+        """
+        generate the index range for the span of tokens in this phrase
+        """
+        return range(self.chunk.start, self.chunk.end)
 
 
     def set_key (self, compound_key):
@@ -74,13 +82,29 @@ class Phrase:
         using a point estimate based on the number of non-lemma
         tokens within the phrase
         """
-        chunk_len = self.end - self.start + 1
+        chunk_len = self.chunk.end - self.chunk.start + 1
         non_lemma_discount = chunk_len / (chunk_len + (2.0 * self.non_lemma) + 1.0)
 
         # normalize the contributions of all the kept lemma tokens
         # within the phrase using root mean square (RMS)
 
         self.rank = sqrt(self.sq_sum_rank / (chunk_len + self.non_lemma)) * non_lemma_discount
+
+
+class Phrase:
+    """
+    represents one extracted phrase
+    """
+
+    def __init__ (self, text, rank, count, phrase_list):
+        self.text = text
+        self.rank = rank
+        self.count = count
+        self.chunks = [p.chunk for p in phrase_list]
+
+
+    def __repr__ (self):
+        return self.text
 
 
 class TextRank:
@@ -106,6 +130,8 @@ class TextRank:
         self.pos_kept = pos_kept
         self.scrubber = scrubber
         self.token_lookback = token_lookback
+
+        self.doc = None
         self.reset()
 
 
@@ -113,6 +139,7 @@ class TextRank:
         """
         reset the data structures to default values, removing any state
         """
+        self.elapsed_time = 0.0
         self.lemma_graph = nx.Graph()
         self.phrases = defaultdict(list)
         self.ranks = {}
@@ -133,7 +160,7 @@ class TextRank:
             self.lemma_graph.add_edge(node0, node1, weight=self.edge_weight)
 
 
-    def link_sentence (self, doc, sent):
+    def link_sentence (self, sent):
         """
         link nodes and edges into the lemma graph for one parsed sentence
         """
@@ -141,7 +168,7 @@ class TextRank:
         visited_nodes = []
 
         for i in range(sent.start, sent.end):
-            token = doc[i]
+            token = self.doc[i]
 
             if token.pos_ in self.pos_kept:
                 key = (token.lemma_, token.pos_)
@@ -186,13 +213,14 @@ class TextRank:
 
     def collect_phrases (self, chunk):
         """
-        collect the top-ranked phrases from the lemma graph
+        collect instances of phrases from the lemma graph
+        based on the given chunk
         """
-        phrase = Phrase(chunk, self.scrubber)
+        phrase = CollectedPhrase(chunk, self.scrubber)
         compound_key = set([])
 
-        for i in range(phrase.start, phrase.end):
-            token = doc[i]
+        for i in phrase.range():
+            token = self.doc[i]
             key = (token.lemma_, token.pos_)
         
             if key in self.seen_lemma:
@@ -217,19 +245,21 @@ class TextRank:
             self.logger.debug(phrase)
 
 
-    def text_rank (self, doc):
+    def calc_textrank (self):
         """
-        iterate through the sentences to construct the lemma graph,
-        returning the top-ranked phrases
+        iterate through each sentence in the doc, constructing a lemma graph
+        then returning the top-ranked phrases
         """
-        for sent in doc.sents:
-            self.link_sentence(doc, sent)
+        t0 = time.time()
+
+        for sent in self.doc.sents:
+            self.link_sentence(sent)
             #break # only test one sentence
 
         if self.logger:
             self.logger.debug(self.seen_lemma)
 
-        # to run the algorithm, we use PageRank – which approximates
+        # to run the algorithm, we use PageRank – i.e., approximating
         # eigenvalue centrality – to calculate ranks for each of the
         # nodes in the lemma graph
 
@@ -238,10 +268,10 @@ class TextRank:
         # collect the top-ranked phrases based on both the noun chunks
         # and the named entities
 
-        for chunk in doc.noun_chunks:
+        for chunk in self.doc.noun_chunks:
             self.collect_phrases(chunk)
 
-        for ent in doc.ents:
+        for ent in self.doc.ents:
             self.collect_phrases(ent)
 
         # since noun chunks can be expressed in different ways (e.g., may
@@ -253,33 +283,49 @@ class TextRank:
         for phrase_key, phrase_list in self.phrases.items():
             phrase_list.sort(key=lambda p: p.rank, reverse=True)
             best_phrase = phrase_list[0]
-            min_phrases[best_phrase.text] = (best_phrase.rank, len(phrase_list))
+            min_phrases[best_phrase.text] = (best_phrase.rank, len(phrase_list), phrase_key)
 
         # yield results
 
-        phrase_iter = iter([
-            (p, r, c) for p, (r, c) in sorted(min_phrases.items(), key=lambda x: x[1][0], reverse=True)
-        ])
+        results = sorted(min_phrases.items(), key=lambda x: x[1][0], reverse=True)
 
-        return phrase_iter
+        phrase_list = [
+            Phrase(p, r, c, self.phrases[k]) for p, (r, c, k) in results
+        ]
+
+        t1 = time.time()
+        self.elapsed_time = (t1 - t0) * 1000.0
+
+        return phrase_list
+
+
+    def PipelineComponent (self, doc):
+        """
+        define a custom pipeline component for spaCy
+        and extend the Doc class to add TextRank
+        """
+        self.doc = doc
+        Doc.set_extension("phrases", default=self.calc_textrank())
+
+        return doc
 
 
 if __name__ == "__main__":
     text = "Compatibility of systems of linear constraints over the set of natural numbers. Criteria of compatibility of a system of linear Diophantine equations, strict inequations, and nonstrict inequations are considered. Upper bounds for components of a minimal set of solutions and algorithms of construction of minimal generating sets of solutions for all types of systems are given. These criteria and the corresponding algorithms for constructing a minimal supporting set of solutions can be used in solving all the considered types systems and systems of mixed types."
 
     nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
 
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     logger = logging.getLogger("PyTR")
 
     tr = TextRank(logger=None)
+    nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
 
-    t0 = time.time()
-    phrase_iter = tr.text_rank(doc)
-    t1 = time.time()
-    
-    for phrase, rank, count in phrase_iter:
-        print("{:.4f} {:5d}  {}".format(rank, count, phrase))
+    doc = nlp(text)
 
-    print("\nelapsed time: {} ms".format((t1 - t0) * 1000))
+    print("pipeline", nlp.pipe_names)
+    print("elapsed time: {} ms".format(tr.elapsed_time))
+
+    for phrase in doc._.phrases:
+        print("{:.4f} {:5d}  {}".format(phrase.rank, phrase.count, phrase.text))
+        print(phrase.chunks)
