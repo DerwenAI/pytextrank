@@ -1,14 +1,86 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+from collections import defaultdict 
 from math import sqrt
-from operator import itemgetter
 import logging
 import networkx as nx
 import spacy
 import sys
 import time
 import unicodedata
+
+
+def default_scrubber (text):
+    """
+    remove spurious punctuation (for English)
+    """
+    return text.lower().replace("'", "")
+
+
+def maniacal_scrubber (text):
+    """
+    it scrubs the garble from its stream...
+    or it gets the debugger again
+    """
+    x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
+
+    x = x.replace('“', '"').replace('”', '"')
+    x = x.replace("‘", "'").replace("’", "'").replace("`", "'")
+    x = x.replace("…", "...").replace("–", "-")
+
+    x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("utf-8"))
+
+    # some web content returns "not string" ?? ostensibly no longer possibly in Py 3.x
+    # fyi, there are crazy "mixed modes" of character encodings found in the wild...
+
+    try:
+        assert type(x).__name__ == "str"
+    except AssertionError:
+        print("not a string?", type(line), line)
+
+    return x
+
+
+class Phrase:
+    """
+    represents one extracted phrase
+    """
+
+    def __init__ (self, chunk, scrubber):
+        self.sq_sum_rank = 0.0
+        self.non_lemma = 0
+        
+        self.start = chunk.start
+        self.end = chunk.end
+
+        self.text = scrubber(chunk.text)
+
+
+    def __repr__ (self):
+        return "{:.4f} ({},{}) {} {}".format(self.rank, self.start, self.end, self.text, self.key)
+
+
+    def set_key (self, compound_key):
+        """
+        create a unique key for the the phrase based on its lemma components
+        """
+        self.key = tuple(sorted(list(compound_key)))
+
+
+    def calc_rank (self):
+        """
+        since noun chunking is greedy, we normalize the rank values
+        using a point estimate based on the number of non-lemma
+        tokens within the phrase
+        """
+        chunk_len = self.end - self.start + 1
+        non_lemma_discount = chunk_len / (chunk_len + (2.0 * self.non_lemma) + 1.0)
+
+        # normalize the contributions of all the kept lemma tokens
+        # within the phrase using root mean square (RMS)
+
+        self.rank = sqrt(self.sq_sum_rank / (chunk_len + self.non_lemma)) * non_lemma_discount
 
 
 class TextRank:
@@ -21,10 +93,18 @@ class TextRank:
     _TOKEN_LOOKBACK = 3
     
 
-    def __init__ (self, edge_weight=_EDGE_WEIGHT, logger=None, pos_kept=_POS_KEPT, token_lookback=_TOKEN_LOOKBACK):
+    def __init__ (
+            self,
+            edge_weight=_EDGE_WEIGHT,
+            logger=None,
+            pos_kept=_POS_KEPT,
+            scrubber=default_scrubber,
+            token_lookback=_TOKEN_LOOKBACK
+    ):
         self.edge_weight = edge_weight
         self.logger = logger
         self.pos_kept = pos_kept
+        self.scrubber = scrubber
         self.token_lookback = token_lookback
         self.reset()
 
@@ -33,37 +113,13 @@ class TextRank:
         """
         reset the data structures to default values, removing any state
         """
-        self.counts = {}
         self.lemma_graph = nx.Graph()
-        self.phrases = {}
+        self.phrases = defaultdict(list)
         self.ranks = {}
         self.seen_lemma = {}
 
 
-    @classmethod
-    def cleanup_text (cls, text):
-        """
-        it scrubs the garble from its stream...
-        or it gets the debugger again
-        """
-        x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
-
-        x = x.replace('“', '"').replace('”', '"')
-        x = x.replace("‘", "'").replace("’", "'").replace("`", "'")
-        x = x.replace("…", "...").replace("–", "-")
-
-        x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("ascii"))
-
-        # some content returns text in bytes rather than as a str ?
-        try:
-            assert type(x).__name__ == "str"
-        except AssertionError:
-            print("not a string?", type(line), line)
-
-            return x
-
-
-    def increment_edge (self, graph, node0, node1):
+    def increment_edge (self, node0, node1):
         """
         increment the weight for an edge between the two given nodes,
         creating the edge first if needed
@@ -71,10 +127,10 @@ class TextRank:
         if self.logger:
             self.logger.debug("link {} {}".format(node0, node1))
     
-        if graph.has_edge(node0, node1):
-            graph[node0][node1]["weight"] += self.edge_weight
+        if self.lemma_graph.has_edge(node0, node1):
+            self.lemma_graph[node0][node1]["weight"] += self.edge_weight
         else:
-            graph.add_edge(node0, node1, weight=self.edge_weight)
+            self.lemma_graph.add_edge(node0, node1, weight=self.edge_weight)
 
 
     def link_sentence (self, doc, sent):
@@ -115,7 +171,7 @@ class TextRank:
                         ))
                 
                     if (token.i - visited_tokens[prev_token]) <= self.token_lookback:
-                        self.increment_edge(self.lemma_graph, node_id, visited_nodes[prev_token])
+                        self.increment_edge(node_id, visited_nodes[prev_token])
                     else:
                         break
 
@@ -132,19 +188,17 @@ class TextRank:
         """
         collect the top-ranked phrases from the lemma graph
         """
-        chunk_len = chunk.end - chunk.start + 1
-        sq_sum_rank = 0.0
-        non_lemma = 0
+        phrase = Phrase(chunk, self.scrubber)
         compound_key = set([])
 
-        for i in range(chunk.start, chunk.end):
+        for i in range(phrase.start, phrase.end):
             token = doc[i]
             key = (token.lemma_, token.pos_)
         
             if key in self.seen_lemma:
                 node_id = list(self.seen_lemma.keys()).index(key)
                 rank = self.ranks[node_id]
-                sq_sum_rank += rank
+                phrase.sq_sum_rank += rank
                 compound_key.add(key)
         
                 if self.logger:
@@ -152,37 +206,15 @@ class TextRank:
                         token.lemma_, token.pos_, node_id, rank
                     ))
             else:
-                non_lemma += 1
+                phrase.non_lemma += 1
     
-        # although the noun chunking is greedy, we discount the ranks using a
-        # point estimate based on the number of non-lemma tokens within a phrase
+        phrase.set_key(compound_key)
+        phrase.calc_rank()
 
-        non_lemma_discount = chunk_len / (chunk_len + (2.0 * non_lemma) + 1.0)
-
-        # use root mean square (RMS) to normalize the contributions of all the tokens
-
-        phrase_rank = sqrt(sq_sum_rank / (chunk_len + non_lemma))
-        phrase_rank *= non_lemma_discount
-
-        # remove spurious punctuation
-
-        phrase = chunk.text.lower().replace("'", "")
-
-        # create a unique key for the the phrase based on its lemma components
-
-        compound_key = tuple(sorted(list(compound_key)))
-    
-        if not compound_key in self.phrases:
-            self.phrases[compound_key] = set([ (phrase, phrase_rank) ])
-            self.counts[compound_key] = 1
-        else:
-            self.phrases[compound_key].add( (phrase, phrase_rank) )
-            self.counts[compound_key] += 1
+        self.phrases[phrase.key].append(phrase)
 
         if self.logger:
-            self.logger.debug("{} {} {} {} {} {}".format(
-                phrase_rank, chunk.text, chunk.start, chunk.end, chunk_len, self.counts[compound_key]
-            ))
+            self.logger.debug(phrase)
 
 
     def text_rank (self, doc):
@@ -218,14 +250,10 @@ class TextRank:
 
         min_phrases = {}
 
-        for compound_key, rank_tuples in self.phrases.items():
-            l = list(rank_tuples)
-            l.sort(key=itemgetter(1), reverse=True)
-    
-            phrase, rank = l[0]
-            count = self.counts[compound_key]
-    
-            min_phrases[phrase] = (rank, count)
+        for phrase_key, phrase_list in self.phrases.items():
+            phrase_list.sort(key=lambda p: p.rank, reverse=True)
+            best_phrase = phrase_list[0]
+            min_phrases[best_phrase.text] = (best_phrase.rank, len(phrase_list))
 
         # yield results
 
