@@ -2,7 +2,7 @@
 
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy extension](https://explosion.ai/blog/spacy-v2-pipelines-extensions),
-to:
+used to:
 
   - extract the top-ranked phrases from text documents
   - run extractive summarization of text documents
