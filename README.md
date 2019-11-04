@@ -5,8 +5,8 @@
 used to:
 
   - extract the top-ranked phrases from text documents
-  - run extractive summarization of text documents
   - infer links from unstructured text into structured data
+  - run extractive summarization of text documents
 
 
 ## Background
@@ -58,15 +58,21 @@ The *TextRank* algorithm used here is based on research published in:
 Several modifications in **PyTextRank** improve on the algorithm originally
 described in the paper:
 
-  - fixes a bug: see [Java impl, 2008](https://github.com/ceteri/textrank)
-  - uses *lemmatization* in place of stemming
-  - includes verbs in the graph (but not in the resulting phrases)
-  - leverages preprocessing via *noun chunking* and *named entity recognition*
-  - provides *extractive summarization* based on ranked phrases
+  - fixed a bug: see [Java impl, 2008](https://github.com/ceteri/textrank)
+  - use *lemmatization* in place of stemming
+  - include verbs in the graph (but not in the resulting phrases)
+  - leverage preprocessing via *noun chunking* and *named entity recognition*
+  - provide *extractive summarization* based on ranked phrases
 
 This implementation was inspired by the
 [Williams 2016](http://mike.place/2016/summarization/)
 talk on text summarization.
+Note that while there are better approaches for
+[*summarizing text*](http://nlpprogress.com/english/summarization.html),
+questions linger about some of the top contenders -- see:
+[1](https://arxiv.org/abs/1909.03004),
+[2]https://arxiv.org/abs/1906.02243).
+Arguably, having alternatives such as this allow for cost trade-offs.
 
 
 ## Installation
@@ -156,14 +162,15 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
   - include the unit tests
   - add extractive summarization to the pipeline component
+  - reintroduce lemma-based stopwords
   - load 2.0.0rc1 to PyPi
   - update the wiki for version 2.x
   - PR to propose adding PyTR to spaCy Universe
   - build a conda package
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
-  - generate a phrase graph, with entity linking to DBpedia
-  - fix Sphinx errors, to generate docs
+  - generate a phrase graph, with entity linking to DBpedia, etc.
+  - fix Sphinx errors, generate docs
 
 
 ## Kudos
@@ -180,6 +187,6 @@ Many thanks to contributors:
 [@SaiThejeshwar](https://github.com/SaiThejeshwar),
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
-and for support from [Derwen, Inc.](https://derwen.ai/)
+plus the support from [Derwen, Inc.](https://derwen.ai/)
 
 [![thx noam](docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
