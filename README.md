@@ -34,14 +34,15 @@ and
 as well as leveraging *knowledge graphs* in the general case.
 
 For example,
-[DBpedia](https://wiki.dbpedia.org/)
-and
 [WordNet](https://spacy.io/universe/project/spacy-wordnet)
+and
+[DBpedia](https://wiki.dbpedia.org/)
 both provide means for inferring links among entities, and can be applied
 even in cases where those links are not explicit within the text.
 Consider a paragraph that mentions `cats` and `kittens` in different sentences: 
-there is an implied semantic relation between the two nouns since the lemma `kitten` is a
-hyponym of the lemma `cat` such that an inferred link can be added between them.
+an implied semantic relation exists between the two nouns since the lemma `kitten` 
+is a hyponym of the lemma `cat` -- such that an inferred link can be added 
+between them.
 Purpose-built knowledge graphs can be applied to enrich the lemma graph for
 specific use cases.
 
@@ -52,7 +53,7 @@ into more structured data, and can also be used to support
 The *TextRank* algorithm used here is based on research published in:  
 ["TextRank: Bringing Order into Text"](https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf)  
 [**Rada Mihalcea**](https://web.eecs.umich.edu/~mihalcea/), 
-[**Paul Tarau**](https://www.cse.unt.edu/~tarau/);  
+[**Paul Tarau**](https://www.cse.unt.edu/~tarau/)  
 [*Empirical Methods in Natural Language Processing*](https://www.researchgate.net/publication/200044196_TextRank_Bringing_Order_into_Texts) (2004)
 
 Several modifications in **PyTextRank** improve on the algorithm originally
@@ -166,7 +167,7 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
   - load 2.0.0rc1 to PyPi
   - fix Sphinx errors, generate docs
   - update the wiki for version 2.x
-  - PR to propose adding PyTR to spaCy Universe
+  - PR to propose adding PyTR to the spaCy Universe
   - build a conda package
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
