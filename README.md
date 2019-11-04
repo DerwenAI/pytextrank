@@ -71,7 +71,7 @@ Note that while there are better approaches for
 [*summarizing text*](http://nlpprogress.com/english/summarization.html),
 questions linger about some of the top contenders -- see:
 [1](https://arxiv.org/abs/1909.03004),
-[2]https://arxiv.org/abs/1906.02243).
+[2](https://arxiv.org/abs/1906.02243).
 Arguably, having alternatives such as this allow for cost trade-offs.
 
 
@@ -164,13 +164,13 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
   - add extractive summarization to the pipeline component
   - reintroduce lemma-based stopwords
   - load 2.0.0rc1 to PyPi
+  - fix Sphinx errors, generate docs
   - update the wiki for version 2.x
   - PR to propose adding PyTR to spaCy Universe
   - build a conda package
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
   - generate a phrase graph, with entity linking to DBpedia, etc.
-  - fix Sphinx errors, generate docs
 
 
 ## Kudos
