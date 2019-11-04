@@ -24,7 +24,7 @@ nlp = spacy.load("en_core_web_sm")
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger("PyTR")
 
-# add PyTextRank into the spaCy pipline
+# add PyTextRank into the spaCy pipeline
 
 tr = pytextrank.TextRank(logger=None)
 nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)

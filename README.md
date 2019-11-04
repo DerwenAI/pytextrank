@@ -111,7 +111,7 @@ text = "Compatibility of systems of linear constraints over the set of natural n
 # load a spaCy model, depending on language, scale, etc.
 nlp = spacy.load("en_core_web_sm")
 
-# add PyTextRank to the spaCy pipline
+# add PyTextRank to the spaCy pipeline
 tr = pytextrank.TextRank()
 nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
 

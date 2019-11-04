@@ -1,6 +1,7 @@
 # misc.
 graph.png
 venv/
+nohup.out
 
 # docs -- in progress
 docs/
