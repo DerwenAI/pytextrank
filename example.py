@@ -57,7 +57,7 @@ with open("dat/lee.txt", "r") as f:
 
 doc = nlp(text)
 
-for phrase in doc._.phrases:
+for phrase in doc._.phrases[:20]:
     print(phrase)
 
 print("\n----\n")
@@ -71,36 +71,24 @@ for sent in doc._.textrank.summary(limit_phrases=15, limit_sentences=5):
 print("\n----\n")
 
 
-# how to use stopwords, first show a baseline...
+# to show use of stopwords, first we output a baseline...
 
 with open("dat/gen.txt", "r") as f:
     text = f.read()
 
 doc = nlp(text)
 
-MAX_PHRASE = 10
-num_phrase = 0
-
-for phrase in doc._.phrases:
+for phrase in doc._.phrases[:10]:
     print(phrase)
-    num_phrase += 1
-
-    if num_phrase == MAX_PHRASE:
-        break
 
 print("\n----\n")
 
-# now we'll add `("gensim", "PROPN")` to the stop words list
-# and see how the top-ranked phrases differ...
+# now add `("gensim", "PROPN")` to the stop words list
+# then see how the top-ranked phrases differ...
 
 tr.load_stopwords(path="stop.json")
 
 doc = nlp(text)
-num_phrase = 0
 
-for phrase in doc._.phrases:
+for phrase in doc._.phrases[:10]:
     print(phrase)
-    num_phrase += 1
-
-    if num_phrase == MAX_PHRASE:
-        break

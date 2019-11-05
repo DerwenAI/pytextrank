@@ -10,6 +10,7 @@
   * supports multiple languages
   * significantly faster, with less memory required
   * better extraction of top-ranked phrases
+  * changed license to MIT
   * uses lemma-based stopwords for more precise control
   * WIP toward integration with knowledge graph use cases
 
