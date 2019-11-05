@@ -37,14 +37,14 @@ For example,
 [WordNet](https://spacy.io/universe/project/spacy-wordnet)
 and
 [DBpedia](https://wiki.dbpedia.org/)
-both provide means for inferring links among entities, and can be applied
-even in cases where those links are not explicit within the text.
+both provide means for inferring links among entities, and purpose-built knowledge
+graphs can be applied for specific use cases.
+These can help enrich a lemma graph even in cases where links are not explicit 
+within the text.
 Consider a paragraph that mentions `cats` and `kittens` in different sentences: 
 an implied semantic relation exists between the two nouns since the lemma `kitten` 
 is a hyponym of the lemma `cat` -- such that an inferred link can be added 
 between them.
-Purpose-built knowledge graphs can be applied to enrich the lemma graph for
-specific use cases.
 
 This has an additional benefit of linking parsed and annotated documents
 into more structured data, and can also be used to support
@@ -129,7 +129,8 @@ If you need to troubleshoot any problems:
 
   - use [GitHub issues](https://github.com/DerwenAI/pytextrank/issues) (most recommended)
   - search [related discussions on StackOverflow](https://stackoverflow.com/search?q=pytextrank)
-  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (copy @pacoid)
+  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (copy `@pacoid`)
+  - search [related articles on Medium](https://medium.com/search?q=pytextrank)
 
 For related course materials and training, please check for calendar updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
