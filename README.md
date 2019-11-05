@@ -162,10 +162,9 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
 ## TODOs
 
-  - include the unit tests
-  - add extractive summarization to the pipeline component
   - reintroduce lemma-based stopwords
   - load 2.0.0rc1 to PyPi
+  - include the unit tests
   - fix Sphinx errors, generate docs
   - update the wiki for version 2.x
   - PR to propose adding PyTR to the spaCy Universe

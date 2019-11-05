@@ -10,10 +10,6 @@ import sys
 ## sample usage
 ######################################################################
 
-# example text
-
-text = "Compatibility of systems of linear constraints over the set of natural numbers. Criteria of compatibility of a system of linear Diophantine equations, strict inequations, and nonstrict inequations are considered. Upper bounds for components of a minimal set of solutions and algorithms of construction of minimal generating sets of solutions for all types of systems are given. These criteria and the corresponding algorithms for constructing a minimal supporting set of solutions can be used in solving all the considered types systems and systems of mixed types."
-
 # load a spaCy model, depending on language, scale, etc.
 
 nlp = spacy.load("en_core_web_sm")
@@ -31,6 +27,9 @@ nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
 
 # parse the document
 
+with open("dat/mih.txt", "r") as f:
+    text = f.read()
+
 doc = nlp(text)
 
 print("pipeline", nlp.pipe_names)
@@ -42,6 +41,27 @@ for phrase in doc._.phrases:
     print("{:.4f} {:5d}  {}".format(phrase.rank, phrase.count, phrase.text))
     print(phrase.chunks)
 
-# generate a GraphViz doc "lemma_graph.dot" to visualize
+
+# generate a GraphViz doc to visualize the lemma graph
 
 tr.write_dot(path="lemma_graph.dot")
+
+
+# let's switch to a different text document:
+print("----\n")
+doc._.textrank.reset()
+
+with open("dat/lee.txt", "r") as f:
+    text = f.read()
+
+doc = nlp(text)
+
+for phrase in doc._.phrases:
+    print(phrase)
+
+# summarize the document based on the top 15 phrases, 
+# yielding the top 5 sentences...
+print("----\n")
+
+for sent in doc._.textrank.summary(limit_phrases=15, limit_sentences=5):
+    print(sent)

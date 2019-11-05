@@ -3,6 +3,7 @@
 
 from collections import defaultdict 
 from math import sqrt
+from operator import itemgetter
 from spacy.tokens import Doc
 import graphviz
 import logging
@@ -426,7 +427,7 @@ class TextRank:
             f.write(dot.source)
 
 
-    def summary (self, limit_sentences=4, limit_phrases=10):
+    def summary (self, limit_phrases=10, limit_sentences=4):
         """
         run extractive summarization, based on vector distance 
         per sentence from the top-ranked phrases
@@ -443,17 +444,24 @@ class TextRank:
 
         phrase_id = 0
 
-        for p in doc._.phrases:
+        for p in self.doc._.phrases:
             unit_vector.append(p.rank)
-            print(phrase_id, p.text, p.rank)
+
+            if self.logger:
+                self.logger.debug(
+                    "{} {} {}".format(phrase_id, p.text, p.rank)
+                )
     
             for chunk in p.chunks:
-                print(" ", chunk.start, chunk.end)
-        
                 for sent_start, sent_end, sent_vector in sent_bounds:
                     if chunk.start >= sent_start and chunk.start <= sent_end:
                         sent_vector.add(phrase_id)
-                        print(" ", sent_start, chunk.start, chunk.end, sent_end)
+
+                        if self.logger:
+                            self.logger.debug(
+                                " {} {} {} {}".format(sent_start, chunk.start, chunk.end, sent_end)
+                                )
+
                         break
 
             phrase_id += 1
@@ -475,32 +483,30 @@ class TextRank:
 
         for sent_start, sent_end, sent_vector in sent_bounds:
             sum_sq = 0.0
-            print(sent_vector)
     
             for phrase_id in range(len(unit_vector)):
-                print(phrase_id, unit_vector[phrase_id])
-        
                 if phrase_id not in sent_vector:
                     sum_sq += unit_vector[phrase_id]**2.0
 
             sent_rank[sent_id] = sqrt(sum_sq)
             sent_id += 1
 
-        # extract the sentences with the lowest distance, up to the
-        # limit requested
+        # extract the sentences with the lowest distance
 
         sent_text = {}
         sent_id = 0
 
-        for sent in doc.sents:
+        for sent in self.doc.sents:
             sent_text[sent_id] = sent
             sent_id += 1
+
+        # yield results, up to the limit requested
 
         num_sent = 0
 
         for sent_id, rank in sorted(sent_rank.items(), key=itemgetter(1)):
+            yield sent_text[sent_id]
             num_sent += 1
-            print(sent_id, sent_text[sent_id])
 
             if num_sent == limit_sentences:
                 break
@@ -512,7 +518,7 @@ class TextRank:
         Doc class to add TextRank
         """
         self.doc = doc
-        Doc.set_extension("phrases", default=self.calc_textrank())
-        Doc.set_extension("textrank", default=self)
+        Doc.set_extension("phrases", force=True, default=self.calc_textrank())
+        Doc.set_extension("textrank", force=True, default=self)
 
         return doc
