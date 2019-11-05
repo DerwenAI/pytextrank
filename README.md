@@ -187,4 +187,4 @@ Many thanks to contributors:
 [@dimmu](https://github.com/dimmu), 
 plus the support from [Derwen, Inc.](https://derwen.ai/)
 
-[![thx noam](docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
+[![thx noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
