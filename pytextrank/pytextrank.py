@@ -426,6 +426,86 @@ class TextRank:
             f.write(dot.source)
 
 
+    def summary (self, limit_sentences=4, limit_phrases=10):
+        """
+        run extractive summarization, based on vector distance 
+        per sentence from the top-ranked phrases
+        """
+        unit_vector = []
+
+        # construct a list of sentence boundaries with a phrase set
+        # for each (initialized to empty)
+
+        sent_bounds = [ [s.start, s.end, set([])] for s in self.doc.sents ]
+
+        # iterate through the top-ranked phrases, added them to the
+        # phrase vector for each sentence
+
+        phrase_id = 0
+
+        for p in doc._.phrases:
+            unit_vector.append(p.rank)
+            print(phrase_id, p.text, p.rank)
+    
+            for chunk in p.chunks:
+                print(" ", chunk.start, chunk.end)
+        
+                for sent_start, sent_end, sent_vector in sent_bounds:
+                    if chunk.start >= sent_start and chunk.start <= sent_end:
+                        sent_vector.add(phrase_id)
+                        print(" ", sent_start, chunk.start, chunk.end, sent_end)
+                        break
+
+            phrase_id += 1
+
+            if phrase_id == limit_phrases:
+                break
+
+        # construct a unit_vector for the top-ranked phrases, up to
+        # the requested limit
+
+        sum_ranks = sum(unit_vector)
+        unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+
+        # iterate through each sentence, calculating its euclidean
+        # distance from the unit vector
+
+        sent_rank = {}
+        sent_id = 0
+
+        for sent_start, sent_end, sent_vector in sent_bounds:
+            sum_sq = 0.0
+            print(sent_vector)
+    
+            for phrase_id in range(len(unit_vector)):
+                print(phrase_id, unit_vector[phrase_id])
+        
+                if phrase_id not in sent_vector:
+                    sum_sq += unit_vector[phrase_id]**2.0
+
+            sent_rank[sent_id] = sqrt(sum_sq)
+            sent_id += 1
+
+        # extract the sentences with the lowest distance, up to the
+        # limit requested
+
+        sent_text = {}
+        sent_id = 0
+
+        for sent in doc.sents:
+            sent_text[sent_id] = sent
+            sent_id += 1
+
+        num_sent = 0
+
+        for sent_id, rank in sorted(sent_rank.items(), key=itemgetter(1)):
+            num_sent += 1
+            print(sent_id, sent_text[sent_id])
+
+            if num_sent == limit_sentences:
+                break
+
+
     def PipelineComponent (self, doc):
         """
         define a custom pipeline component for spaCy and extend the
