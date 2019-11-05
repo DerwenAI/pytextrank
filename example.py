@@ -35,6 +35,7 @@ doc = nlp(text)
 print("pipeline", nlp.pipe_names)
 print("elapsed time: {} ms".format(tr.elapsed_time))
 
+
 # examine the top-ranked phrases in the document
 
 for phrase in doc._.phrases:
@@ -46,10 +47,10 @@ for phrase in doc._.phrases:
 
 tr.write_dot(path="lemma_graph.dot")
 
+print("\n----\n")
 
-# let's switch to a different text document:
-print("----\n")
-doc._.textrank.reset()
+
+# switch to a longer text document...
 
 with open("dat/lee.txt", "r") as f:
     text = f.read()
@@ -59,9 +60,47 @@ doc = nlp(text)
 for phrase in doc._.phrases:
     print(phrase)
 
+print("\n----\n")
+
 # summarize the document based on the top 15 phrases, 
 # yielding the top 5 sentences...
-print("----\n")
 
 for sent in doc._.textrank.summary(limit_phrases=15, limit_sentences=5):
     print(sent)
+
+print("\n----\n")
+
+
+# how to use stopwords, first show a baseline...
+
+with open("dat/gen.txt", "r") as f:
+    text = f.read()
+
+doc = nlp(text)
+
+MAX_PHRASE = 10
+num_phrase = 0
+
+for phrase in doc._.phrases:
+    print(phrase)
+    num_phrase += 1
+
+    if num_phrase == MAX_PHRASE:
+        break
+
+print("\n----\n")
+
+# now we'll add `("gensim", "PROPN")` to the stop words list
+# and see how the top-ranked phrases differ...
+
+tr.load_stopwords(path="stop.json")
+
+doc = nlp(text)
+num_phrase = 0
+
+for phrase in doc._.phrases:
+    print(phrase)
+    num_phrase += 1
+
+    if num_phrase == MAX_PHRASE:
+        break

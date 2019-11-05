@@ -1,8 +1,8 @@
-# pytextrank changelog
+# PyTextRank changelog
 
 ## 2.0.0
 
-2019-11-17
+2019-11-05
 
 ### Improved
 
@@ -10,6 +10,7 @@
   * supports multiple languages
   * significantly faster, with less memory required
   * better extraction of top-ranked phrases
+  * uses lemma-based stopwords for more precise control
   * WIP toward integration with knowledge graph use cases
 
 ## 1.2.1

@@ -129,8 +129,7 @@ If you need to troubleshoot any problems:
 
   - use [GitHub issues](https://github.com/DerwenAI/pytextrank/issues) (most recommended)
   - search [related discussions on StackOverflow](https://stackoverflow.com/search?q=pytextrank)
-  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (copy `@pacoid`)
-  - search [related articles on Medium](https://medium.com/search?q=pytextrank)
+  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (cc `@pacoid`)
 
 For related course materials and training, please check for calendar updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
@@ -162,12 +161,10 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
 ## TODOs
 
-  - reintroduce lemma-based stopwords
-  - load 2.0.0rc1 to PyPi
+  - PR to propose adding PyTR to the spaCy Universe
+  - update the wiki for version 2.x
   - include the unit tests
   - fix Sphinx errors, generate docs
-  - update the wiki for version 2.x
-  - PR to propose adding PyTR to the spaCy Universe
   - build a conda package
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph

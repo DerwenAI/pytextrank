@@ -6,6 +6,7 @@ from math import sqrt
 from operator import itemgetter
 from spacy.tokens import Doc
 import graphviz
+import json
 import logging
 import networkx as nx
 import os
@@ -208,6 +209,7 @@ class TextRank:
         self.logger = logger
         self.pos_kept = pos_kept
         self.scrubber = scrubber
+        self.stopwords = defaultdict(list)
         self.token_lookback = token_lookback
 
         self.doc = None
@@ -216,17 +218,17 @@ class TextRank:
 
     def reset (self):
         """
-        reset the data structures to default values, removing any state
+        initialize the data structures needed for extracting phrases
+        removing any state
         """
         self.elapsed_time = 0.0
         self.lemma_graph = nx.Graph()
         self.phrases = defaultdict(list)
         self.ranks = {}
         self.seen_lemma = {}
-        self.stopwords = set([])
 
 
-    def load_stopwords (self, stop_file="stop.txt"):
+    def load_stopwords (self, path="stop.json"):
         """
         load a list of "stop words" that get ignored when constructing
         the lemma graph -- NB: be cautious when using this feature
@@ -236,20 +238,22 @@ class TextRank:
         # check if the path is fully qualified, or if the file is in
         # the current working directory
 
-        if os.path.isfile(stop_file):
-            stop_path = stop_file
+        if os.path.isfile(path):
+            stop_path = path
         else:
             cwd = os.getcwd()
-            stop_path = os.path.join(cwd, stop_file)
+            stop_path = os.path.join(cwd, path)
 
             if not os.path.isfile(stop_path):
                 loc = os.path.realpath(os.path.join(cwd, os.path.dirname(__file__)))
-                stop_path = os.path.join(loc, stop_file)
+                stop_path = os.path.join(loc, path)
 
         try:
             with open(stop_path, "r") as f:
-                for line in f.readlines():
-                    self.stopwords.add(line.strip().lower())
+                data = json.load(f)
+
+                for lemma, pos_list in data.items():
+                    self.stopwords[lemma] = pos_list
         except FileNotFoundError:
             pass
 
@@ -279,6 +283,13 @@ class TextRank:
             token = self.doc[i]
 
             if token.pos_ in self.pos_kept:
+                # skip any stop words...
+                lemma = token.lemma_.lower().strip()
+
+                if lemma in self.stopwords and token.pos_ in self.stopwords[lemma]:
+                    continue
+
+                # ...otherwise proceed
                 key = (token.lemma_, token.pos_)
 
                 if key not in self.seen_lemma:
@@ -358,11 +369,11 @@ class TextRank:
         iterate through each sentence in the doc, constructing a lemma graph
         then returning the top-ranked phrases
         """
+        self.reset()
         t0 = time.time()
 
         for sent in self.doc.sents:
             self.link_sentence(sent)
-            #break # only test one sentence
 
         if self.logger:
             self.logger.debug(self.seen_lemma)
