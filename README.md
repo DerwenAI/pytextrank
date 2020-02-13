@@ -1,7 +1,7 @@
 # PyTextRank
 
 **PyTextRank** is a Python implementation of *TextRank* as a
-[spaCy extension](https://explosion.ai/blog/spacy-v2-pipelines-extensions),
+[spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
 used to:
 
   - extract the top-ranked phrases from text documents
@@ -141,6 +141,12 @@ knowledge graph, and other AI applications, contact
 [Derwen, Inc.](https://derwen.ai/contact)
 
 
+## Links
+
+  - https://spacy.io/universe/project/spacy-pytextrank
+  - https://pypi.org/project/pytextrank/
+
+
 ## Attribution
 
 **PyTextRank** has an [MIT](https://spdx.org/licenses/MIT.html) license,
@@ -161,11 +167,9 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
 ## TODOs
 
-  - PR to propose adding PyTR to the spaCy Universe
-  - update the wiki for version 2.x
-  - include the unit tests
   - fix Sphinx errors, generate docs
   - build a conda package
+  - include more unit tests
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
   - generate a phrase graph, with entity linking to DBpedia, etc.
@@ -185,6 +189,8 @@ Many thanks to contributors:
 [@SaiThejeshwar](https://github.com/SaiThejeshwar),
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
-plus the support from [Derwen, Inc.](https://derwen.ai/)
+[@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
+encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
+plus general support from [Derwen, Inc.](https://derwen.ai/)
 
 [![thx noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
