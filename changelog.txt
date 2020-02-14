@@ -5,6 +5,7 @@
 2020-??-??
 
   * added PyTextRank to the spaCy uniVerse
+  * fixed README.md instructions to download `en_core_web_sm`
 
 
 ## 2.0.0

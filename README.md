@@ -192,6 +192,7 @@ Many thanks to contributors:
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
+[@jake-aft](https://github.com/@jake-aft),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
