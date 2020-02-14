@@ -18,7 +18,7 @@ in contrast to the more commonplace usage of
 These approaches can be used together in complementary ways to improve
 the results overall.
 The introduction of graph algorithms -- notably,
-[*eigenvalue centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
+[*eigenvector centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
 -- provides a more flexible and robust basis for integrating additional
 techniques that enhance the natural language work being performed.
 
