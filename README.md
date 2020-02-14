@@ -89,6 +89,7 @@ To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 
 ```
 pip install pytextrank
+python -m spacy download en_core_web_sm
 ```
 
 If you install directly from this Git repo, be sure to install the dependencies
@@ -96,6 +97,7 @@ as well:
 
 ```
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
 
 
