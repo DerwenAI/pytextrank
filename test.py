@@ -21,8 +21,8 @@ class TestRCGraph (unittest.TestCase):
         doc = self.nlp(text)
         phrases = [ p.text for p in doc._.phrases ]
 
-        print(f"\nUSING: |{text}|\n  =>{phrases}")
-        self.assertTrue("linear constraints" in phrases)
+        print("\nUSING: |{}|\n  =>{}".format(text, phrases))
+        self.assertTrue(any(map(lambda x: "constraints" in x, phrases)))
 
 
     def test_py35_dict_keyerror (self):
@@ -30,8 +30,8 @@ class TestRCGraph (unittest.TestCase):
         doc = self.nlp(text)
         phrases = [ p.text for p in doc._.phrases ]
 
-        print(f"\nUSING: |{text}|\n  =>{phrases}")
-        self.assertTrue("linear constraints" in phrases)
+        print("\nUSING: |{}|\n  =>{}".format(text, phrases))
+        self.assertTrue(any(map(lambda x: "constraints" in x, phrases)))
 
 
 if __name__ == "__main__":

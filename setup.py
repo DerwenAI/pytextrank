@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pytextrank",
-    version="2.0.0",
+    version="2.0.1",
     author="Paco Xander Nathan",
     author_email="ceteri@gmail.com",
     description="Python implementation of TextRank for phrase extraction and summarization of text documents",
@@ -17,7 +17,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         "Intended Audience :: Information Technology",
@@ -31,11 +31,12 @@ setuptools.setup(
     ],
     python_requires=">=3.5",
     install_requires=[
+          "coverage",
           "graphviz",
           "networkx",
           "spacy",
     ],
-    keywords="textrank, parsing, extractive summarization, natural language processing, nlp, knowledge graph, graph algorithms, text analytics",
+    keywords="textrank, spacy, phrase extraction, parsing, extractive summarization, natural language processing, nlp, knowledge graph, graph algorithms, text analytics",
     license="MIT",
     zip_safe=False,
 )

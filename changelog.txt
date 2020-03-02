@@ -2,8 +2,9 @@
 
 ## 2.0.1
 
-2020-03-??
+2020-03-02
 
+  * fix `KeyError` issue for pre Python 3.6
   * integrated codecov.io
   * added PyTextRank to the spaCy uniVerse
   * fixed README.md instructions to download `en_core_web_sm`
