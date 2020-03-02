@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from collections import defaultdict 
+from collections import defaultdict, OrderedDict
 from math import sqrt
 from operator import itemgetter
 from spacy.tokens import Doc
@@ -225,7 +225,7 @@ class TextRank:
         self.lemma_graph = nx.Graph()
         self.phrases = defaultdict(list)
         self.ranks = {}
-        self.seen_lemma = {}
+        self.seen_lemma = OrderedDict()
 
 
     def load_stopwords (self, path="stop.json"):
