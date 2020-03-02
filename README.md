@@ -148,7 +148,7 @@ knowledge graph, and other AI applications, contact
   - https://pypi.org/project/pytextrank/
 
 
-### Testing
+## Testing
 
 To run the unit tests:
 
