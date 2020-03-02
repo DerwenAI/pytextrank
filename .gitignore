@@ -3,6 +3,11 @@ graph.png
 venv/
 nohup.out
 
+# codecov.io
+.cc_token
+.coverage
+coverage.xml
+
 # docs -- in progress
 docs/
 

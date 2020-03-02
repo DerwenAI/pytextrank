@@ -8,6 +8,8 @@ used to:
   - infer links from unstructured text into structured data
   - run extractive summarization of text documents
 
+[![codecov](https://codecov.io/gh/DerwenAI/pytextrank/branch/master/docs/codecov_io.svg)](https://codecov.io/gh/DerwenAI/pytextrank)
+
 
 ## Background
 
@@ -149,6 +151,26 @@ knowledge graph, and other AI applications, contact
   - https://pypi.org/project/pytextrank/
 
 
+### Testing
+
+To run the unit tests:
+
+```
+coverage run -m unittest discover
+```
+
+To generate a coverage report and upload it to the `codecov.io`
+reporting site:
+
+```
+coverage report
+bash <(curl -s https://codecov.io/bash) -t @.cc_token
+```
+
+Test coverage reports can be viewed at
+<https://codecov.io/gh/DerwenAI/pytextrank>
+
+
 ## Attribution
 
 **PyTextRank** has an [MIT](https://spdx.org/licenses/MIT.html) license,
@@ -193,6 +215,7 @@ Many thanks to contributors:
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
 [@jake-aft](https://github.com/@jake-aft),
+[@junchen1992](https://github.com/@junchen1992),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
