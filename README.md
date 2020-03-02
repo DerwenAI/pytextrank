@@ -8,9 +8,6 @@ used to:
   - infer links from unstructured text into structured data
   - run extractive summarization of text documents
 
-[![codecov](https://github.com/DerwenAI/pytextrank/branch/master/docs/codecov_io.svg)](https://codecov.io/gh/DerwenAI/pytextrank)
-
-
 ## Background
 
 Note that **PyTextRank** is intended to provide support for
