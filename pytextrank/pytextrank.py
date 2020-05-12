@@ -18,6 +18,7 @@ import sys
 import time
 import unicodedata
 
+
 ######################################################################
 ## utility functions
 ######################################################################
@@ -27,7 +28,7 @@ PAT_REPLIED = re.compile("\nOn.*\d+.*\n?wrote\:\n+\>")
 PAT_UNSUBSC = re.compile("\n\-+\nTo unsubscribe,.*\nFor additional commands,.*")
 
 
-def split_grafs(lines):
+def split_grafs (lines):
     """
     segment raw text, given as a list of lines, into paragraphs
     """
@@ -47,7 +48,7 @@ def split_grafs(lines):
         yield "\n".join(graf)
 
 
-def filter_quotes(text, is_email=True):
+def filter_quotes (text, is_email=True):
     """
     filter the quoted text out of a message
     """
@@ -86,7 +87,7 @@ def filter_quotes(text, is_email=True):
     return list(split_grafs(lines))
 
 
-def maniacal_scrubber(text):
+def maniacal_scrubber (text):
     """
     it scrubs the garble from its stream...
     or it gets the debugger again
@@ -111,7 +112,7 @@ def maniacal_scrubber(text):
     return x
 
 
-def default_scrubber(text):
+def default_scrubber (text):
     """
     remove spurious punctuation (for English)
     """
@@ -127,31 +128,35 @@ class CollectedPhrase:
     represents one phrase during the collection process
     """
 
-    def __init__(self, chunk, scrubber):
+    def __init__ (self, chunk, scrubber):
         self.sq_sum_rank = 0.0
         self.non_lemma = 0
-
+        
         self.chunk = chunk
         self.text = scrubber(chunk.text)
 
-    def __repr__(self):
+
+    def __repr__ (self):
         return "{:.4f} ({},{}) {} {}".format(
             self.rank, self.chunk.start, self.chunk.end, self.text, self.key
         )
 
-    def range(self):
+
+    def range (self):
         """
         generate the index range for the span of tokens in this phrase
         """
         return range(self.chunk.start, self.chunk.end)
 
-    def set_key(self, compound_key):
+
+    def set_key (self, compound_key):
         """
         create a unique key for the the phrase based on its lemma components
         """
         self.key = tuple(sorted(list(compound_key)))
 
-    def calc_rank(self):
+
+    def calc_rank (self):
         """
         since noun chunking is greedy, we normalize the rank values
         using a point estimate based on the number of non-lemma
@@ -171,13 +176,14 @@ class Phrase:
     represents one extracted phrase
     """
 
-    def __init__(self, text, rank, count, phrase_list):
+    def __init__ (self, text, rank, count, phrase_list):
         self.text = text
         self.rank = rank
         self.count = count
         self.chunks = [p.chunk for p in phrase_list]
 
-    def __repr__(self):
+
+    def __repr__ (self):
         return self.text
 
 
@@ -189,8 +195,9 @@ class TextRank:
     _EDGE_WEIGHT = 1.0
     _POS_KEPT = ["ADJ", "NOUN", "PROPN", "VERB"]
     _TOKEN_LOOKBACK = 3
+    
 
-    def __init__(
+    def __init__ (
             self,
             edge_weight=_EDGE_WEIGHT,
             logger=None,
@@ -208,7 +215,8 @@ class TextRank:
         self.doc = None
         self.reset()
 
-    def reset(self):
+
+    def reset (self):
         """
         initialize the data structures needed for extracting phrases
         removing any state
@@ -219,7 +227,8 @@ class TextRank:
         self.ranks = {}
         self.seen_lemma = OrderedDict()
 
-    def load_stopwords(self, path="stop.json"):
+
+    def load_stopwords (self, path="stop.json"):
         """
         load a list of "stop words" that get ignored when constructing
         the lemma graph -- NB: be cautious when using this feature
@@ -248,20 +257,22 @@ class TextRank:
         except FileNotFoundError:
             pass
 
-    def increment_edge(self, node0, node1):
+
+    def increment_edge (self, node0, node1):
         """
         increment the weight for an edge between the two given nodes,
         creating the edge first if needed
         """
         if self.logger:
             self.logger.debug("link {} {}".format(node0, node1))
-
+    
         if self.lemma_graph.has_edge(node0, node1):
             self.lemma_graph[node0][node1]["weight"] += self.edge_weight
         else:
             self.lemma_graph.add_edge(node0, node1, weight=self.edge_weight)
 
-    def link_sentence(self, sent):
+
+    def link_sentence (self, sent):
         """
         link nodes and edges into the lemma graph for one parsed sentence
         """
@@ -298,13 +309,13 @@ class TextRank:
                     self.logger.debug("range {}".format(
                         list(range(len(visited_tokens) - 1, -1, -1))
                     ))
-
+            
                 for prev_token in range(len(visited_tokens) - 1, -1, -1):
                     if self.logger:
                         self.logger.debug("prev_tok {} {}".format(
                             prev_token, (token.i - visited_tokens[prev_token])
                         ))
-
+                
                     if (token.i - visited_tokens[prev_token]) <= self.token_lookback:
                         self.increment_edge(node_id, visited_nodes[prev_token])
                     else:
@@ -318,7 +329,8 @@ class TextRank:
                 visited_tokens.append(token.i)
                 visited_nodes.append(node_id)
 
-    def collect_phrases(self, chunk):
+
+    def collect_phrases (self, chunk):
         """
         collect instances of phrases from the lemma graph
         based on the given chunk
@@ -329,20 +341,20 @@ class TextRank:
         for i in phrase.range():
             token = self.doc[i]
             key = (token.lemma_, token.pos_)
-
+        
             if key in self.seen_lemma:
                 node_id = list(self.seen_lemma.keys()).index(key)
                 rank = self.ranks[node_id]
                 phrase.sq_sum_rank += rank
                 compound_key.add(key)
-
+        
                 if self.logger:
                     self.logger.debug(" {} {} {} {}".format(
                         token.lemma_, token.pos_, node_id, rank
                     ))
             else:
                 phrase.non_lemma += 1
-
+    
         phrase.set_key(compound_key)
         phrase.calc_rank()
 
@@ -351,7 +363,8 @@ class TextRank:
         if self.logger:
             self.logger.debug(phrase)
 
-    def calc_textrank(self):
+
+    def calc_textrank (self):
         """
         iterate through each sentence in the doc, constructing a lemma graph
         then returning the top-ranked phrases
@@ -404,7 +417,8 @@ class TextRank:
 
         return phrase_list
 
-    def write_dot(self, path="graph.dot"):
+
+    def write_dot (self, path="graph.dot"):
         """
         output the lemma graph in Dot file format
         """
@@ -423,9 +437,10 @@ class TextRank:
         with open(path, "w") as f:
             f.write(dot.source)
 
-    def summary(self, limit_phrases=10, limit_sentences=4):
+
+    def summary (self, limit_phrases=10, limit_sentences=4):
         """
-        run extractive summarization, based on vector distance
+        run extractive summarization, based on vector distance 
         per sentence from the top-ranked phrases
         """
         unit_vector = []
@@ -433,7 +448,7 @@ class TextRank:
         # construct a list of sentence boundaries with a phrase set
         # for each (initialized to empty)
 
-        sent_bounds = [[s.start, s.end, set([])] for s in self.doc.sents]
+        sent_bounds = [ [s.start, s.end, set([])] for s in self.doc.sents ]
 
         # iterate through the top-ranked phrases, added them to the
         # phrase vector for each sentence
@@ -447,7 +462,7 @@ class TextRank:
                 self.logger.debug(
                     "{} {} {}".format(phrase_id, p.text, p.rank)
                 )
-
+    
             for chunk in p.chunks:
                 for sent_start, sent_end, sent_vector in sent_bounds:
                     if chunk.start >= sent_start and chunk.start <= sent_end:
@@ -456,7 +471,7 @@ class TextRank:
                         if self.logger:
                             self.logger.debug(
                                 " {} {} {} {}".format(sent_start, chunk.start, chunk.end, sent_end)
-                            )
+                                )
 
                         break
 
@@ -469,7 +484,7 @@ class TextRank:
         # the requested limit
 
         sum_ranks = sum(unit_vector)
-        unit_vector = [rank / sum_ranks for rank in unit_vector]
+        unit_vector = [ rank/sum_ranks for rank in unit_vector ]
 
         # iterate through each sentence, calculating its euclidean
         # distance from the unit vector
@@ -479,10 +494,10 @@ class TextRank:
 
         for sent_start, sent_end, sent_vector in sent_bounds:
             sum_sq = 0.0
-
+    
             for phrase_id in range(len(unit_vector)):
                 if phrase_id not in sent_vector:
-                    sum_sq += unit_vector[phrase_id] ** 2.0
+                    sum_sq += unit_vector[phrase_id]**2.0
 
             sent_rank[sent_id] = sqrt(sum_sq)
             sent_id += 1
@@ -507,7 +522,8 @@ class TextRank:
             if num_sent == limit_sentences:
                 break
 
-    def PipelineComponent(self, doc):
+
+    def PipelineComponent (self, doc):
         """
         define a custom pipeline component for spaCy and extend the
         Doc class to add TextRank

@@ -33,7 +33,7 @@ class TestRCGraph (unittest.TestCase):
         print("\nUSING: |{}|\n  =>{}".format(text, phrases))
         self.assertTrue(any(map(lambda x: "constraints" in x, phrases)))
 
-    def test_enable_disable_pipeline(self):
+    def test_enable_disable_pipeline (self):
         text = "linear constraints over the set of natural numbers"
         doc = self.nlp(text)
         with self.nlp.disable_pipes("textrank"):
