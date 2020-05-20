@@ -79,7 +79,7 @@ Arguably, having alternatives such as this allow for cost trade-offs.
 
 Prerequisites:
 
-- [Python 3.x](https://www.python.org/downloads/)
+- [Python 3.5+](https://www.python.org/downloads/)
 - [spaCy](https://spacy.io/docs/usage/)
 - [NetworkX](http://networkx.readthedocs.io/)
 - [GraphViz](https://graphviz.readthedocs.io/)
@@ -211,8 +211,9 @@ Many thanks to contributors:
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
-[@jake-aft](https://github.com/@jake-aft),
-[@junchen1992](https://github.com/@junchen1992),
+[@jake-aft](https://github.com/jake-aft),
+[@junchen1992](https://github.com/junchen1992),
+[@Ankush-Chander](https://github.com/Ankush-Chander),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 

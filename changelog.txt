@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 2.0.2
+
+2020-05-20
+
+  * fixed default value of `._.phrases` to allow for disabling PTR in a pipeline
+
+
 ## 2.0.1
 
 2020-03-02
