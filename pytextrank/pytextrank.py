@@ -529,7 +529,7 @@ class TextRank:
         Doc class to add TextRank
         """
         self.doc = doc
-        Doc.set_extension("phrases", force=True, default=self.calc_textrank())
+        Doc.set_extension("phrases", force=True, default=[])
         Doc.set_extension("textrank", force=True, default=self)
-
+        doc._.phrases = self.calc_textrank()
         return doc
