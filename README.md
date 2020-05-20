@@ -211,7 +211,7 @@ Many thanks to contributors:
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
-[@jake-aft](https://github.com/@ake-aft),
+[@jake-aft](https://github.com/jake-aft),
 [@junchen1992](https://github.com/junchen1992),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
