@@ -173,8 +173,8 @@ Test coverage reports can be viewed at
 **PyTextRank** has an [MIT](https://spdx.org/licenses/MIT.html) license,
 which is succinct and simplifies use in commercial applications.
 
-Please use the following BibTeX entry for citing **PyTextRank** in
-publications:
+Please use the following BibTeX entry for citing **PyTextRank** if you use it in your research or software.
+Citations are helpful for the continued development and maintenance of the library.
 
 ```
 @Misc{PyTextRank,
