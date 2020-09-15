@@ -1,5 +1,13 @@
 # PyTextRank changelog
 
+## 2.0.3
+
+2020-09-15
+
+  * try-catch `ZeroDivisionError` in summary method -- kudos @shyamcody
+  * tested with updated dependencies: `spaCy` 2.3.x and `NetworkX` 2.5
+
+
 ## 2.0.2
 
 2020-05-20
@@ -12,7 +20,7 @@
 2020-03-02
 
   * fix `KeyError` issue for pre Python 3.6
-  * integrated codecov.io
+  * integrated `codecov.io`
   * added PyTextRank to the spaCy uniVerse
   * fixed README.md instructions to download `en_core_web_sm`
 
@@ -21,7 +29,7 @@
 
 2019-11-05
 
-  * refactored library to run as a spaCy extension
+  * refactored library to run as a `spaCy` extension
   * supports multiple languages
   * significantly faster, with less memory required
   * better extraction of top-ranked phrases
@@ -41,31 +49,31 @@
 
 2019-11-01
 
- * updated to fix for current versions of `spaCy` and `NetworkX` -- kudos @dimmu
- * removed deprecated argument -- kudos @laxatives
+  * updated to fix for current versions of `spaCy` and `NetworkX` -- kudos @dimmu
+  * removed deprecated argument -- kudos @laxatives
 
 
 ## 1.1.1
 
 2017-09-15
 
-  * patch disables use of NER in spaCy until an intermittent bug is resolved.
-  * will probably replace named tuples with spaCy spans instead.
+  * patch disables use of NER in `spaCy` until an intermittent bug is resolved.
+  * will probably replace named tuples with `spaCy` spans instead.
 
 
 ## 1.1.0
 
 2017-06-07
 
- * replaced use of TextBlob with spaCy
- * updated other Py dependencies
- * better handling for UTF-8
+  * replaced use of `TextBlob` with `spaCy`
+  * updated other Py dependencies
+  * better handling for UTF-8
 
 
 ## 1.0.1
 
 2017-04-30
 
- * updated Jupyter notebook example -- kudos @kjam
- * better install/import for aptagger
- * comparing spaCy performance with TextBlob
+  * updated Jupyter notebook example -- kudos @kjam
+  * better install/import for `aptagger`
+  * comparing `spaCy` performance with `TextBlob`

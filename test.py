@@ -48,9 +48,6 @@ class TestRCGraph (unittest.TestCase):
         doc = self.nlp(text)
         phrases = [ p.text for p in doc._.phrases ]
 
-        for k, p in doc._.textrank.phrases.items():
-            print(k, p)
-
         print("\nUSING: |{}|\n  =>{}".format(text, phrases))
         self.assertTrue(len(doc._.phrases) >= 0)
 
