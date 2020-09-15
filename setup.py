@@ -8,7 +8,7 @@ setuptools.setup(
     version="2.0.3",
     author="Paco Xander Nathan",
     author_email="paco@derwen.ai",
-    description="Python implementation of TextRank for phrase extraction and ligthweight summarization of text documents",
+    description="Python implementation of TextRank for phrase extraction and lightweight summarization of text documents",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="http://github.com/DerwenAI/pytextrank",
