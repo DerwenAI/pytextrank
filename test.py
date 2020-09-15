@@ -43,5 +43,17 @@ class TestRCGraph (unittest.TestCase):
             assert len(doc._.phrases) == 0
 
 
+    def test_noun_chunk_fails (self):
+        text = "everything you need to know about student loan interest rates variable and fixed rates capitalization amortization student loan refinancing and more."
+        doc = self.nlp(text)
+        phrases = [ p.text for p in doc._.phrases ]
+
+        for k, p in doc._.textrank.phrases.items():
+            print(k, p)
+
+        print("\nUSING: |{}|\n  =>{}".format(text, phrases))
+        self.assertTrue(len(doc._.phrases) >= 0)
+
+
 if __name__ == "__main__":
     unittest.main()
