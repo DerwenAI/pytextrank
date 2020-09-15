@@ -100,9 +100,11 @@ def maniacal_scrubber (text):
 
     x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("utf-8"))
 
-    # some web content returns "not string" ?? ostensibly no longer
-    # possibl in Py 3.x but crazy "mixed modes" of character encodings
-    # have been found in the wild -- YMMV
+    # some web content returns "not string" ??
+    #
+    # ostensibly that's no longer possible in Py 3.x even so some
+    # crazy-making "mixed modes" of character encodings have been
+    # found in the wild -- YMMV
 
     try:
         assert type(x).__name__ == "str"
@@ -290,7 +292,7 @@ class TextRank:
                     continue
 
                 # ...otherwise proceed
-                key = (token.lemma_, token.pos_)
+                key = (token.lemma_, token.pos_,)
 
                 if key not in self.seen_lemma:
                     self.seen_lemma[key] = set([token.i])
@@ -378,9 +380,9 @@ class TextRank:
         if self.logger:
             self.logger.debug(self.seen_lemma)
 
-        # to run the algorithm, we use PageRank – i.e., approximating
-        # eigenvalue centrality – to calculate ranks for each of the
-        # nodes in the lemma graph
+        # to run the algorithm, we use the NetworkX implementation of
+        # PageRank – i.e., approximating eigenvalue centrality – to
+        # calculate ranks for each of the nodes in the lemma graph
 
         self.ranks = nx.pagerank(self.lemma_graph)
 
@@ -392,6 +394,24 @@ class TextRank:
 
         for ent in self.doc.ents:
             self.collect_phrases(ent)
+
+        # TODO:
+        # there are edge cases where the built-in noun chunking in
+        # spaCy fails to extract much, for example:
+
+        # > "everything you need to know about student loan interest rates variable and fixed rates capitalization amortization student loan refinancing and more."
+
+        # we should test `len(self.phrases.keys())` vs. a brute-force
+        # noun chunking approach, then add the brute-force override to
+        # `self.phrases`
+
+        #for k, p in self.phrases.items():
+        #    print(" >>", k, p)
+
+        #for key, lemma in self.seen_lemma.items():
+        #    node_id = list(self.seen_lemma.keys()).index(key)
+        #    print(node_id, key, lemma, self.ranks[node_id])
+
 
         # since noun chunks can be expressed in different ways (e.g., may
         # have articles or prepositions), we need to find a minimum span
@@ -484,7 +504,11 @@ class TextRank:
         # the requested limit
 
         sum_ranks = sum(unit_vector)
-        unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+
+        try:
+            unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+        except ZeroDivisionError:
+            unit_vector = (0.0,) * len(unit_vector)
 
         # iterate through each sentence, calculating its euclidean
         # distance from the unit vector

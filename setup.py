@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pytextrank",
-    version="2.0.2",
+    version="2.0.3",
     author="Paco Xander Nathan",
     author_email="paco@derwen.ai",
-    description="Python implementation of TextRank for phrase extraction and summarization of text documents",
+    description="Python implementation of TextRank for phrase extraction and lightweight summarization of text documents",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="http://github.com/DerwenAI/pytextrank",
@@ -36,7 +36,7 @@ setuptools.setup(
           "networkx",
           "spacy",
     ],
-    keywords="textrank, spacy, phrase extraction, parsing, extractive summarization, natural language processing, nlp, knowledge graph, graph algorithms, text analytics",
+    keywords="textrank, spacy, phrase extraction, parsing, natural language processing, nlp, knowledge graph, graph algorithms, text analytics, extractive summarization",
     license="MIT",
     zip_safe=False,
 )
