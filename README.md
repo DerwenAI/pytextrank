@@ -5,8 +5,8 @@
 used to:
 
   - extract the top-ranked phrases from text documents
-  - infer links from unstructured text into structured data
-  - run extractive summarization of text documents
+  - run low-cost extractive summarization of text documents
+  - help infer links from unstructured text into structured data
 
 ## Background
 
@@ -198,7 +198,7 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
 ## Kudos
 
-Many thanks to contributors:
+Many thanks to our contributors:
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl),
@@ -214,6 +214,7 @@ Many thanks to contributors:
 [@jake-aft](https://github.com/jake-aft),
 [@junchen1992](https://github.com/junchen1992),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
+[@shyamcody](https://github.com/shyamcody),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
