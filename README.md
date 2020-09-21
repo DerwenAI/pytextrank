@@ -10,16 +10,19 @@ used to:
 
 ## Background
 
-Note that **PyTextRank** is intended to provide support for
+One of the goals for **PyTextRank** is to provide support (eventually) for
 [*entity linking*](http://nlpprogress.com/english/entity_linking.html),
 in contrast to the more commonplace usage of
 [*named entity recognition*](http://nlpprogress.com/english/named_entity_recognition.html).
 These approaches can be used together in complementary ways to improve
 the results overall.
+
 The introduction of graph algorithms -- notably,
 [*eigenvector centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
 -- provides a more flexible and robust basis for integrating additional
 techniques that enhance the natural language work being performed.
+The entity linking aspects here are still a *work-in-progress* scheduled 
+for a later release.
 
 Internally **PyTextRank** constructs a *lemma graph* to represent links
 among the candidate phrases (e.g., unrecognized entities) and their
@@ -67,7 +70,7 @@ described in the paper:
 This implementation was inspired by the
 [Williams 2016](http://mike.place/2016/summarization/)
 talk on text summarization.
-Note that while there are better approaches for
+Note that while **much better** approaches exit for
 [*summarizing text*](http://nlpprogress.com/english/summarization.html),
 questions linger about some of the top contenders -- see:
 [1](https://arxiv.org/abs/1909.03004),
@@ -188,12 +191,12 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 
 ## TODOs
 
-  - fix Sphinx errors, generate docs
   - build a conda package
-  - include more unit tests
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
-  - generate a phrase graph, with entity linking to DBpedia, etc.
+  - generate a phrase graph, with entity linking into Wikidata, etc.
+  - include more unit tests
+  - fix Sphinx errors, generate docs
 
 
 ## Kudos
@@ -215,6 +218,7 @@ Many thanks to our contributors:
 [@junchen1992](https://github.com/junchen1992),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@shyamcody](https://github.com/shyamcody),
+[@chikubee](https://github.com/chikubee),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
