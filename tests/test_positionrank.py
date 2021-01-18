@@ -1,0 +1,25 @@
+from pytextrank.positionrank import PositionRank
+from pytextrank.base import BaseTextRank
+
+
+def test_base_text_rank(doc):
+    # given
+    position_rank = PositionRank()
+    base_text_rank = BaseTextRank()
+
+    # when
+    processed_doc = position_rank(doc)
+    phrases = processed_doc._.phrases
+    comparison_doc = base_text_rank(doc)
+    comparison_phrases = comparison_doc._.phrases
+
+    # then
+    assert set(p.rank for p in phrases) != set(p.rank for p in comparison_phrases)
+    # the test article mentions Chelsea at the begginning of the article
+    # while it mentions Shanghai Shenhua annecdotally later in the article
+    # with normal TextRank, Shanghai Shenhua is part of top 10 phrases and Chelsea is not
+    # with PositionRank, the situation is the opposite, which is desired for a piece of news.
+    assert "Chelsea" in [p.text for p in phrases[:10]]
+    assert "Chelsea" not in [p.text for p in comparison_phrases[:10]]
+    assert 'Shanghai Shenhua' not in [p.text for p in phrases[:10]]
+    assert 'Shanghai Shenhua' in [p.text for p in comparison_phrases[:10]]
