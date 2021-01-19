@@ -1,8 +1,12 @@
-from pytextrank.positionrank import PositionRank
+"""Unit tests for PositionRank."""
+from spacy.tokens import Doc
+
 from pytextrank.base import BaseTextRank
+from pytextrank.positionrank import PositionRank
 
 
-def test_base_text_rank(doc):
+def test_base_text_rank(doc: Doc):
+    """It ranks keywords that appear early in the document higher than TextRank."""
     # given
     position_rank = PositionRank()
     base_text_rank = BaseTextRank()
@@ -21,5 +25,5 @@ def test_base_text_rank(doc):
     # with PositionRank, the situation is the opposite, which is desired for a piece of news.
     assert "Chelsea" in [p.text for p in phrases[:10]]
     assert "Chelsea" not in [p.text for p in comparison_phrases[:10]]
-    assert 'Shanghai Shenhua' not in [p.text for p in phrases[:10]]
-    assert 'Shanghai Shenhua' in [p.text for p in comparison_phrases[:10]]
+    assert "Shanghai Shenhua" not in [p.text for p in phrases[:10]]
+    assert "Shanghai Shenhua" in [p.text for p in comparison_phrases[:10]]

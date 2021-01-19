@@ -1,23 +1,29 @@
-"""Implementation of Florescu, et al. (2017) as a spaCy pipeline component."""
-import operator
-from typing import Optional, Dict, List, Tuple
+"""Implements PositionRank."""
+from typing import Dict, List, Optional, Tuple
 
-from .base import BaseTextRank, groupby_apply, Node
+from .base import BaseTextRank, Node, groupby_apply
 
 
 class PositionRank(BaseTextRank):
+    """Implements PositionRank by Florescu, et al. (2017) as a spaCy pipeline component."""
+
     def get_personalization(self) -> Optional[Dict[Node, float]]:
-        """
-        Specifically, we propose to assign a higher probability to a word
-        found on the 2nd position as compared with a word found on the
-        50th position in the same document. The weight of each candidate
-        word is equal to its inverse position in the document.
-        If the same word appears multiple times in the target document,
-        then we sum all its position weights.
-        For example, a word v_i occurring in the following positions:
-        2nd, 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8
-        The weights of words are normalized before they are used in the
-        position-biased PageRank.
+        """Get node weights for personalised PageRank.
+
+        Returns:
+            Biased restart probabilities for PageRank.
+
+        Reference:
+            > Specifically, we propose to assign a higher probability to a word
+            found on the 2nd position as compared with a word found on the
+            50th position in the same document. The weight of each candidate
+            word is equal to its inverse position in the document.
+            If the same word appears multiple times in the target document,
+            then we sum all its position weights.
+            For example, a word v_i occurring in the following positions:
+            2nd, 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8
+            The weights of words are normalized before they are used in the
+            position-biased PageRank.
         """
         weighted_tokens: List[Tuple[str, float]] = [
             (tok, 1 / (i + 1))

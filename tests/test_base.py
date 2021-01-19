@@ -1,7 +1,11 @@
+"""Unit tests for BaseTextRank."""
+from spacy.tokens import Doc
+
 from pytextrank.base import BaseTextRank
 
 
-def test_base_text_rank(doc):
+def test_base_text_rank(doc: Doc):
+    """It ranks unique keywords in a document by decreasing centrality."""
     # given
     base_text_rank = BaseTextRank()
 
