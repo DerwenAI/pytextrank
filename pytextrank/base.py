@@ -33,7 +33,7 @@ class Phrase:
     text: str
     rank: float
     count: int
-    phrase_list: List[Span]
+    chunks: List[Span]
 
 
 Node = Tuple[str, str]  # (lemma, pos)
@@ -177,7 +177,7 @@ class BaseTextRank:
                 text=p[0],
                 rank=max(rank for rank, span in p[1]),
                 count=len(p[1]),
-                phrase_list=list(span for rank, span in p[1]),
+                chunks=list(span for rank, span in p[1]),
             )
             for p in phrases
         ]

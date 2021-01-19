@@ -47,6 +47,9 @@ class PositionRank(BaseTextRank):
         }
 
         weighted_nodes = {
+            # the authors assign higher probability to a word
+            # but our lemma graph vertices are (word, pos) tuples
+            # so we map each word weight to all vertices containing that word
             (token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
             for token in self.doc
             if token.pos_ in self.pos_kept
