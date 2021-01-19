@@ -1,11 +1,18 @@
 """Shared ficture functions."""
 import pytest
 import spacy
+from spacy.language import Language
 from spacy.tokens import Doc
 
 
 @pytest.fixture(scope="session")
-def doc() -> Doc:
+def nlp() -> Language:
+    nlp = spacy.load("en_core_web_sm")
+    return nlp
+
+
+@pytest.fixture(scope="session")
+def doc(nlp) -> Doc:
     """Doc shared ficture.
 
     Returns:
@@ -27,6 +34,5 @@ def doc() -> Doc:
     Their draw against Leicester on Saturday means they have won just four of the last
     13 Premier League matches.
     """
-    nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
     return doc
