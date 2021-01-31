@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pytextrank",
-    version="2.0.3",
+    version="2.1.0",
     author="Paco Xander Nathan",
     author_email="paco@derwen.ai",
     description="Python implementation of TextRank for phrase extraction and lightweight summarization of text documents",
