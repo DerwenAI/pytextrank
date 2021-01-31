@@ -458,7 +458,7 @@ class TextRank:
             f.write(dot.source)
 
 
-    def summary (self, limit_phrases=10, limit_sentences=4):
+    def summary (self, limit_phrases=10, limit_sentences=4, preserve_order=False):
         """
         run extractive summarization, based on vector distance 
         per sentence from the top-ranked phrases
@@ -535,16 +535,19 @@ class TextRank:
             sent_text[sent_id] = sent
             sent_id += 1
 
+        # build a list of sentence indices, sorted according to their
+        # corresponding rank
+        top_sent_ids = list(range(len(sent_rank)))
+        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
+        # truncate to the given limit
+        top_sent_ids = top_sent_ids[:limit_sentences]
+        # sort in ascending order of index to preserve the order in which the
+        # sentences appear in the original text
+        if preserve_order:
+            top_sent_ids.sort()
         # yield results, up to the limit requested
-
-        num_sent = 0
-
-        for sent_id, rank in sorted(sent_rank.items(), key=itemgetter(1)):
+        for sent_id in top_sent_ids:
             yield sent_text[sent_id]
-            num_sent += 1
-
-            if num_sent == limit_sentences:
-                break
 
 
     def PipelineComponent (self, doc):
