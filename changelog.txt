@@ -6,6 +6,8 @@
 
   * add `PositionRank` by @louisguitton (many thanks!)
   * fixes chunk in `explain_summ.ipynb` by @anna-droid-beep
+  * add option `preserve_order` in TextRank.summary by @kavorite
+  * tested with `spaCy` 2.3.5
 
 
 ## 2.0.3

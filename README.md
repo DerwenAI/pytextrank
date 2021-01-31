@@ -216,6 +216,7 @@ Citations are helpful for the continued development and maintenance of this libr
 Many thanks to our contributors:
 [@louisguitton](https://github.com/louisguitton),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
+[@kavorite](https://github.com/kavorite),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl),
