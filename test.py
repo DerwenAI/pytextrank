@@ -8,7 +8,7 @@ import unittest
 import warnings
 
 
-class TestRCGraph (unittest.TestCase):
+class TestPTR (unittest.TestCase):
     def setUp (self):
         """set up a spaCy pipeline"""
         self.nlp = spacy.load("en_core_web_sm")

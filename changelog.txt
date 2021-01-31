@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 2.1.0
+
+2021-01-31
+
+  * `PositionRank` by @louisguitton (many thanks!)
+
+
 ## 2.0.3
 
 2020-09-15

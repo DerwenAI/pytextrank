@@ -8,6 +8,7 @@ used to:
   - run low-cost extractive summarization of text documents
   - help infer links from unstructured text into structured data
 
+
 ## Background
 
 One of the goals for **PyTextRank** is to provide support (eventually) for
@@ -171,27 +172,38 @@ Test coverage reports can be viewed at
 <https://codecov.io/gh/DerwenAI/pytextrank>
 
 
+## License and Copyright
+
+Source code for **PyTextRank** plus its logo, documentation, and examples
+have an [MIT license](https://spdx.org/licenses/MIT.html) which is
+succinct and simplifies use in commercial applications.
+
+All materials herein are Copyright &copy; 2016-2021 Derwen, Inc.
+
+
 ## Attribution
 
-**PyTextRank** has an [MIT](https://spdx.org/licenses/MIT.html) license,
-which is succinct and simplifies use in commercial applications.
-
-Please use the following BibTeX entry for citing **PyTextRank** if you use it in your research or software.
-Citations are helpful for the continued development and maintenance of the library.
+Please use the following BibTeX entry for citing **PyTextRank** if you 
+use it in your research or software.
+Citations are helpful for the continued development and maintenance of this library.
 
 ```
-@Misc{PyTextRank,
-author = {Nathan, Paco},
-title = {PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents},
-    howpublished = {\url{https://github.com/DerwenAI/pytextrank/}},
-    year = {2016}
-    }
+@software{PyTextRank,
+  author = {Paco Nathan},
+  title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
+  year = 2016,
+  publisher = {Derwen},
+  url = {https://github.com/DerwenAI/pytextrank}
+}
 ```
 
 
 ## TODOs
 
-  - build a conda package
+  - [`kglab`](https://github.com/DerwenAI/kglab) integration
+  - generate MkDocs
+  - MyPy and PyLint coverage
+  - include more unit tests
   - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
   - generate a phrase graph, with entity linking into Wikidata, etc.
@@ -202,6 +214,7 @@ title = {PyTextRank, a Python implementation of TextRank for phrase extraction a
 ## Kudos
 
 Many thanks to our contributors:
+[@louisguitton](https://github.com/louisguitton),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl),
