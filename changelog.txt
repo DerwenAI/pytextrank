@@ -5,6 +5,8 @@
 2021-02-??
 
   * support for `spaCy` 3.0.x
+  * migrated all unit tests to `pytest`
+  * removed use of `logger` for debugging, introducing `icecream` instead
 
 
 ## 2.1.0

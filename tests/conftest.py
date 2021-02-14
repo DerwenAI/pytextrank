@@ -6,14 +6,14 @@ from spacy.tokens import Doc
 
 
 @pytest.fixture(scope="session")
-def nlp() -> Language:
+def nlp () -> Language:
     """Language shared fixture."""
     nlp = spacy.load("en_core_web_sm")
     return nlp
 
 
 @pytest.fixture(scope="session")
-def doc(nlp: Language) -> Doc:
+def doc (nlp: Language) -> Doc:
     """Doc shared fixture.
 
     Returns:

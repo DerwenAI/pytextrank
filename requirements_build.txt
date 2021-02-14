@@ -1,0 +1,12 @@
+coverage
+flask
+mkdocs-git-revision-date-plugin
+mkdocs-material
+mypy
+nbconvert
+notebook
+pylint
+pytest
+pymdown-extensions
+selenium
+twine

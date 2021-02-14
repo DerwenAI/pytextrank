@@ -83,7 +83,7 @@ Arguably, having alternatives such as this allow for cost trade-offs.
 
 Prerequisites:
 
-- [Python 3.5+](https://www.python.org/downloads/)
+- [Python 3.7+](https://www.python.org/downloads/)
 - [spaCy 3.0+](https://spacy.io/docs/usage/)
 - [NetworkX](http://networkx.readthedocs.io/)
 - [GraphViz](https://graphviz.readthedocs.io/)
@@ -156,7 +156,7 @@ knowledge graph, and other AI applications, contact
 To run the unit tests:
 
 ```
-coverage run -m unittest discover
+coverage run -m pytest tests
 ```
 
 To generate a coverage report and upload it to the `codecov.io`

@@ -1,29 +1,40 @@
-"""Implements PositionRank."""
-from typing import Dict, List, Optional, Tuple
+"""
+Implements PositionRank.
+"""
 
-from .base import BaseTextRank, Node, groupby_apply
+from .base import BaseTextRank, Node
+from .util import groupby_apply
+
+from typing import Dict, List, Optional, Tuple
 
 
 class PositionRank (BaseTextRank):
-    """Implements PositionRank by Florescu, et al. (2017) as a spaCy pipeline component."""
+    """
+Implements the PositionRank algorithm by Florescu, et al. (2017) as a
+spaCy pipeline component.
+    """
 
-    def get_personalization (self) -> Optional[Dict[Node, float]]:
-        """Get node weights for personalised PageRank.
+    def get_personalization (
+        self
+        ) -> Optional[Dict[Node, float]]:
+        """
+Get the node weights for implementing a personalised PageRank.
+From the cited reference:
+            
+> Specifically, we propose to assign a higher probability to a word
+> found on the 2nd position as compared with a word found on the 50th
+> position in the same document. The weight of each candidate word is
+> equal to its inverse position in the document.  If the same word
+> appears multiple times in the target document, then we sum all its
+> position weights.
 
-        Returns:
-            Biased restart probabilities for PageRank.
+> For example, a word v_i occurring in the following positions: 2nd,
+> 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8 
+> The weights of words are normalized before they are used in the
+> position-biased PageRank.
 
-        Reference:
-            > Specifically, we propose to assign a higher probability to a word
-            found on the 2nd position as compared with a word found on the
-            50th position in the same document. The weight of each candidate
-            word is equal to its inverse position in the document.
-            If the same word appears multiple times in the target document,
-            then we sum all its position weights.
-            For example, a word v_i occurring in the following positions:
-            2nd, 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8
-            The weights of words are normalized before they are used in the
-            position-biased PageRank.
+    returns:
+Biased restart probabilities for PageRank.
         """
         weighted_tokens: List[Tuple[str, float]] = [
             (tok, 1 / (i + 1))
@@ -36,7 +47,9 @@ class PositionRank (BaseTextRank):
         applyfunc = lambda g: sum(w for text, w in g)
 
         accumulated_weighted_tokens: List[Tuple[str, float]] = groupby_apply(
-            weighted_tokens, keyfunc, applyfunc
+            weighted_tokens,
+            keyfunc,
+            applyfunc,
         )
 
         accumulated_weighted_tokens = sorted(

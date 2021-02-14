@@ -1,11 +1,12 @@
 """Unit tests for PositionRank."""
 from spacy.tokens import Doc
 
+import sys ; sys.path.insert(0, "../pytextrank")
 from pytextrank.base import BaseTextRank
 from pytextrank.positionrank import PositionRank
 
 
-def test_position_rank(doc: Doc):
+def test_position_rank (doc: Doc):
     """It ranks keywords that appear early in the document higher than TextRank."""
     # given
     position_rank = PositionRank()
