@@ -5,7 +5,8 @@
 2021-02-14
 
   * **THIS WILL BREAK THINGS!!!**
-  * support for `spaCy` 3.0.x
+  * support for `spaCy` 3.0.x; kudos @Lord-V15
+  * full integration of `PositionRank`
   * migrated all unit tests to `pytest`
   * removed use of `logger` for debugging, introducing `icecream` instead
 
