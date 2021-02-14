@@ -54,7 +54,6 @@ if __name__ == "__main__":
         license="MIT",
 
         description="Python implementation of TextRank for phrase extraction and lightweight summarization of text documents",
-        long_description=long_description,
         long_description = pathlib.Path("README.md").read_text(),
         long_description_content_type = "text/markdown",
 
