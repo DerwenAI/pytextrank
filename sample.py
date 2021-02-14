@@ -15,6 +15,7 @@ import sys
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank into the spaCy pipeline
+#nlp.add_pipe("positionrank")
 nlp.add_pipe("textrank")
 
 # parse the document

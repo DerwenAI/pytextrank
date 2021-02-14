@@ -1,6 +1,10 @@
 from .base import BaseTextRank, Phrase
+
 from .positionrank import PositionRank
+
 from .util import groupby_apply, split_grafs, filter_quotes, maniacal_scrubber, default_scrubber
+
+from .version import MIN_PY_VERSION, _versify, _check_version, __version__
 
 
 ######################################################################
