@@ -4,10 +4,10 @@ from typing import Dict, List, Optional, Tuple
 from .base import BaseTextRank, Node, groupby_apply
 
 
-class PositionRank(BaseTextRank):
+class PositionRank (BaseTextRank):
     """Implements PositionRank by Florescu, et al. (2017) as a spaCy pipeline component."""
 
-    def get_personalization(self) -> Optional[Dict[Node, float]]:
+    def get_personalization (self) -> Optional[Dict[Node, float]]:
         """Get node weights for personalised PageRank.
 
         Returns:
@@ -34,9 +34,11 @@ class PositionRank(BaseTextRank):
 
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: sum(w for text, w in g)
+
         accumulated_weighted_tokens: List[Tuple[str, float]] = groupby_apply(
             weighted_tokens, keyfunc, applyfunc
         )
+
         accumulated_weighted_tokens = sorted(
             accumulated_weighted_tokens, key=lambda x: x[1]
         )
@@ -54,4 +56,5 @@ class PositionRank(BaseTextRank):
             for token in self.doc
             if token.pos_ in self.pos_kept
         }
+
         return weighted_nodes
