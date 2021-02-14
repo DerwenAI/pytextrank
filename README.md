@@ -83,10 +83,11 @@ Arguably, having alternatives such as this allow for cost trade-offs.
 
 Prerequisites:
 
-- [Python 3.5+](https://www.python.org/downloads/)
-- [spaCy](https://spacy.io/docs/usage/)
+- [Python 3.7+](https://www.python.org/downloads/)
+- [spaCy 3.0+](https://spacy.io/docs/usage/)
 - [NetworkX](http://networkx.readthedocs.io/)
 - [GraphViz](https://graphviz.readthedocs.io/)
+- [icecream](https://github.com/gruns/icecream)
 
 To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 
@@ -95,8 +96,8 @@ pip install pytextrank
 python -m spacy download en_core_web_sm
 ```
 
-If you install directly from this Git repo, be sure to install the dependencies
-as well:
+If you install directly from this Git repo, be sure to install the
+dependencies as well:
 
 ```
 pip install -r requirements.txt
@@ -117,9 +118,7 @@ text = "Compatibility of systems of linear constraints over the set of natural n
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank to the spaCy pipeline
-tr = pytextrank.TextRank()
-nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
-
+nlp.add_pipe("textrank", last=True)
 doc = nlp(text)
 
 # examine the top-ranked phrases in the document
@@ -157,7 +156,7 @@ knowledge graph, and other AI applications, contact
 To run the unit tests:
 
 ```
-coverage run -m unittest discover
+coverage run -m pytest tests
 ```
 
 To generate a coverage report and upload it to the `codecov.io`
@@ -200,15 +199,12 @@ Citations are helpful for the continued development and maintenance of this libr
 
 ## TODOs
 
-  - [`kglab`](https://github.com/DerwenAI/kglab) integration
-  - generate MkDocs
+  - generate MkDocs based on `kglab` project
   - MyPy and PyLint coverage
+  - [`kglab`](https://github.com/DerwenAI/kglab) integration
+  - generate a phrase graph, with entity linking
   - include more unit tests
-  - show examples of `spacy-wordnet` to enrich the lemma graph
   - leverage `neuralcoref` to enrich the lemma graph
-  - generate a phrase graph, with entity linking into Wikidata, etc.
-  - include more unit tests
-  - fix Sphinx errors, generate docs
 
 
 ## Kudos

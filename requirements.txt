@@ -1,4 +1,4 @@
-coverage >= 5.0.1
 graphviz >= 0.13
+icecream > 2.1
 networkx >= 2.0
-spacy >= 2.0
+spacy >= 3.0

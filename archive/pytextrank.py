@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+
+from .base import BaseTextRank
+from .positionrank import PositionRank
 
 from collections import defaultdict, OrderedDict
 from math import sqrt
-from operator import itemgetter
 from spacy.tokens import Doc
 import graphviz
 import json
@@ -21,7 +23,6 @@ import unicodedata
 
 ######################################################################
 ## utility functions
-######################################################################
 
 PAT_FORWARD = re.compile("\n\-+ Forwarded message \-+\n")
 PAT_REPLIED = re.compile("\nOn.*\d+.*\n?wrote\:\n+\>")
@@ -123,7 +124,6 @@ def default_scrubber (text):
 
 ######################################################################
 ## class definitions
-######################################################################
 
 class CollectedPhrase:
     """
@@ -216,6 +216,20 @@ class TextRank:
 
         self.doc = None
         self.reset()
+
+
+    def __call__ (self, doc: Doc) -> Doc:
+        """
+        define a custom pipeline component for spaCy and extend the
+        Doc class to add TextRank, when doc gets processed
+        """
+        self.doc = doc
+
+        Doc.set_extension("phrases", force=True, default=[])
+        Doc.set_extension("textrank", force=True, default=self)
+        doc._.phrases = self.calc_textrank()
+
+        return doc
 
 
     def reset (self):
@@ -548,16 +562,3 @@ class TextRank:
         # yield results, up to the limit requested
         for sent_id in top_sent_ids:
             yield sent_text[sent_id]
-
-
-    def PipelineComponent (self, doc):
-        """
-        define a custom pipeline component for spaCy and extend the
-        Doc class to add TextRank
-        """
-        self.doc = doc
-        Doc.set_extension("phrases", force=True, default=[])
-        Doc.set_extension("textrank", force=True, default=self)
-        doc._.phrases = self.calc_textrank()
-
-        return doc
