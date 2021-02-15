@@ -1,5 +1,8 @@
 # PyTextRank
 
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
+[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
 used to:
@@ -11,7 +14,7 @@ used to:
 
 ## Background
 
-One of the goals for **PyTextRank** is to provide support (eventually) for
+One of the motivations for **PyTextRank** is to provide support (eventually) for
 [*entity linking*](http://nlpprogress.com/english/entity_linking.html),
 in contrast to the more commonplace usage of
 [*named entity recognition*](http://nlpprogress.com/english/named_entity_recognition.html).
@@ -22,8 +25,8 @@ The introduction of graph algorithms -- notably,
 [*eigenvector centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
 -- provides a more flexible and robust basis for integrating additional
 techniques that enhance the natural language work being performed.
-The entity linking aspects here are still a *work-in-progress* scheduled 
-for a later release.
+The entity linking aspects here are a *work-in-progress*, based on
+[`kglab`](https://github.com/DerwenAI/kglab).
 
 Internally **PyTextRank** constructs a *lemma graph* to represent links
 among the candidate phrases (e.g., unrecognized entities) and their
@@ -85,7 +88,7 @@ Prerequisites:
 
 - [Python 3.7+](https://www.python.org/downloads/)
 - [spaCy 3.0+](https://spacy.io/docs/usage/)
-- [NetworkX](http://networkx.readthedocs.io/)
+- [NetworkX](https://networkx.org/)
 - [GraphViz](https://graphviz.readthedocs.io/)
 - [icecream](https://github.com/gruns/icecream)
 
@@ -202,7 +205,7 @@ Citations are helpful for the continued development and maintenance of this libr
   - RAPIDS integration for GPU acceleration
   - generate MkDocs – reusing custom process in `kglab` project
   - PyLint coverage
-  - [`kglab`](https://github.com/DerwenAI/kglab) integration
+  - [`kglab`](https://github.com/DerwenAI/kglab) integration for *entity linking*
   - generate a phrase graph, with entity linking
   - include more unit tests
   - leverage `neuralcoref` to enrich the lemma graph
