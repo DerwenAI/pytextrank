@@ -199,8 +199,9 @@ Citations are helpful for the continued development and maintenance of this libr
 
 ## TODOs
 
-  - generate MkDocs based on `kglab` project
-  - MyPy and PyLint coverage
+  - RAPIDS integration for GPU acceleration
+  - generate MkDocs – reusing custom process in `kglab` project
+  - PyLint coverage
   - [`kglab`](https://github.com/DerwenAI/kglab) integration
   - generate a phrase graph, with entity linking
   - include more unit tests
