@@ -10,13 +10,13 @@ from .util import groupby_apply
 
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
-from icecream import ic
-from spacy.tokens import Doc, Span, Token
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
-import graphviz
+from icecream import ic  # type: ignore
+from spacy.tokens import Doc, Span, Token  # type: ignore
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
+import graphviz  # type: ignore
 import json
 import math
-import networkx as nx
+import networkx as nx  # type: ignore
 import pathlib
 import time
 
@@ -59,21 +59,21 @@ Constructor for a `TextRank` object
 default weight for an edge
 
     pos_kept:
-parts of speech tags to be kept
+parts of speech tags to be kept; adjust this if strings representing
+the POS tags change
 
     scrubber:
 optional "scrubber" function to clean up punctuation from a token
 
     token_lookback:
-the "lookback" window for distance between neighboring tokens, which
-is similar to a skip gram
+the window for neighboring tokens (similar to a skip gram)
         """
         self.edge_weight = edge_weight
         self.pos_kept = pos_kept
         self.scrubber = scrubber
         self.token_lookback = token_lookback
 
-        self.doc = None
+        self.doc: Doc = None
         self.stopwords: dict = defaultdict(list)
         self.reset()
 
@@ -110,8 +110,8 @@ any pre-existing state.
         self.elapsed_time = 0.0
         self.lemma_graph = nx.DiGraph()
         self.phrases: dict = defaultdict(list)
-        self.ranks: dict = {}
-        self.seen_lemma: dict = OrderedDict()
+        self.ranks: Dict[Node, float] = {}
+        self.seen_lemma: Dict[Node, Set[int]] = OrderedDict()
 
 
     def load_stopwords (
@@ -141,8 +141,9 @@ of a JSON file – in lieu of providing a `data` parameter
             with open(path, "r") as f:
                 data = json.load(f)
 
-                for lemma, pos_list in data.items():
-                    self.stopwords[lemma] = pos_list
+                if data:
+                    for lemma, pos_list in data.items():
+                        self.stopwords[lemma] = pos_list
 
 
     def calc_textrank (
@@ -163,7 +164,7 @@ This method represents the heart of the algorithm implementation.
         # of PageRank (i.e., approximating eigenvalue centrality)
         # to calculate a rank for each node in the lemma graph
 
-        self.ranks: Dict[Node, float] = nx.pagerank(
+        self.ranks = nx.pagerank(
             self.lemma_graph,
             personalization=self.get_personalization(),
         )
@@ -216,16 +217,6 @@ a directed graph representing the lemma graph
         # weighted by the count
         g.add_edges_from(self.edge_list)
 
-        # also track the lemma, to use for graph libraries later
-        for token in self.doc:
-            if self.keep_token(token):
-                key = (token.lemma_, token.pos_,)
-
-                if key not in self.seen_lemma:
-                    self.seen_lemma[key] = set([token.i])
-                else:
-                    self.seen_lemma[key].add(token.i)
-
         return g
 
 
@@ -236,6 +227,7 @@ a directed graph representing the lemma graph
         """
 Skip tokens that are either in the stop word list or don't have a part
 of speech tag suitable for vertices in the lemma graph.
+Otherwise, track this token in the `seen_lemma` dictionary.
 
     token:
 a parsed spaCy [`Token`](https://spacy.io/api/token) to be evaluated
@@ -251,6 +243,14 @@ graph
         elif token.pos_ not in self.pos_kept:
             return False
         else:
+            # also track occurrence of this token's lemma, for later use
+            key = (lemma, token.pos_,)
+
+            if key not in self.seen_lemma:
+                self.seen_lemma[key] = set([token.i])
+            else:
+                self.seen_lemma[key].add(token.i)
+
             return True
 
 

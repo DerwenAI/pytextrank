@@ -10,3 +10,4 @@ pytest
 pymdown-extensions
 selenium
 twine
+wheel

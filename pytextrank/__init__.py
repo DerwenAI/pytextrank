@@ -10,7 +10,7 @@ from .version import MIN_PY_VERSION, _versify, _check_version, __version__
 ######################################################################
 ## add component factories to the spaCy pipeline namespace
 
-from spacy.language import Language
+from spacy.language import Language  # type: ignore
 from typing import Callable, List
 
 _DEFAULT_CONFIG = {
@@ -22,7 +22,7 @@ _DEFAULT_CONFIG = {
 
 
 @Language.factory("textrank", default_config=_DEFAULT_CONFIG)
-def _create_component (
+def _create_component_tr (
     nlp: Language,
     name: str,
     edge_weight: float,
@@ -41,7 +41,7 @@ Component factory for the `TextRank` base class.
         )
 
 @Language.factory("positionrank", default_config=_DEFAULT_CONFIG)
-def _create_component (
+def _create_component_pr (
     nlp: Language,
     name: str,
     edge_weight: float,

@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 3.0.1
+
+2021-02-??
+
+  * mypy coverage for type annotations
+
+
 ## 3.0.0
 
 2021-02-14
