@@ -238,4 +238,4 @@ Many thanks to our contributors:
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
-[![thx noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
+[![thx noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/assets/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
