@@ -1,5 +1,6 @@
 # PyTextRank
 
+[![DOI](https://zenodo.org/badge/69814684.svg)](https://zenodo.org/badge/latestdoi/69814684)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
@@ -10,6 +11,8 @@ used to:
   - extract the top-ranked phrases from text documents
   - run low-cost extractive summarization of text documents
   - help infer links from unstructured text into structured data
+
+*doi:* <https://doi.org/10.5281/zenodo.4540784>
 
 
 ## Background
@@ -195,6 +198,7 @@ Citations are helpful for the continued development and maintenance of this libr
   title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
   year = 2016,
   publisher = {Derwen},
+  doi = {10.5281/zenodo.4540784},
   url = {https://github.com/DerwenAI/pytextrank}
 }
 ```
@@ -235,6 +239,7 @@ Many thanks to our contributors:
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@shyamcody](https://github.com/shyamcody),
 [@chikubee](https://github.com/chikubee),
+outstanding NLP research work by [mihalcea](https://github.com/explosion/mihalcea),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 

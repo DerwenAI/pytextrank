@@ -5,6 +5,7 @@
 2021-02-??
 
   * mypy coverage for type annotations
+  * add DOI to README and CITATION
 
 
 ## 3.0.0
