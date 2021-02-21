@@ -239,7 +239,7 @@ Many thanks to our contributors:
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@shyamcody](https://github.com/shyamcody),
 [@chikubee](https://github.com/chikubee),
-outstanding NLP research work led by [mihalcea](https://github.com/mihalcea),
+outstanding NLP research work led by [@mihalcea](https://github.com/mihalcea),
 encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
 
