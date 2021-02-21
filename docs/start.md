@@ -2,9 +2,10 @@
 
 ## Installation
 
-To install from [PyPi](https://pypi.python.org/pypi/kglab):
+To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 ```
-pip install kglab
+pip install pytextrank
+python -m spacy download en_core_web_sm
 ```
 
 If you work directly from this Git repo, be sure to install the 
@@ -16,28 +17,30 @@ pip install -r requirements.txt
 
 ## Sample Usage
 
-To use **kglab** in its simplest form:
+To use **pytextrank** in its simplest form:
 ```
-import kglab
+import spacy
+import pytextrank
 
-kg = kglab.KnowledgeGraph()
-kg.load_rdf("https://storage.googleapis.com/kglab-tutorial/foaf.rdf", format="xml")
+# example text
+text = "Compatibility of systems of linear constraints over the set of natural numbers. Criteria of compatibility of a system of linear Diophantine equations, strict inequations, and nonstrict inequations are considered. Upper bounds for components of a minimal set of solutions and algorithms of construction of minimal generating sets of solutions for all types of systems are given. These criteria and the corresponding algorithms for constructing a minimal supporting set of solutions can be used in solving all the considered types systems and systems of mixed types."
 
-measure = kglab.Measure()
-measure.measure_graph(kg)
+# load a spaCy model, depending on language, scale, etc.
+nlp = spacy.load("en_core_web_sm")
 
-print("edges: {}\n".format(measure.get_edge_count()))
-print("nodes: {}\n".format(measure.get_node_count()))
+# add PyTextRank to the spaCy pipeline
+nlp.add_pipe("textrank", last=True)
+doc = nlp(text)
 
-ttl = kg.save_rdf_text()
-print("```")
-print(ttl[:999])
-print("```")
+# examine the top-ranked phrases in the document
+for p in doc._.phrases:
+    print("{:.4f} {:5d}  {}".format(p.rank, p.count, p.text))
+    print(p.chunks)
 ```
 
 
 ## Hands-on Coding Tutorial
 
 See the [*Tutorial*](../tutorial/) notebooks for sample code and
-patterns to use when integrating **kglab** with other related
+patterns to use when integrating **pytextrank** with other related
 libraries in Python.

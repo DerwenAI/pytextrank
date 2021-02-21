@@ -3,9 +3,9 @@
 !!! note
     In most cases you won't need to build this package locally.
 
-Unless you're doing development work on the **kglab** library itself,
+Unless you're doing development work on the **pytextrank** library itself,
 simply install based on the instructions in
-["Getting Started"](https://derwen.ai/docs/kgl/start/).
+["Getting Started"](https://derwen.ai/docs/ptr/start/).
 
 
 ## Setup
@@ -27,7 +27,7 @@ and [`mypy`](https://mypy.readthedocs.io/) for *type checking*.
 
 To run type checking:
 ```
-mypy kglab/*.py
+mypy pytextrank/*.py
 ```
 
 
@@ -37,22 +37,24 @@ This project uses [`pylint`](https://www.pylint.org/) for *code checking*.
 
 To run code checking:
 ```
-pylint kglab/*.py
+pylint pytextrank/*.py
 ```
 
 
 ## Test Coverage
 
-This project uses `unittest` and 
+This project uses
+[`pytest`](https://docs.pytest.org/)
+and
 [`coverage`](https://coverage.readthedocs.io/)
 for *unit test* coverage. 
 Source for unit tests is in the 
-[`test.py`](https://github.com/DerwenAI/kglab/blob/main/test.py)
-module.
+[`tests`](https://github.com/DerwenAI/pytextrank/tree/master/tests)
+subdirectory.
 
 To run unit tests:
 ```
-coverage run -m unittest discover
+coverage run -m pytest tests
 ```
 
 To generate a coverage report and (providing you have the access
@@ -63,7 +65,7 @@ bash <(curl -s https://codecov.io/bash) -t @.cc_token
 ```
 
 Test coverage reports can be viewed at
-<https://codecov.io/gh/DerwenAI/kglab>
+<https://codecov.io/gh/DerwenAI/pytextrank>
 
 
 ## Online Documentation
@@ -76,12 +78,13 @@ To generate documentation pages, this project uses:
   * [`MathJax`](https://www.mathjax.org/)
   * [`Jupyter`](https://jupyter.org/install)
   * [`nbconvert`](https://nbconvert.readthedocs.io/)
+  * [`mknotebooks`](https://github.com/greenape/mknotebooks)
   * [`Selenium`](https://selenium-python.readthedocs.io/)
   * [`Chrome`](https://www.google.com/chrome/)
   * [`Flask`](https://flask.palletsprojects.com/)
 
 Source for the documentation is in the 
-[`docs`](https://github.com/DerwenAI/kglab/tree/main/docs)
+[`docs`](https://github.com/DerwenAI/pytextrank/tree/master/docs)
 subdirectory.
 
 To build the documentation:
@@ -102,13 +105,13 @@ documentation.
 To package the generated microsite for deployment on a
 Flask/WSGI server:
 ```
-tar cvzf kgl.tgz site/
+tar cvzf ptr.tgz site/
 ```
 
 
 ## Package Release
 
-To update the [release on PyPi](https://pypi.org/project/kglab/):
+To update the [release on PyPi](https://pypi.org/project/pytextrank/):
 ```
 ./bin/push_pypi.sh
 ```

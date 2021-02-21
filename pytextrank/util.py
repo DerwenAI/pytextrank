@@ -133,4 +133,4 @@ def default_scrubber (text):
     """
     remove spurious punctuation (for English)
     """
-    return text.lower().replace("'", "")
+    return text.replace("'", "")

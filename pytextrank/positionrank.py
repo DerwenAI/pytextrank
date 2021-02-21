@@ -5,7 +5,7 @@ Implements PositionRank.
 from .base import BaseTextRank, Node
 from .util import groupby_apply
 
-from typing import Dict, List, Optional, Tuple
+import typing
 
 
 class PositionRank (BaseTextRank):
@@ -16,7 +16,7 @@ spaCy pipeline component.
 
     def _get_personalization (
         self
-        ) -> Optional[Dict[Node, float]]:
+        ) -> typing.Optional[typing.Dict[Node, float]]:
         """
 Get the node weights for implementing a personalised PageRank.
 From the cited reference:
@@ -36,7 +36,7 @@ From the cited reference:
     returns:
 Biased restart probabilities for PageRank.
         """
-        weighted_tokens: List[Tuple[str, float]] = [
+        weighted_tokens: typing.List[typing.Tuple[str, float]] = [
             (tok, 1 / (i + 1))
             for i, tok in enumerate(
                 token.lemma_ for token in self.doc if token.pos_ in self.pos_kept
@@ -46,7 +46,7 @@ Biased restart probabilities for PageRank.
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: sum(w for text, w in g)
 
-        accumulated_weighted_tokens: List[Tuple[str, float]] = groupby_apply(
+        accumulated_weighted_tokens: typing.List[typing.Tuple[str, float]] = groupby_apply(
             weighted_tokens,
             keyfunc,
             applyfunc,

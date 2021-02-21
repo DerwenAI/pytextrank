@@ -5,10 +5,10 @@ Implements TextRank by Mihalcea, et al., as a spaCy pipeline component.
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L48)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L49)
 
 ```python
-__init__(edge_weight=1.0, pos_kept=['ADJ', 'NOUN', 'PROPN', 'VERB'], scrubber=<method 'strip' of 'str' objects>, token_lookback=3)
+__init__(edge_weight=1.0, pos_kept=['ADJ', 'NOUN', 'PROPN', 'VERB'], token_lookback=3, scrubber=None)
 ```
 Constructor for a `TextRank` object
 
@@ -18,17 +18,17 @@ default weight for an edge
   * `pos_kept` : `typing.List[str]`  
 parts of speech tags to be kept; adjust this if strings representing
 
-  * `scrubber` : `typing.Callable`  
-optional "scrubber" function to clean up punctuation from a token
-
   * `token_lookback` : `int`  
 the window for neighboring tokens (similar to a skip gram)
+
+  * `scrubber` : `typing.Union[typing.Callable, NoneType]`  
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
 
 
 
 ---
 #### [`__call__` method](#pytextrank.BaseTextRank.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L81)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L87)
 
 ```python
 __call__(doc)
@@ -45,7 +45,7 @@ the document container for accessing linguistic annotations
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L103)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L109)
 
 ```python
 reset()
@@ -57,7 +57,7 @@ any pre-existing state.
 
 ---
 #### [`load_stopwords` method](#pytextrank.BaseTextRank.load_stopwords)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L117)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L123)
 
 ```python
 load_stopwords(data=None, path=None)
@@ -78,7 +78,7 @@ optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html)
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L149)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L155)
 
 ```python
 calc_textrank()
@@ -88,42 +88,14 @@ then returning the top-ranked phrases.
 
 This method represents the heart of the algorithm implementation.
 
-
-
----
-#### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L192)
-
-```python
-get_personalization()
-```
-Get the node weights for use in personalised PageRank.
-Defaults to no-op.
-
-
-
----
-#### [`keep_token` method](#pytextrank.BaseTextRank.keep_token)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L223)
-
-```python
-keep_token(token)
-```
-Skip tokens that are either in the stop word list or don't have a part
-of speech tag suitable for vertices in the lemma graph.
-Otherwise, track this token in the `seen_lemma` dictionary.
-
-  * `token` : `spacy.tokens.token.Token`  
-a parsed spaCy [`Token`](https://spacy.io/api/token) to be evaluated
-
-  * *returns* : `bool`  
-boolean value for whether to keep this token as a node in the lemma
+  * *returns* : `typing.List[pytextrank.base.Phrase]`  
+list of ranked phrases, in descending order
 
 
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L411)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L423)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -147,7 +119,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L517)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L529)
 
 ```python
 write_dot(path="graph.dot")
@@ -159,6 +131,11 @@ path for the output file; defaults to `"graph.dot"`
 
 
 
+## [`PositionRank` class](#PositionRank)
+
+Implements the PositionRank algorithm by Florescu, et al. (2017) as a
+spaCy pipeline component.
+    
 ## [`Phrase` class](#Phrase)
 
 Represents one extracted phrase.
@@ -178,38 +155,6 @@ __init__(text, rank, count, chunks)
 ```python
 __repr__()
 ```
-
-## [`PositionRank` class](#PositionRank)
-
-Implements the PositionRank algorithm by Florescu, et al. (2017) as a
-spaCy pipeline component.
-    
----
-#### [`get_personalization` method](#pytextrank.PositionRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L17)
-
-```python
-get_personalization()
-```
-Get the node weights for implementing a personalised PageRank.
-From the cited reference:
-            
-> Specifically, we propose to assign a higher probability to a word
-> found on the 2nd position as compared with a word found on the 50th
-> position in the same document. The weight of each candidate word is
-> equal to its inverse position in the document.  If the same word
-> appears multiple times in the target document, then we sum all its
-> position weights.
-
-> For example, a word v_i occurring in the following positions: 2nd,
-> 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8 
-> The weights of words are normalized before they are used in the
-> position-biased PageRank.
-
-  * *returns* : `typing.Union[typing.Dict[typing.Tuple[str, str], float], NoneType]`  
-Biased restart probabilities for PageRank.
-
-
 
 ---
 ## [module functions](#pytextrank)
@@ -285,13 +230,8 @@ segment raw text, given as a list of lines, into paragraphs
 
 ---
 ## [module types](#pytextrank)
-#### [`Callable` type](#pytextrank.Callable)
+#### [`Node` type](#pytextrank.Node)
 ```python
-Callable = typing.Callable
-```
-
-#### [`List` type](#pytextrank.List)
-```python
-List = typing.List
+Node = typing.Tuple[str, str]
 ```
 
