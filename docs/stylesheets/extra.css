@@ -1,0 +1,13 @@
+.md-typeset a {
+  color: hsl(66deg 100% 31%);
+}
+
+.md-typeset a:focus, .md-typeset a:hover {
+  color: hsl(306, 45%, 57%);
+}
+
+:root {
+  --md-primary-fg-color:        hsl(65, 46%, 58%);
+  --md-primary-fg-color--light: #000;
+  --md-primary-fg-color--dark:  #FFF;
+}

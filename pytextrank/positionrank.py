@@ -14,7 +14,7 @@ Implements the PositionRank algorithm by Florescu, et al. (2017) as a
 spaCy pipeline component.
     """
 
-    def get_personalization (
+    def _get_personalization (
         self
         ) -> Optional[Dict[Node, float]]:
         """

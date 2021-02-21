@@ -154,6 +154,9 @@ Iterate through each sentence in the doc, constructing a lemma graph
 then returning the top-ranked phrases.
 
 This method represents the heart of the algorithm implementation.
+
+    returns:
+list of ranked phrases, in descending order
         """
         self.reset()
         t0 = time.time()
@@ -166,7 +169,7 @@ This method represents the heart of the algorithm implementation.
 
         self.ranks = nx.pagerank(
             self.lemma_graph,
-            personalization=self.get_personalization(),
+            personalization=self._get_personalization(),
         )
 
         # collect the top-ranked phrases based on both the noun chunks
@@ -189,12 +192,15 @@ This method represents the heart of the algorithm implementation.
         return phrase_list
 
 
-    def get_personalization (
+    def _get_personalization (
         self
         ) -> Optional[Dict[Node, float]]:
         """
 Get the node weights for use in personalised PageRank.
 Defaults to no-op.
+
+    returns:
+`None`
         """
         return None
 
@@ -220,7 +226,7 @@ a directed graph representing the lemma graph
         return g
 
 
-    def keep_token (
+    def _keep_token (
         self,
         token: Token,
         ) -> bool:
@@ -267,7 +273,7 @@ list of nodes
         nodes = [
             (token.lemma_, token.pos_)
             for token in self.doc
-            if self.keep_token(token)
+            if self._keep_token(token)
         ]
 
         return nodes
@@ -289,7 +295,7 @@ list of weighted edges
             h = [
                 (token.lemma_, token.pos_)
                 for token in sent
-                if self.keep_token(token)
+                if self._keep_token(token)
             ]
 
             for hop in range(self.token_lookback):
@@ -328,7 +334,7 @@ metric
             span: sum(
                 ranks[(token.lemma_, token.pos_)]
                 for token in span
-                if self.keep_token(token)
+                if self._keep_token(token)
             )
             for span in spans
         }
