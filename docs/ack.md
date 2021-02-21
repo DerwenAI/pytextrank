@@ -2,19 +2,37 @@
 
 ## Contributors
 
-Many thanks to the contributors on this **kglab** project:
+Many thanks to our contributors:
 [@louisguitton](https://github.com/louisguitton),
+[@Lord-V15](https://github.com/Lord-V15),
+[@anna-droid-beep](https://github.com/anna-droid-beep),
+[@kavorite](https://github.com/kavorite),
+[@htmartin](https://github.com/htmartin),
+[@williamsmj](https://github.com/williamsmj/),
+[@mattkohl](https://github.com/mattkohl),
+[@vanita5](https://github.com/vanita5),
+[@HarshGrandeur](https://github.com/HarshGrandeur),
+[@mnowotka](https://github.com/mnowotka),
+[@kjam](https://github.com/kjam),
+[@dvsrepo](https://github.com/dvsrepo),
+[@SaiThejeshwar](https://github.com/SaiThejeshwar),
+[@laxatives](https://github.com/laxatives),
+[@dimmu](https://github.com/dimmu), 
+[@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
 [@jake-aft](https://github.com/jake-aft),
-[@dmoore247](https://github.com/dmoore247),
+[@junchen1992](https://github.com/junchen1992),
+[@Ankush-Chander](https://github.com/Ankush-Chander),
+[@shyamcody](https://github.com/shyamcody),
+[@chikubee](https://github.com/chikubee),
+outstanding NLP research work led by [@mihalcea](https://github.com/mihalcea),
+encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
-and [The Knowledge Graph Conference](https://www.knowledgegraph.tech/),
-plus an even larger scope of [use cases](../use_case/) represented by its community.
 
 
 ## Project Lead
 
 [Paco Nathan](https://derwen.ai/paco)
-is lead committer on **kglab** and lead author for its documentation and tutorial.
+is lead committer on **pytextrank** and lead author for its documentation and tutorial.
 By day he's the Managing Partner at [Derwen, Inc.](https://derwen.ai/)
 Paco's formal background is in 
 Mathematics (advisor: [Richard Cottle](https://engineering.stanford.edu/people/richard-cottle))
@@ -36,7 +54,7 @@ by Innovation Enterprise.
     large-scale Hadoop use case on [cloud computing](../glossary/#cloud-computing) (2008)
   * former Director, Community Evangelism at Databricks (2014-2015) for
     [Apache Spark](https://spark.apache.org/)
-  * lead committer on [PyTextRank](https://derwen.ai/s/xdw563z8b4gj) ([spaCy](https://spacy.io/) pipeline);
+  * lead committer on [kglab](https://derwen.ai/docs/kgl/);
     open source community work on 
     [Jupyter](https://jupyter.org/),
     [Ray](https://ray.io/),
@@ -65,28 +83,29 @@ U&nbsp;Virginia, CU&nbsp;Boulder.
 
 ## Attribution
 
-Please use the following BibTeX entry for citing **kglab** if you use
+Please use the following BibTeX entry for citing **pytextrank** if you use
 it in your research or software:
 
 ```
-@software{kglab,
+@software{PyTextRank,
   author = {Paco Nathan},
-  title = {{kglab: a simple abstraction layer in Python for building knowledge graphs}},
-  year = 2020,
+  title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
+  year = 2016,
   publisher = {Derwen},
-  doi = {10.5281/zenodo.4516509},
-  url = {https://github.com/DerwenAI/kglab}
+  doi = {10.5281/zenodo.4540784},
+  url = {https://github.com/DerwenAI/pytextrank}
 }
+
 ```
 
 
 ## License and Copyright
 
-Source code for **kglab** plus its logo, documentation, and examples
+Source code for **pytextrank** plus its logo, documentation, and examples
 have an [MIT license](https://spdx.org/licenses/MIT.html) which is
 succinct and simplifies use in commercial applications.
 
-All materials herein are Copyright &copy; 2020-2021 Derwen, Inc.
+All materials herein are Copyright &copy; 2016-2021 Derwen, Inc.
 
 [![logo for Derwen, Inc.](https://derwen.ai/static/block_logo.png)](https://derwen.ai/)
 
@@ -94,21 +113,3 @@ All materials herein are Copyright &copy; 2020-2021 Derwen, Inc.
 ## Production Use Cases
 
   * [Derwen](https://derwen.ai/) and its client projects
-
-
-## Similar Projects
-
-See also:
-
-  * [PheKnowLator](https://github.com/callahantiff/PheKnowLator)
-    * *pro:* quite similar to **kglab** in intent; well-written code; sophisticated, opinionate build of biomedical KGs
-    * *con:* less integration with data science tools or distributed systems
-  * [LynxKite](https://lynxkite.com/)
-    * *pro:* loads of features, lots of adoption
-    * *con:* complex tech stack, combines Py/Java/Go; AGPL less-than-business-friendly for production apps
-  * [KGTK](https://github.com/usc-isi-i2/kgtk)
-    * *pro:* many excellent examples, well-documented in Jupyter notebooks
-    * *con:* mostly a CLI tool, primarily based on TSV data
-  * [zincbase](https://github.com/complexdb/zincbase)
-    * *pro:* probabilistic graph measures, complex simulation suite, leverages GPUs
-    * *con:* lacks interchange with RDF or other standard formats
