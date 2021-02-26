@@ -175,7 +175,7 @@ list of ranked phrases, in descending order
 
         self.ranks = nx.pagerank(
             self.lemma_graph,
-            personalization=self._get_personalization(),
+            personalization=self.get_personalization(),
         )
 
         # collect the top-ranked phrases based on both the noun chunks
@@ -198,11 +198,11 @@ list of ranked phrases, in descending order
         return phrase_list
 
 
-    def _get_personalization (
+    def get_personalization (
         self
         ) -> typing.Optional[typing.Dict[Node, float]]:
         """
-Get the node weights for use in personalised PageRank.
+Get the node weights for use in Personalized PageRank.
 Defaults to no-op.
 
     returns:

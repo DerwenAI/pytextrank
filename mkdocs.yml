@@ -16,6 +16,11 @@ nav:
         - Package Reference: ref.md
         - Dependencies: depend.md
         - Build Instructions: build.md
+        - Project TODO List: todo.md
+    - Tutorial:
+        - Setup: tutorial.md
+        - TextRank algorithm explained: explain_algo.md
+        - Extractive Summarization: explain_summ.md
     - Glossary: glossary.md
     - Bibliography: biblio.md
     - Acknowledgements: ack.md
@@ -25,7 +30,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
   favicon: assets/favicon.png
-  logo: assets/noam.jpg
+  logo: assets/logo.png
   features:
     - navigation.instant
 

@@ -94,6 +94,21 @@ list of ranked phrases, in descending order
 
 
 ---
+#### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L201)
+
+```python
+get_personalization()
+```
+Get the node weights for use in Personalized PageRank.
+Defaults to no-op.
+
+  * *returns* : `typing.Union[typing.Dict[typing.Tuple[str, str], float], NoneType]`  
+`None`
+
+
+
+---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
 [*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L423)
 
@@ -136,6 +151,33 @@ path for the output file; defaults to `"graph.dot"`
 Implements the PositionRank algorithm by Florescu, et al. (2017) as a
 spaCy pipeline component.
     
+---
+#### [`get_personalization` method](#pytextrank.PositionRank.get_personalization)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L17)
+
+```python
+get_personalization()
+```
+Get the node weights for implementing a Personalized PageRank.
+From the cited reference:
+            
+> Specifically, we propose to assign a higher probability to a word
+> found on the 2nd position as compared with a word found on the 50th
+> position in the same document. The weight of each candidate word is
+> equal to its inverse position in the document.  If the same word
+> appears multiple times in the target document, then we sum all its
+> position weights.
+
+> For example, a word v_i occurring in the following positions: 2nd,
+> 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8 
+> The weights of words are normalized before they are used in the
+> position-biased PageRank.
+
+  * *returns* : `typing.Union[typing.Dict[typing.Tuple[str, str], float], NoneType]`  
+Biased restart probabilities for PageRank.
+
+
+
 ## [`Phrase` class](#Phrase)
 
 Represents one extracted phrase.
@@ -233,5 +275,10 @@ segment raw text, given as a list of lines, into paragraphs
 #### [`Node` type](#pytextrank.Node)
 ```python
 Node = typing.Tuple[str, str]
+```
+
+#### [`PhraseLike` type](#pytextrank.PhraseLike)
+```python
+PhraseLike = typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, spacy.tokens.span.Span]]]]
 ```
 

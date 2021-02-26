@@ -14,11 +14,11 @@ Implements the PositionRank algorithm by Florescu, et al. (2017) as a
 spaCy pipeline component.
     """
 
-    def _get_personalization (
+    def get_personalization (
         self
         ) -> typing.Optional[typing.Dict[Node, float]]:
         """
-Get the node weights for implementing a personalised PageRank.
+Get the node weights for implementing a Personalized PageRank.
 From the cited reference:
             
 > Specifically, we propose to assign a higher probability to a word

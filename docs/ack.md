@@ -98,6 +98,8 @@ it in your research or software:
 
 ```
 
+**DOI:** <https://doi.org/10.5281/zenodo.4540784>
+
 
 ## License and Copyright
 
