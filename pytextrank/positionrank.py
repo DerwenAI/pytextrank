@@ -1,26 +1,29 @@
 """
-Implements PositionRank.
+Implements the *PositionRank* algorithm.
 """
 
+import typing
 from .base import BaseTextRank, Node
 from .util import groupby_apply
-
-import typing
 
 
 class PositionRank (BaseTextRank):
     """
-Implements the PositionRank algorithm by Florescu, et al. (2017) as a
-spaCy pipeline component.
+Implements the *PositionRank* algorithm described by
+[[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17),
+deployed as a `spaCy` pipeline component.
     """
 
     def get_personalization (
         self
         ) -> typing.Optional[typing.Dict[Node, float]]:
         """
-Get the node weights for implementing a Personalized PageRank.
+Get the *node weights* for initializing the use of the
+[*Personalized PageRank*](https://derwen.ai/docs/ptr/glossary/#personalized-pagerank)
+algorithm.
+
 From the cited reference:
-            
+
 > Specifically, we propose to assign a higher probability to a word
 > found on the 2nd position as compared with a word found on the 50th
 > position in the same document. The weight of each candidate word is
@@ -29,12 +32,12 @@ From the cited reference:
 > position weights.
 
 > For example, a word v_i occurring in the following positions: 2nd,
-> 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8 
+> 5th and 10th, has a weight p(v_i) = 1/2 + 1/5 + 1/10 = 4/5 = 0.8
 > The weights of words are normalized before they are used in the
 > position-biased PageRank.
 
     returns:
-Biased restart probabilities for PageRank.
+Biased restart probabilities to use in the *PageRank* algorithm.
         """
         weighted_tokens: typing.List[typing.Tuple[str, float]] = [
             (tok, 1 / (i + 1))
@@ -62,9 +65,9 @@ Biased restart probabilities for PageRank.
         }
 
         weighted_nodes = {
-            # the authors assign higher probability to a word
-            # but our lemma graph vertices are (word, pos) tuples
-            # so we map each word weight to all vertices containing that word
+            # the authors assign higher probability to a word but our
+            # lemma graph vertices are (word, pos) tuples so we map
+            # each word weight to all vertices containing that word
             (token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
             for token in self.doc
             if token.pos_ in self.pos_kept

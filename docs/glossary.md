@@ -70,6 +70,9 @@ see: <https://derwen.ai/d/knowledge_graph>
 
 ### semantic relations
 
+### stop words
+
+
 ## – T –
 
 ### textgraphs

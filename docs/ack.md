@@ -92,13 +92,13 @@ it in your research or software:
   title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
   year = 2016,
   publisher = {Derwen},
-  doi = {10.5281/zenodo.4540784},
+  doi = {10.5281/zenodo.4568079},
   url = {https://github.com/DerwenAI/pytextrank}
 }
 
 ```
 
-**DOI:** <https://doi.org/10.5281/zenodo.4540784>
+**DOI:** <https://doi.org/10.5281/zenodo.4568079>
 
 
 ## License and Copyright

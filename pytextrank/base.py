@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
-Implements the base class for TextRank, with placeholder methods for
-use by subclasses for algorithm extensions.
+Implements the base class for `TextRank`, with placeholder methods
+to be used by subclasses for algorithm extensions.
 """
 
 from .util import groupby_apply, default_scrubber
 
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
-from icecream import ic  # type: ignore
+from icecream import ic  # type: ignore # pylint: disable=W0611
 from spacy.tokens import Doc, Span, Token  # type: ignore
 import graphviz  # type: ignore
 import json
@@ -38,7 +38,9 @@ PhraseLike = typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, Span]
 
 class BaseTextRank:
     """
-Implements TextRank by Mihalcea, et al., as a spaCy pipeline component.
+Implements the *TextRank* algorithm defined by
+[[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank),
+deployed as a `spaCy` pipeline component.
     """
 
     _EDGE_WEIGHT = 1.0
@@ -49,7 +51,7 @@ Implements TextRank by Mihalcea, et al., as a spaCy pipeline component.
     def __init__ (
         self,
         edge_weight: float = _EDGE_WEIGHT,
-        pos_kept: typing.List[str] = _POS_KEPT,
+        pos_kept: typing.List[str] = None,
         token_lookback: int = _TOKEN_LOOKBACK,
         scrubber: typing.Optional[typing.Callable] = None,
         ) -> None:
@@ -67,20 +69,31 @@ the POS tags change
 the window for neighboring tokens (similar to a skip gram)
 
     scrubber:
-optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
+optional "scrubber" function to clean up punctuation from a token;
+if `None` then defaults to `pytextrank.default_scrubber`
         """
         self.edge_weight = edge_weight
-        self.pos_kept = pos_kept
         self.token_lookback = token_lookback
+
+        if pos_kept:
+            self.pos_kept = pos_kept
+        else:
+            self.pos_kept = self._POS_KEPT
 
         if not scrubber:
             self.scrubber = default_scrubber
         else:
             self.scrubber = scrubber
 
-
         self.doc: Doc = None
         self.stopwords: dict = defaultdict(list)
+
+        self.elapsed_time = 0.0
+        self.lemma_graph = nx.DiGraph()
+        self.phrases: dict = defaultdict(list)
+        self.ranks: typing.Dict[Node, float] = {}
+        self.seen_lemma: typing.Dict[Node, typing.Set[int]] = OrderedDict()
+
         self.reset()
 
 
@@ -89,13 +102,14 @@ optional "scrubber" function to clean up punctuation from a token; if `None` the
         doc: Doc,
         ) -> Doc:
         """
-Set the extension attributes on a spaCy[`Doc`](https://spacy.io/api/doc) 
-document to create a *pipeline component factory* for `TextRank` as 
-a stateful component, when the document gets processed.
+Set the extension attributes on a spaCy [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component factory* for `TextRank` as
+a stateful component, invoked when the document gets processed.
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
     doc:
-the document container for accessing linguistic annotations
+a document container for accessing the annotations produced by earlier
+stages of the `spaCy` pipeline
         """
         self.doc = doc
 
@@ -126,11 +140,13 @@ any pre-existing state.
         path: typing.Optional[pathlib.Path] = None,
         ) -> None:
         """
-Load a dictionary of *stop words* for tokens to be ignored when
-constructing the lemma graph.
+Load a dictionary of
+[*stop words*](https://derwen.ai/docs/ptr/glossary/#stop-words)
+– i.e., tokens to be ignored when constructing the
+[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
 
-Note: be cautious when using this feature, it can get "greedy" and
-bias/distort the results.
+Note: be cautious about use of this feature, since it can get "greedy"
+and bias/distort the results.
 
     data:
 dictionary of `lemma: [pos]` items to define the stop words, where
@@ -138,7 +154,7 @@ each item has a key as a lemmatized token and a value as a list of POS
 tags
 
     path:
-optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) 
+optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html)
 of a JSON file – in lieu of providing a `data` parameter
         """
         if data:
@@ -156,10 +172,11 @@ of a JSON file – in lieu of providing a `data` parameter
         self
         ) -> typing.List[Phrase]:
         """
-Iterate through each sentence in the doc, constructing a lemma graph
+Iterate through each sentence in the doc, constructing a
+[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph)
 then returning the top-ranked phrases.
 
-This method represents the heart of the algorithm implementation.
+This method represents the heart of the *TextRank* algorithm.
 
     returns:
 list of ranked phrases, in descending order
@@ -198,12 +215,15 @@ list of ranked phrases, in descending order
         return phrase_list
 
 
-    def get_personalization (
+    def get_personalization (  # pylint: disable=R0201
         self
         ) -> typing.Optional[typing.Dict[Node, float]]:
         """
-Get the node weights for use in Personalized PageRank.
-Defaults to no-op.
+Get the *node weights* for initializing the use of the
+[*Personalized PageRank*](https://derwen.ai/docs/ptr/glossary/#personalized-pagerank)
+algorithm.
+
+Defaults to a no-op for the base *TextRank* algorithm.
 
     returns:
 `None`
@@ -215,7 +235,8 @@ Defaults to no-op.
         self
         ) -> nx.DiGraph:
         """
-Construct the lemma graph.
+Construct the
+[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
 
     returns:
 a directed graph representing the lemma graph
@@ -252,18 +273,19 @@ graph
 
         if lemma in self.stopwords and token.pos_ in self.stopwords[lemma]:
             return False
-        elif token.pos_ not in self.pos_kept:
+
+        if token.pos_ not in self.pos_kept:
             return False
+
+        # also track occurrence of this token's lemma, for later use
+        key = (lemma, token.pos_,)
+
+        if key not in self.seen_lemma:
+            self.seen_lemma[key] = set([token.i])
         else:
-            # also track occurrence of this token's lemma, for later use
-            key = (lemma, token.pos_,)
+            self.seen_lemma[key].add(token.i)
 
-            if key not in self.seen_lemma:
-                self.seen_lemma[key] = set([token.i])
-            else:
-                self.seen_lemma[key].add(token.i)
-
-            return True
+        return True
 
 
     @property
@@ -487,8 +509,8 @@ texts for sentences, in order
 
         for sent_start, sent_end, sent_vector in sent_bounds:
             sum_sq = 0.0
-    
-            for phrase_id in range(len(unit_vector)):
+
+            for phrase_id, _ in enumerate(unit_vector):
                 if phrase_id not in sent_vector:
                     sum_sq += unit_vector[phrase_id]**2.0
 

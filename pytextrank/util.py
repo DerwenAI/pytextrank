@@ -39,9 +39,37 @@ an iterable with the accumulated values
 ######################################################################
 ## utility functions
 
-PAT_FORWARD = re.compile(r"\n-+ Forwarded message -+\n")
-PAT_REPLIED = re.compile(r"\nOn.*\d+.*\n?wrote\:\n+\>")
-PAT_UNSUBSC = re.compile(r"\n-+\nTo unsubscribe,.*\nFor additional commands,.*")
+def default_scrubber (text):
+    """
+    remove spurious punctuation (for English)
+    """
+    return text.replace("'", "")
+
+
+def maniacal_scrubber (text):
+    """
+    it scrubs the garble from its stream...
+    or it gets the debugger again
+    """
+    x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
+
+    x = x.replace('“', '"').replace('”', '"')
+    x = x.replace("‘", "'").replace("’", "'").replace("`", "'")
+    x = x.replace("…", "...").replace("–", "-")
+
+    x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("utf-8"))
+
+    # some web content returns "not string" ??
+    # ostensibly this is no longer possible in Py 3.x ...
+    # even so some crazy-making "mixed modes" of character encodings
+    # have been found in the wild -- YMMV
+
+    try:
+        assert type(x).__name__ == "str"
+    except AssertionError:
+        print("not a string?", type(text), text)
+
+    return x
 
 
 def split_grafs (lines):
@@ -68,25 +96,27 @@ def filter_quotes (text, is_email=True):
     """
     filter the quoted text out of a message
     """
-    global PAT_FORWARD, PAT_REPLIED, PAT_UNSUBSC
+    _PAT_FORWARD = re.compile(r"\n-+ Forwarded message -+\n")
+    _PAT_REPLIED = re.compile(r"\nOn.*\d+.*\n?wrote\:\n+\>")
+    _PAT_UNSUBSC = re.compile(r"\n-+\nTo unsubscribe,.*\nFor additional commands,.*")
 
     if is_email:
         text = filter(lambda x: x in string.printable, text)
 
         # strip off quoted text in a forward
-        m = PAT_FORWARD.split(text, re.M)
+        m = _PAT_FORWARD.split(text, re.M)
 
         if m and len(m) > 1:
             text = m[0]
 
         # strip off quoted text in a reply
-        m = PAT_REPLIED.split(text, re.M)
+        m = _PAT_REPLIED.split(text, re.M)
 
         if m and len(m) > 1:
             text = m[0]
 
         # strip off any trailing unsubscription notice
-        m = PAT_UNSUBSC.split(text, re.M)
+        m = _PAT_UNSUBSC.split(text, re.M)
 
         if m:
             text = m[0]
@@ -101,36 +131,3 @@ def filter_quotes (text, is_email=True):
             lines.append(line)
 
     return list(split_grafs(lines))
-
-
-def maniacal_scrubber (text):
-    """
-    it scrubs the garble from its stream...
-    or it gets the debugger again
-    """
-    x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
-
-    x = x.replace('“', '"').replace('”', '"')
-    x = x.replace("‘", "'").replace("’", "'").replace("`", "'")
-    x = x.replace("…", "...").replace("–", "-")
-
-    x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("utf-8"))
-
-    # some web content returns "not string" ??
-    # ostensibly this is no longer possible in Py 3.x ...
-    # even so some crazy-making "mixed modes" of character encodings
-    # have been found in the wild -- YMMV
-
-    try:
-        assert type(x).__name__ == "str"
-    except AssertionError:
-        print("not a string?", type(line), line)
-
-    return x
-
-
-def default_scrubber (text):
-    """
-    remove spurious punctuation (for English)
-    """
-    return text.replace("'", "")

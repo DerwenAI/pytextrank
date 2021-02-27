@@ -14,8 +14,6 @@ practices) which gets used to:
 The entity linking aspects here are a *work-in-progress*, based on
 [`kglab`](https://github.com/DerwenAI/kglab).
 
-**DOI:** <https://doi.org/10.5281/zenodo.4516509>
-
 
 ## Cut to the Chase
 
