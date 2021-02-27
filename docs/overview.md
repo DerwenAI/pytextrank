@@ -1,90 +1,101 @@
 # Overview
 
-## Open Source Integration
+## Lemma Graph
 
-The **kglab** package is mostly about integration.
-On the one hand, there are useful graph libraries, most of which don't
-share much common ground and can often be difficult to use together.
-One the other hand, there are the popular tools used for data science
-and data engineering, with expectation about how to repeat process,
-how to scale and leverage multi-cloud resources, etc.
-
-Much of the role of **kglab** is to provide abstractions that make
-these integrations simpler, while fitting into the tools and processes
-that are expected by contemporary data teams in industry.
-The following figure shows a *landscape diagram* for how **kglab**
-fits into multiple technology stacks and related workflows:
-
-<a href="../assets/landscape.png" target="_blank"><img src="../assets/landscape.png" width="500" /></a>
-
-Items shown in *black* have been implemented, while the items shown in
-*blue* are on our roadmap.
-We include use cases for most of what's
-implemented within the [tutorial](../tutorial/).
+Internally, **PyTextRank** constructs a *lemma graph* to represent
+links among the candidate phrases (e.g., unrecognized entities) and
+also references within supporting language within the text.
 
 
-## Just Enough Math, Edition 2
+The results from components in earlier stages of the `spaCy` pipeline
+produce two important kinds of annotations for each token in a parsed
+document:
 
-To be candid, **kglab** is partly a follow-up edition of 
-[*Just Enough Math*](../biblio/#nathan2014jem)
-– which originally had the elevator pitch: 
+  1. *part-of-speech*
+  2. *lemmatized*
 
-> practical uses of advanced math for business execs (who probably didn't take +3 years of calculus) to understand big data use cases through hands-on coding experience plus case studies, histories of the key innovations and their innovators, and links to primary sources
+Note that when you have these two annotation plus the disambiguated
+*word sense* (i.e., the meaning of a word based on its context and
+usage) then you can map from a token to a *concept*.
 
-[*JEM*](../biblio/#nathan2014jem) started as a book which –
-thanks to quick thinking by editor Ann Spencer – 
-turned into a popular video+notebook series,
-followed by tutorials, and then a community focused on open source.
-Seven years later the field of 
-[data science](../glossary/#data-science)
-has changed dramatically
-This time around, **kglab** starts as an open source Python library,
-with a notebook-based tutorial at its core,
-focused on a community and their business use cases.
+The gist of the *TextRank* algorithm is to apply a sliding window
+across the tokens within a parsed sentence, constructing a graph from
+the lemmatized tokens where neighbor within the window get linked.
+Each lemma is unique within the lemma graph, such that repeated
+instances collect more links.
 
-The scope now is about
-[*graph-based data science*](../glossary/#graph-based-data-science),
-and perhaps someday this may spin-out a book or other learning materials.
+A *centrality* measure gets calculated for each node in the graph,
+then the nouns can be ranked in decending order.
+
+An additional pass through the graph uses both *noun chunks* and
+*named entities* to help agglomerate adjacent nouns into ranked
+phrases.
 
 
-## How to use these materials
+## Leveraging Semantic Relations
 
-Following the *JEM* approach, throughout the tutorial you'll find a
-mix of topics:
-data science, business context, AI applications, data management, 
-design, distributed systems – plus explorations of how to leverage
-relatively advanced math, where appropriate.
+Generally speaking, any means of enriching the lemma graph prior to
+phrase ranking will tend to improve results.
 
-To addresses these topics, this documentation uses a particular
-structure, shown in the following figure:
+Possible ways to enrich the lemma graph include
+[*coreference resolution*](http://nlpprogress.com/english/coreference_resolution.html)
+and
+[*semantic relations*](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy).
+The latter can leverage *knowledge graphs* or some form of *thesaurus*
+in the general case.
 
-<a href="../assets/learning.png" target="_blank"><img src="../assets/learning.png" width="500" /></a>
+For example,
+[WordNet](https://spacy.io/universe/project/spacy-wordnet)
+and
+[DBpedia](https://wiki.dbpedia.org/)
+both provide means for inferring links among entities, and
+purpose-built knowledge graphs can be applied for specific use cases.
+These can help enrich a lemma graph even in cases where links are not
+explicit within the text.
 
-To make these materials useful to a wide audience, we've provided
-multiple entry points, depending on what you need:
+Consider a paragraph that mentions `cats` and `kittens` in different
+sentences: an implied semantic relation exists between the two nouns
+since the lemma `kitten` is a hyponym of the lemma `cat` -- such that
+an inferred link can be added between them.
 
-  * Introduce [concepts](../concepts), exploring the math behind the concepts
-  * Point toward histories, [primary sources](../biblio), and other materials for context
-  * Show [use cases](../use_case) and linking to related case studies for grounding
-  * Practice through [hands-on coding](../tutorial/), based on a progressive example
-  * Clarify terminology with a [glossary](../glossary) for shared definitions
 
-Ideally, there should also be two other parts – stay tuned for both:
+## Entity Linking
 
-  * *self-assessments* for personal feedback
-  * the coding examples show lead into a *capstone project*
+One of the motivations for **PyTextRank** is to provide support (eventually) for
+[*entity linking*](http://nlpprogress.com/english/entity_linking.html),
+in contrast to the more commonplace usage of
+[*named entity recognition*](http://nlpprogress.com/english/named_entity_recognition.html).
+These approaches can be used together in complementary ways to improve
+the results overall.
 
-In any case, the objective for these materials is to help people learn
-how leverage **kglab** effectively, gain confidence working with
-graph-based data science, plus have examples to repurpose for your own
-use cases.
+This has an additional benefit of linking parsed and annotated
+documents into more structured data, and can also be used to support
+knowledge graph construction.
 
-Start at any point, whatever is most immediately useful for you.
-The material is hyper-linked together; it may be helpful to run
-JupyterLab for the coding examples in one browser tab, while reading
-this documentation in another browser tab.
 
-Again, we're focused on a [community](../#community-resources)
-and pay special attention to their business use cases.
+## Extractive Summarization
+
+The simple implementation of *extractive summarization* in *
+*PyTextRank** was inspired by the
+[[williams2016]](../biblio/#williams2016),
+talk on text summarization.
+
+Note that while **much better** approaches exist for
+[*summarizing text*](http://nlpprogress.com/english/summarization.html),
+questions linger about some of the top contenders -- see:
+[1](https://arxiv.org/abs/1909.03004),
+[2](https://arxiv.org/abs/1906.02243).
+
+Arguably, having alternatives such as **PyTextRank** 
+allow for a wider range of cost trade-offs.
+
+
+## Feedback
+
+Let us know if you find this package useful, tell us about use cases, 
+describe what else you would like to see integrated, etc.
+
+We're focused on our [community](../#community-resources) 
+and pay special attention to the business use cases.
 We're also eager to hear your feedback and suggestions for this 
 open source project.

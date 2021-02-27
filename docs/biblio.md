@@ -8,6 +8,7 @@ Links to online versions of cited works use [DOIs](https://www.doi.org/) when av
 then separately list [open access](https://peerj.com/preprints/3119v1/) URLs obtained
 through <https://github.com/Coleridge-Initiative/RCApi>
 
+
 ## – F –
 
 ### florescuc17
@@ -19,6 +20,20 @@ doi: 10.18653/v1/P17-1102
 open: <https://www.aclweb.org/anthology/P17-1102.pdf>
 
 
+## – H –
+
+### hogan2020knowledge
+
+["Knowledge Graphs"](https://arxiv.org/abs/2003.02320)  
+**Aidan Hogan**, **Eva Blomqvist**, **Michael Cochez**, **Claudia d'Amato**,
+**Gerard de Melo**, **Claudio Gutierrez**, **José Emilio Labra Gayo**,
+**Sabrina Kirrane**, **Sebastian Neumaier**, **Axel Polleres**,
+**Roberto Navigli**, **Axel-Cyrille Ngonga Ngomo**, **Sabbir M. Rashid**,
+**Anisa Rula**, **Lukas Schmelzeisen**, **Juan Sequeda**, **Steffen Staab**,
+**Antoine Zimmermann**  
+*arXiv* (2020)
+
+
 ## – M –
 
 ### mihalcea04textrank
@@ -28,9 +43,11 @@ open: <https://www.aclweb.org/anthology/P17-1102.pdf>
 *EMNLP* (2004)  
 open: <https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf>
 
-### mihalcea16msr
 
-["Single and Multiple Document Summarization with Graph-based Ranking Algorithms"](https://www.youtube.com/watch?v=NvpCFJ0dA8A)  
-**Rada Mihalcea**  
-Microsoft Research on *YouTube* (2016-09-05)
+## - W -
 
+### williams2016
+
+["Text summarization, topic models and RNNs"](http://mike.place/2016/summarization/)  
+**Mike Williams**  
+*PyGotham*, (2016-09-25)

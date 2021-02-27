@@ -21,6 +21,7 @@ nav:
         - Setup: tutorial.md
         - TextRank algorithm explained: explain_algo.md
         - Extractive Summarization: explain_summ.md
+        - Misc. Talks: talks.md
     - Glossary: glossary.md
     - Bibliography: biblio.md
     - Acknowledgements: ack.md
