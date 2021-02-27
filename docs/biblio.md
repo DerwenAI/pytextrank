@@ -16,8 +16,19 @@ through <https://github.com/Coleridge-Initiative/RCApi>
 ["PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents"](https://doi.org/10.18653/v1/P17-1102)  
 **Corina Florescu**, **Cornelia Caragea**  
 *Comput Linguist Assoc Comput Linguist* (2017)  
-doi: 10.18653/v1/P17-1102  
+DOI: 10.18653/v1/P17-1102  
 open: <https://www.aclweb.org/anthology/P17-1102.pdf>
+
+
+## – G –
+
+### gleich15
+
+["PageRank Beyond the Web"](https://doi.org/10.1137/140976649)  
+**David F. Gleich**  
+*SIAM Review* 57 (3): 321-363 (2015)  
+DOI: 10.1137/140976649  
+open: <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf>
 
 
 ## – H –
@@ -32,6 +43,16 @@ open: <https://www.aclweb.org/anthology/P17-1102.pdf>
 **Anisa Rula**, **Lukas Schmelzeisen**, **Juan Sequeda**, **Steffen Staab**,
 **Antoine Zimmermann**  
 *arXiv* (2020)
+
+
+## – P –
+
+### page1998
+
+["The PageRank Citation Ranking: Bringing Order to the Web"](http://ilpubs.stanford.edu:8090/422/)  
+**Lawrence Page**, **Sergey Brin**, **Rajeev Motwani**, **Terry Winograd**  
+Stanford University Database Group (1998)  
+open: <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf>
 
 
 ## – M –
