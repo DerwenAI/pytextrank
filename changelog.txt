@@ -2,10 +2,11 @@
 
 ## 3.0.1
 
-2021-02-??
+2021-02-28
 
   * mypy coverage for type annotations
   * add DOI to README and CITATION
+  * now deploying online docs at <https://derwen.ai/docs/ptr/>
 
 
 ## 3.0.0
