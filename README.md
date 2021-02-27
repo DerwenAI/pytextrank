@@ -13,7 +13,7 @@ practices) which gets used to:
   - run low-cost extractive summarization of a text document
   - help infer links from unstructured text into more structured representation
 
-Documentation: <https://derwen.ai/docs/ptr/>
+Documentation: <https://derwen.ai/docs/ptr/> (COMING SOON!)
 
 
 ## Getting Started
