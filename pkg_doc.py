@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     class_list = [
         "BaseTextRank",
-        "Phrase",
         "PositionRank",
+        "Phrase",
         ]
 
     pkg_doc = pyfixdoc.PackageDoc(

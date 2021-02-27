@@ -6,19 +6,19 @@ Implements the base class for TextRank, with placeholder methods for
 use by subclasses for algorithm extensions.
 """
 
-from .util import groupby_apply
+from .util import groupby_apply, default_scrubber
 
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
 from icecream import ic  # type: ignore
 from spacy.tokens import Doc, Span, Token  # type: ignore
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 import graphviz  # type: ignore
 import json
 import math
 import networkx as nx  # type: ignore
 import pathlib
 import time
+import typing
 
 
 @dataclass
@@ -29,10 +29,11 @@ Represents one extracted phrase.
     text: str
     rank: float
     count: int
-    chunks: List[Span]
+    chunks: typing.List[Span]
 
 
-Node = Tuple[str, str]  # (lemma, pos)
+Node = typing.Tuple[str, str]  # (lemma, pos)
+PhraseLike = typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, Span]]]]
 
 
 class BaseTextRank:
@@ -48,9 +49,9 @@ Implements TextRank by Mihalcea, et al., as a spaCy pipeline component.
     def __init__ (
         self,
         edge_weight: float = _EDGE_WEIGHT,
-        pos_kept: List[str] = _POS_KEPT,
-        scrubber: Callable = str.strip,
+        pos_kept: typing.List[str] = _POS_KEPT,
         token_lookback: int = _TOKEN_LOOKBACK,
+        scrubber: typing.Optional[typing.Callable] = None,
         ) -> None:
         """
 Constructor for a `TextRank` object
@@ -62,16 +63,21 @@ default weight for an edge
 parts of speech tags to be kept; adjust this if strings representing
 the POS tags change
 
-    scrubber:
-optional "scrubber" function to clean up punctuation from a token
-
     token_lookback:
 the window for neighboring tokens (similar to a skip gram)
+
+    scrubber:
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
         """
         self.edge_weight = edge_weight
         self.pos_kept = pos_kept
-        self.scrubber = scrubber
         self.token_lookback = token_lookback
+
+        if not scrubber:
+            self.scrubber = default_scrubber
+        else:
+            self.scrubber = scrubber
+
 
         self.doc: Doc = None
         self.stopwords: dict = defaultdict(list)
@@ -110,14 +116,14 @@ any pre-existing state.
         self.elapsed_time = 0.0
         self.lemma_graph = nx.DiGraph()
         self.phrases: dict = defaultdict(list)
-        self.ranks: Dict[Node, float] = {}
-        self.seen_lemma: Dict[Node, Set[int]] = OrderedDict()
+        self.ranks: typing.Dict[Node, float] = {}
+        self.seen_lemma: typing.Dict[Node, typing.Set[int]] = OrderedDict()
 
 
     def load_stopwords (
         self,
-        data: Optional[Dict[str, List[str]]] = None,
-        path: Optional[pathlib.Path] = None,
+        data: typing.Optional[typing.Dict[str, typing.List[str]]] = None,
+        path: typing.Optional[pathlib.Path] = None,
         ) -> None:
         """
 Load a dictionary of *stop words* for tokens to be ignored when
@@ -148,12 +154,15 @@ of a JSON file – in lieu of providing a `data` parameter
 
     def calc_textrank (
         self
-        ) -> List[Phrase]:
+        ) -> typing.List[Phrase]:
         """
 Iterate through each sentence in the doc, constructing a lemma graph
 then returning the top-ranked phrases.
 
 This method represents the heart of the algorithm implementation.
+
+    returns:
+list of ranked phrases, in descending order
         """
         self.reset()
         t0 = time.time()
@@ -180,7 +189,7 @@ This method represents the heart of the algorithm implementation.
         # have articles or prepositions), we need to find a minimum span
         # for each phrase based on combinations of lemmas
 
-        raw_phrase_list: List[Phrase] = self._get_min_phrases(all_phrases)
+        raw_phrase_list: typing.List[Phrase] = self._get_min_phrases(all_phrases)
         phrase_list = sorted(raw_phrase_list, key=lambda p: p.rank, reverse=True)
 
         t1 = time.time()
@@ -191,10 +200,13 @@ This method represents the heart of the algorithm implementation.
 
     def get_personalization (
         self
-        ) -> Optional[Dict[Node, float]]:
+        ) -> typing.Optional[typing.Dict[Node, float]]:
         """
-Get the node weights for use in personalised PageRank.
+Get the node weights for use in Personalized PageRank.
 Defaults to no-op.
+
+    returns:
+`None`
         """
         return None
 
@@ -220,7 +232,7 @@ a directed graph representing the lemma graph
         return g
 
 
-    def keep_token (
+    def _keep_token (
         self,
         token: Token,
         ) -> bool:
@@ -257,7 +269,7 @@ graph
     @property
     def node_list (
         self
-        ) -> List[Tuple[str, str]]:
+        ) -> typing.List[typing.Tuple[str, str]]:
         """
 Build a list of vertices for the lemma graph.
 
@@ -267,7 +279,7 @@ list of nodes
         nodes = [
             (token.lemma_, token.pos_)
             for token in self.doc
-            if self.keep_token(token)
+            if self._keep_token(token)
         ]
 
         return nodes
@@ -276,20 +288,20 @@ list of nodes
     @property
     def edge_list (
         self
-        ) -> List[Tuple[Node, Node, Dict[str, float]]]:
+        ) -> typing.List[typing.Tuple[Node, Node, typing.Dict[str, float]]]:
         """
 Build a list of weighted edges for the lemma graph.
 
     returns:
 list of weighted edges
         """
-        edges: List[Tuple[Node, Node]] = []
+        edges: typing.List[typing.Tuple[Node, Node]] = []
 
         for sent in self.doc.sents:
             h = [
                 (token.lemma_, token.pos_)
                 for token in sent
-                if self.keep_token(token)
+                if self._keep_token(token)
             ]
 
             for hop in range(self.token_lookback):
@@ -307,9 +319,9 @@ list of weighted edges
 
     def _collect_phrases (
         self,
-        spans: Iterable[Span],
-        ranks: Dict[Node, float]
-        ) -> Dict[Span, float]:
+        spans: typing.Iterable[Span],
+        ranks: typing.Dict[Node, float]
+        ) -> typing.Dict[Span, float]:
         """
 Aggregate the rank metrics of the individual nodes (tokens) within
 each phrase.
@@ -328,7 +340,7 @@ metric
             span: sum(
                 ranks[(token.lemma_, token.pos_)]
                 for token in span
-                if self.keep_token(token)
+                if self._keep_token(token)
             )
             for span in spans
         }
@@ -369,8 +381,8 @@ normalized rank metric
 
     def _get_min_phrases (
         self,
-        all_phrases: Dict[Span, float]
-        ) -> List[Phrase]:
+        all_phrases: typing.Dict[Span, float]
+        ) -> typing.List[Phrase]:
         """
 Group the phrases by their text content, select the span with the
 maximum rank within each group, then collect the ranked phrases into
@@ -389,7 +401,7 @@ ordered list of ranked phrases
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: list((rank, spans) for text, rank, spans in g)
 
-        phrases: List[Tuple[str, List[Tuple[float, Span]]]] = groupby_apply(
+        phrases: PhraseLike = groupby_apply(
             data,
             keyfunc,
             applyfunc,
