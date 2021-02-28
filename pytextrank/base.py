@@ -32,8 +32,8 @@ Represents one extracted phrase.
     chunks: typing.List[Span]
 
 
-Node = typing.Tuple[str, str]  # (lemma, pos)
 PhraseLike = typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, Span]]]]
+Node = typing.Tuple[str, str]  # (lemma, pos)
 
 
 class BaseTextRank:
@@ -43,13 +43,14 @@ Implements the *TextRank* algorithm defined by
 deployed as a `spaCy` pipeline component.
     """
 
-    _EDGE_WEIGHT = 1.0
-    _POS_KEPT = ["ADJ", "NOUN", "PROPN", "VERB"]
-    _TOKEN_LOOKBACK = 3
+    _EDGE_WEIGHT: float = 1.0
+    _POS_KEPT: typing.List[str] = ["ADJ", "NOUN", "PROPN", "VERB"]
+    _TOKEN_LOOKBACK: int = 3
 
 
     def __init__ (
         self,
+        *,
         edge_weight: float = _EDGE_WEIGHT,
         pos_kept: typing.List[str] = None,
         token_lookback: int = _TOKEN_LOOKBACK,
@@ -72,29 +73,29 @@ the window for neighboring tokens (similar to a skip gram)
 optional "scrubber" function to clean up punctuation from a token;
 if `None` then defaults to `pytextrank.default_scrubber`
         """
-        self.edge_weight = edge_weight
-        self.token_lookback = token_lookback
+        self.edge_weight: float = edge_weight
+        self.token_lookback: int = token_lookback
 
         if pos_kept:
-            self.pos_kept = pos_kept
+            self.pos_kept: typing.List[str] = pos_kept
         else:
             self.pos_kept = self._POS_KEPT
 
-        if not scrubber:
-            self.scrubber = default_scrubber
+        if scrubber:
+            self.scrubber: typing.Callable = scrubber
         else:
-            self.scrubber = scrubber
+            self.scrubber = default_scrubber
 
         self.doc: Doc = None
         self.stopwords: dict = defaultdict(list)
 
-        self.elapsed_time = 0.0
-        self.lemma_graph = nx.DiGraph()
+        # effectively, performs the same work as the `reset()` method;
+        # called explicitly here for the sake of type annotations
+        self.elapsed_time: float = 0.0
+        self.lemma_graph: nx.DiGraph = nx.DiGraph()
         self.phrases: dict = defaultdict(list)
         self.ranks: typing.Dict[Node, float] = {}
         self.seen_lemma: typing.Dict[Node, typing.Set[int]] = OrderedDict()
-
-        self.reset()
 
 
     def __call__ (
@@ -102,7 +103,7 @@ if `None` then defaults to `pytextrank.default_scrubber`
         doc: Doc,
         ) -> Doc:
         """
-Set the extension attributes on a spaCy [`Doc`](https://spacy.io/api/doc)
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
 document to create a *pipeline component factory* for `TextRank` as
 a stateful component, invoked when the document gets processed.
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
@@ -124,18 +125,19 @@ stages of the `spaCy` pipeline
         self
         ) -> None:
         """
-Initialize the data structures needed for extracting phrases, removing
-any pre-existing state.
+Reinitialize the data structures needed for extracting phrases,
+removing any pre-existing state.
         """
         self.elapsed_time = 0.0
         self.lemma_graph = nx.DiGraph()
-        self.phrases: dict = defaultdict(list)
-        self.ranks: typing.Dict[Node, float] = {}
-        self.seen_lemma: typing.Dict[Node, typing.Set[int]] = OrderedDict()
+        self.phrases = defaultdict(list)
+        self.ranks = {}
+        self.seen_lemma = OrderedDict()
 
 
     def load_stopwords (
         self,
+        *,
         data: typing.Optional[typing.Dict[str, typing.List[str]]] = None,
         path: typing.Optional[pathlib.Path] = None,
         ) -> None:
@@ -189,25 +191,24 @@ list of ranked phrases, in descending order
         # to run the algorithm, we use the NetworkX implementation
         # of PageRank (i.e., approximating eigenvalue centrality)
         # to calculate a rank for each node in the lemma graph
-
         self.ranks = nx.pagerank(
             self.lemma_graph,
-            personalization=self.get_personalization(),
+            personalization = self.get_personalization(),
         )
 
-        # collect the top-ranked phrases based on both the noun chunks
-        # and the named entities
+        # agglomerate the lemmas ranked in the lemma graph into ranked
+        # phrases, leveraging information from earlier stages of the
+        # pipeline: noun chunks and named entities
 
-        nc_phrases = self._collect_phrases(self.doc.noun_chunks, self.ranks)
-        ent_phrases = self._collect_phrases(self.doc.ents, self.ranks)
-        all_phrases = { **nc_phrases, **ent_phrases }
+        nc_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.noun_chunks, self.ranks)
+        ent_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.ents, self.ranks)
+        all_phrases: typing.Dict[Span, float] = { **nc_phrases, **ent_phrases }
 
         # since noun chunks can be expressed in different ways (e.g., may
         # have articles or prepositions), we need to find a minimum span
         # for each phrase based on combinations of lemmas
-
         raw_phrase_list: typing.List[Phrase] = self._get_min_phrases(all_phrases)
-        phrase_list = sorted(raw_phrase_list, key=lambda p: p.rank, reverse=True)
+        phrase_list: typing.List[Phrase] = sorted(raw_phrase_list, key=lambda p: p.rank, reverse=True)
 
         t1 = time.time()
         self.elapsed_time = (t1 - t0) * 1000.0
@@ -263,7 +264,7 @@ of speech tag suitable for vertices in the lemma graph.
 Otherwise, track this token in the `seen_lemma` dictionary.
 
     token:
-a parsed spaCy [`Token`](https://spacy.io/api/token) to be evaluated
+a parsed `spaCy` [`Token`](https://spacy.io/api/token) to be evaluated
 
     returns:
 boolean value for whether to keep this token as a node in the lemma
@@ -298,7 +299,7 @@ Build a list of vertices for the lemma graph.
     returns:
 list of nodes
         """
-        nodes = [
+        nodes: typing.List[typing.Tuple[str, str]] = [
             (token.lemma_, token.pos_)
             for token in self.doc
             if self._keep_token(token)
@@ -332,7 +333,7 @@ list of weighted edges
                     edges.append((node, nbor))
 
         # include weight on the edge: (2, 3, {'weight': 3.1415})
-        weighted_edges = [
+        weighted_edges: typing.List[typing.Tuple[Node, Node, typing.Dict[str, float]]] = [
             (*n, {"weight": w * self.edge_weight}) for n, w in Counter(edges).items()
         ]
 
@@ -358,7 +359,7 @@ rank metrics corresponding to each node
 phrases extracted from the lemma graph, each with an aggregate rank
 metric
         """
-        phrases = {
+        phrases: typing.Dict[Span, float] = {
             span: sum(
                 ranks[(token.lemma_, token.pos_)]
                 for token in span
@@ -383,7 +384,7 @@ Since the noun chunking is greedy, we discount the ranks using a point
 estimate based on the number of non-lemma tokens within a phrase.
 
     span:
-span representing one phrase
+a span representing one phrase
 
     sum_rank:
 sum of the ranks for each token within this span
@@ -406,17 +407,17 @@ normalized rank metric
         all_phrases: typing.Dict[Span, float]
         ) -> typing.List[Phrase]:
         """
-Group the phrases by their text content, select the span with the
+Group the phrases by their text content, selecting the span with the
 maximum rank within each group, then collect the ranked phrases into
 an ordered list.
 
     all_phrases:
-raw phrase list
+the raw phrase list
 
     returns:
-ordered list of ranked phrases
+an ordered list of ranked phrases
         """
-        data = [
+        data: typing.List[typing.Tuple[str, float, Span]] = [
             (self.scrubber(span.text), rank, span) for span, rank in all_phrases.items()
         ]
 
@@ -429,7 +430,7 @@ ordered list of ranked phrases
             applyfunc,
         )
 
-        phrase_list = [
+        phrase_list: typing.List[Phrase] = [
             Phrase(
                 text=p[0],
                 rank=max(rank for rank, span in p[1]),
@@ -442,39 +443,34 @@ ordered list of ranked phrases
         return phrase_list
 
 
-    def summary (
+    def calc_sent_rank (
         self,
-        limit_phrases=10,
-        limit_sentences=4,
-        preserve_order=False
-        ):
+        limit_phrases: int,
+        ) -> typing.Dict[int, float]:
         """
-Run extractive summarization, based on the vector distance (per
-sentence) for each of the top-ranked phrases.
+Calculates a rank for each sentence in the document, based on its distance
+(per sentence) from a *unit vector* of the top-ranked phrases.
 
     limit_phrases:
-maximum number of top-ranked phrases to use in the distance vectors
+maximum number of top-ranked phrases to use in the *unit vector*
 
-    limit_sentences:
-total number of sentences to yield for the extractive summary
-
-    preserve_order:
-flag to preserve the order of sentences as they originally occurred in
-the source text; defaults to `False`
-
-    yields:
-texts for sentences, in order
+    returns:
+a dictionary of the calculated ranks per sentence
         """
-        unit_vector = []
-
-        # construct a list of sentence boundaries with a phrase set
-        # for each (initialized to empty)
-
+        # generate a list of sentence boundaries, each of which will
+        # be populated with a phrase vector
         sent_bounds = [ [s.start, s.end, set([])] for s in self.doc.sents ]
 
-        # iterate through the top-ranked phrases, adding them to the
-        # phrase vector for each sentence
+        # TODO: the `sent_bounds` tuples should be NamedTuple objects
+        # -- including position in the doc and rank metric -- returned
+        # by this method
 
+        # iterate through top-ranked phrases in order, adding each in
+        # turn to the phrase vector for the sentence in which it
+        # appears, and meanwhile constructing the `unit_vector` to
+        # provide a *characteristic* for comparing each sentence to
+        # the entire document
+        unit_vector: typing.List[float] = []
         phrase_id = 0
 
         for p in self.doc._.phrases:
@@ -491,20 +487,17 @@ texts for sentences, in order
             if phrase_id == limit_phrases:
                 break
 
-        # construct a unit_vector for the top-ranked phrases, up to
-        # the requested limit
-
+        # normalize the unit vector of top-ranked phrases
         sum_ranks = sum(unit_vector)
 
         try:
             unit_vector = [ rank/sum_ranks for rank in unit_vector ]
         except ZeroDivisionError:
-            unit_vector = (0.0,) * len(unit_vector)
+            unit_vector = list((0.0,) * len(unit_vector))
 
         # iterate through each sentence, calculating its euclidean
         # distance from the unit vector
-
-        sent_rank = {}
+        sent_rank: typing.Dict[int, float] = {}
         sent_id = 0
 
         for sent_start, sent_end, sent_vector in sent_bounds:
@@ -517,40 +510,64 @@ texts for sentences, in order
             sent_rank[sent_id] = math.sqrt(sum_sq)
             sent_id += 1
 
-        # extract the sentences with the lowest distance
+        return sent_rank
 
-        sent_text = {}
+
+    def summary (
+        self,
+        *,
+        limit_phrases: int = 10,
+        limit_sentences: int = 4,
+        preserve_order: bool = False,
+        ) -> typing.Iterator[str]:
+        """
+Run
+[*extractive summarization*](https://derwen.ai/docs/ptr/glossary/#extractive-summarization),
+based on a vector distance (per sentence) for each of the top-ranked phrases.
+
+    limit_phrases:
+maximum number of top-ranked phrases to use in the distance vectors
+
+    limit_sentences:
+total number of sentences to yield for the extractive summarization
+
+    preserve_order:
+flag to preserve the order of sentences as they originally occurred in
+the source text; defaults to `False`
+
+    yields:
+texts for sentences, in order
+        """
+        # build a list of sentence indices, sorted by rank and
+        # truncated to the specified limit
+        sent_rank: typing.Dict[int, float] = self.calc_sent_rank(limit_phrases)
+        top_sent_ids: typing.List[int] = list(range(len(sent_rank)))
+
+        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
+        top_sent_ids = top_sent_ids[:limit_sentences]
+
+        # optional: sort in ascending order of index to preserve the
+        # order in which sentences appear in the original text
+        if preserve_order:
+            top_sent_ids.sort()
+
+        # extract the sentences with the lowest distance
+        sent_text: typing.Dict[int, str] = {}
         sent_id = 0
 
         for sent in self.doc.sents:
             sent_text[sent_id] = sent
             sent_id += 1
 
-        # build a list of sentence indices, sorted according to their
-        # corresponding rank
-
-        top_sent_ids = list(range(len(sent_rank)))
-        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
-
-        # truncate to the given limit
-
-        top_sent_ids = top_sent_ids[:limit_sentences]
-
-        # sort in ascending order of index to preserve the order in
-        # which the sentences appear in the original text
-
-        if preserve_order:
-            top_sent_ids.sort()
-
         # yield results, up to the limit requested
-
         for sent_id in top_sent_ids:
             yield sent_text[sent_id]
 
 
     def write_dot (
         self,
-        path="graph.dot"
+        *,
+        path: str = "graph.dot"
         ) -> None:
         """
 Serialize the lemma graph in the `Dot` file format.

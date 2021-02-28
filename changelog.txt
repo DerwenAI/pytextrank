@@ -7,6 +7,7 @@
   * updated links on PyPi
   * `pylint` coverage for code checking
   * linking definitions and citations in source code apidocs to our online docs
+  * add `calc_sent_rank()` method to expose the sentence ranks (for summarization)
 
 
 ## 3.0.1

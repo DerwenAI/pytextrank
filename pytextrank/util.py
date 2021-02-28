@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Callable, Iterable, List, Tuple
 import itertools
 import re
 import string
+import typing
 import unicodedata
 
 
 def groupby_apply (
-    data: Iterable[Any],
-    keyfunc: Callable,
-    applyfunc: Callable,
-    ) -> List[Tuple[Any, Any]]:
+    data: typing.Iterable[typing.Any],
+    keyfunc: typing.Callable,
+    applyfunc: typing.Callable,
+    ) -> typing.List[typing.Tuple[typing.Any, typing.Any]]:
     """
 GroupBy using a key function and an apply function, without a `pandas`
 dependency.
@@ -31,7 +31,11 @@ callable to apply to the group
 an iterable with the accumulated values
     """
     data = sorted(data, key=keyfunc)
-    accum = [ (k, applyfunc(g)) for k, g in itertools.groupby(data, keyfunc) ]
+
+    accum: typing.List[typing.Tuple[typing.Any, typing.Any]] = [
+        (k, applyfunc(g),)
+        for k, g in itertools.groupby(data, keyfunc)
+        ]
 
     return accum
 
@@ -39,17 +43,36 @@ an iterable with the accumulated values
 ######################################################################
 ## utility functions
 
-def default_scrubber (text):
+def default_scrubber (
+    text: str
+    ) -> str:
     """
-    remove spurious punctuation (for English)
+Removes spurious punctuation from the given text.
+Note: this is intended for documents in English.
+
+    text:
+input text
+
+    returns:
+scrubbed text
     """
     return text.replace("'", "")
 
 
-def maniacal_scrubber (text):
+def maniacal_scrubber (
+    text: str
+    ) -> str:
     """
-    it scrubs the garble from its stream...
-    or it gets the debugger again
+Applies multiple approaches for aggressively removing garbled Unicode
+and spurious punctuation from the given text.
+
+OH: "It scrubs the garble from its stream... or it gets the debugger again!"
+
+    text:
+input text
+
+    returns:
+scrubbed text
     """
     x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
 
@@ -72,11 +95,19 @@ def maniacal_scrubber (text):
     return x
 
 
-def split_grafs (lines):
+def split_grafs (
+    lines: typing.List[str]
+    ) -> typing.Iterator[str]:
     """
-    segment raw text, given as a list of lines, into paragraphs
+Segments a raw text, given as a list of lines, into paragraphs.
+
+    lines:
+the raw text document, split into a lists of lines
+
+    yields:
+text per paragraph
     """
-    graf = []
+    graf: typing.List[str] = []
 
     for line in lines:
         line = line.strip()
@@ -92,16 +123,31 @@ def split_grafs (lines):
         yield "\n".join(graf)
 
 
-def filter_quotes (text, is_email=True):
+def filter_quotes (
+    text: str,
+    *,
+    is_email: bool = True,
+    ) -> typing.List[str]:
     """
-    filter the quoted text out of a message
+Filter the quoted text out of an email message.
+This handles quoting methods for popular email systems.
+
+    text:
+raw text data
+
+    is_email:
+flag for whether the text comes from an email message;
+defaults to `True`
+
+    returns:
+the filtered text representing as a list of lines
     """
     _PAT_FORWARD = re.compile(r"\n-+ Forwarded message -+\n")
     _PAT_REPLIED = re.compile(r"\nOn.*\d+.*\n?wrote\:\n+\>")
     _PAT_UNSUBSC = re.compile(r"\n-+\nTo unsubscribe,.*\nFor additional commands,.*")
 
     if is_email:
-        text = filter(lambda x: x in string.printable, text)
+        text = str(filter(lambda x: x in string.printable, text))
 
         # strip off quoted text in a forward
         m = _PAT_FORWARD.split(text, re.M)
@@ -122,7 +168,7 @@ def filter_quotes (text, is_email=True):
             text = m[0]
 
     # replace any remaining quoted text with blank lines
-    lines = []
+    lines: typing.List[str] = []
 
     for line in text.split("\n"):
         if line.startswith(">"):
