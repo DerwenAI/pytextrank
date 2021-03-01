@@ -3,7 +3,7 @@ Implements the *PositionRank* algorithm.
 """
 
 import typing
-from .base import BaseTextRank, Node
+from .base import BaseTextRank, Lemma
 from .util import groupby_apply
 
 
@@ -16,7 +16,7 @@ deployed as a `spaCy` pipeline component.
 
     def get_personalization (
         self
-        ) -> typing.Optional[typing.Dict[Node, float]]:
+        ) -> typing.Optional[typing.Dict[Lemma, float]]:
         """
 Get the *node weights* for initializing the use of the
 [*Personalized PageRank*](https://derwen.ai/docs/ptr/glossary/#personalized-pagerank)
@@ -65,10 +65,12 @@ Biased restart probabilities to use in the *PageRank* algorithm.
         }
 
         weighted_nodes = {
-            # the authors assign higher probability to a word but our
-            # lemma graph vertices are (word, pos) tuples so we map
-            # each word weight to all vertices containing that word
-            (token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
+            # while the authors assign higher probability to a "word",
+            # our *lemma graph* vertices are (lemma, pos) tuples,
+            # therefore we map each `Lemma` weight to all the *lemma
+            # graph* vertices which contain it
+            # TODO: should this map to (lemma, pos) pairs instead?
+            Lemma(token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
             for token in self.doc
             if token.pos_ in self.pos_kept
         }

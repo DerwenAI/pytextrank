@@ -75,19 +75,27 @@ knowledge graph construction.
 
 ## Extractive Summarization
 
-The simple implementation of *extractive summarization* in *
-*PyTextRank** was inspired by the
+The simple implementation of 
+[*extractive summarization*](../glossary/#extractive-summarization)
+**PyTextRank** was inspired by the
 [[williams2016]](../biblio/#williams2016),
 talk on text summarization.
 
-Note that while **much better** approaches exist for
-[*summarizing text*](http://nlpprogress.com/english/summarization.html),
-questions linger about some of the top contenders -- see:
-[1](https://arxiv.org/abs/1909.03004),
-[2](https://arxiv.org/abs/1906.02243).
+Note that **much better** approaches exist for
+[*summarizing text*](http://nlpprogress.com/english/summarization.html).
+For instance, see <https://primer.ai> for a commercial example
+using state of the art 
+[*abstractive summarization*](../glossary/#abstractive-summarization)
+based on a combination of
+[*deep learning*](../glossary/#deep-learning)
+and
+[*knowledge graph*](../glossary/#knowledge-graph)
+approaches.
 
-Arguably, having alternatives such as **PyTextRank** 
-allow for a wider range of cost trade-offs.
+Even so, there are engineering and policy trade-offs[^1] to consider.
+Arguably, lower-cost alternatives such as **PyTextRank** allow for a
+wider range of trade-offs to suit your use cases.
+[^1]: Both <https://arxiv.org/abs/1909.03004> and <https://arxiv.org/abs/1906.02243> explore these issues in detail.
 
 
 ## Feedback

@@ -19,7 +19,10 @@ if __name__ == "__main__":
     class_list = [
         "BaseTextRank",
         "PositionRank",
+        "Lemma",
         "Phrase",
+        "Sentence",
+        "VectorElem",
         ]
 
     pkg_doc = pyfixdoc.PackageDoc(

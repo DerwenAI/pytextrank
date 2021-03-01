@@ -1,4 +1,4 @@
-from .base import BaseTextRank, Phrase, PhraseLike, Node
+from .base import BaseTextRank, Lemma, Phrase, Sentence, VectorElem
 
 from .positionrank import PositionRank
 

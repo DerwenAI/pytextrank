@@ -21,19 +21,88 @@ import time
 import typing
 
 
+@dataclass(order=True, frozen=True)
+class Lemma:
+    """
+A data class representing one node in the *lemma graph*.
+    """
+    lemma: str
+    pos: str
+
+
+    def label (
+        self
+        ) -> str:
+        """
+Generates a more simplified string representation than `repr()`
+provides.
+
+    returns:
+string representation
+        """
+        return str((self.lemma, self.pos,))
+
+
 @dataclass
 class Phrase:
     """
-Represents one extracted phrase.
+A data class representing one ranked phrase.
     """
     text: str
-    rank: float
-    count: int
     chunks: typing.List[Span]
+    count: int
+    rank: float
 
 
-PhraseLike = typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, Span]]]]
-Node = typing.Tuple[str, str]  # (lemma, pos)
+@dataclass
+class Sentence:
+    """
+A data class representing the distance measure for one sentence.
+    """
+    start: int
+    end: int
+    sent_id: int
+    phrases: typing.Set[int]
+    distance: float
+
+
+    def empty (
+        self
+        ) -> bool:
+        """
+Test whether this sentence includes any ranked phrases.
+
+    returns:
+`True` if the `phrases` is not empty.
+        """
+        return len(self.phrases) == 0
+
+
+    def text (
+        self,
+        doc: Doc,
+        ) -> str:
+        """
+Accessor for the text slice of the `spaCy` [`Doc`](https://spacy.io/api/doc)
+document represented by this sentence.
+
+    doc:
+source document
+
+    returns:
+the sentence text
+        """
+        return doc[self.start:self.end]
+
+
+@dataclass
+class VectorElem:
+    """
+A data class representing one element in the *unit vector* of the document.
+    """
+    phrase: Phrase
+    phrase_id: int
+    coord: float
 
 
 class BaseTextRank:
@@ -94,8 +163,8 @@ if `None` then defaults to `pytextrank.default_scrubber`
         self.elapsed_time: float = 0.0
         self.lemma_graph: nx.DiGraph = nx.DiGraph()
         self.phrases: dict = defaultdict(list)
-        self.ranks: typing.Dict[Node, float] = {}
-        self.seen_lemma: typing.Dict[Node, typing.Set[int]] = OrderedDict()
+        self.ranks: typing.Dict[Lemma, float] = {}
+        self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
 
 
     def __call__ (
@@ -218,7 +287,7 @@ list of ranked phrases, in descending order
 
     def get_personalization (  # pylint: disable=R0201
         self
-        ) -> typing.Optional[typing.Dict[Node, float]]:
+        ) -> typing.Optional[typing.Dict[Lemma, float]]:
         """
 Get the *node weights* for initializing the use of the
 [*Personalized PageRank*](https://derwen.ai/docs/ptr/glossary/#personalized-pagerank)
@@ -244,7 +313,7 @@ a directed graph representing the lemma graph
         """
         g = nx.DiGraph()
 
-        # add nodes made of (lemma, pos)
+        # add nodes made of Lemma(lemma, pos)
         g.add_nodes_from(self.node_list)
 
         # add edges between nodes that co-occur within a window,
@@ -279,7 +348,7 @@ graph
             return False
 
         # also track occurrence of this token's lemma, for later use
-        key = (lemma, token.pos_,)
+        key = Lemma(lemma, token.pos_,)
 
         if key not in self.seen_lemma:
             self.seen_lemma[key] = set([token.i])
@@ -292,15 +361,15 @@ graph
     @property
     def node_list (
         self
-        ) -> typing.List[typing.Tuple[str, str]]:
+        ) -> typing.List[Lemma]:
         """
 Build a list of vertices for the lemma graph.
 
     returns:
 list of nodes
         """
-        nodes: typing.List[typing.Tuple[str, str]] = [
-            (token.lemma_, token.pos_)
+        nodes: typing.List[Lemma] = [
+            Lemma(token.lemma_, token.pos_)
             for token in self.doc
             if self._keep_token(token)
         ]
@@ -311,18 +380,18 @@ list of nodes
     @property
     def edge_list (
         self
-        ) -> typing.List[typing.Tuple[Node, Node, typing.Dict[str, float]]]:
+        ) -> typing.List[typing.Tuple[Lemma, Lemma, typing.Dict[str, float]]]:
         """
 Build a list of weighted edges for the lemma graph.
 
     returns:
 list of weighted edges
         """
-        edges: typing.List[typing.Tuple[Node, Node]] = []
+        edges: typing.List[typing.Tuple[Lemma, Lemma]] = []
 
         for sent in self.doc.sents:
             h = [
-                (token.lemma_, token.pos_)
+                Lemma(token.lemma_, token.pos_)
                 for token in sent
                 if self._keep_token(token)
             ]
@@ -333,7 +402,7 @@ list of weighted edges
                     edges.append((node, nbor))
 
         # include weight on the edge: (2, 3, {'weight': 3.1415})
-        weighted_edges: typing.List[typing.Tuple[Node, Node, typing.Dict[str, float]]] = [
+        weighted_edges: typing.List[typing.Tuple[Lemma, Lemma, typing.Dict[str, float]]] = [
             (*n, {"weight": w * self.edge_weight}) for n, w in Counter(edges).items()
         ]
 
@@ -343,7 +412,7 @@ list of weighted edges
     def _collect_phrases (
         self,
         spans: typing.Iterable[Span],
-        ranks: typing.Dict[Node, float]
+        ranks: typing.Dict[Lemma, float]
         ) -> typing.Dict[Span, float]:
         """
 Aggregate the rank metrics of the individual nodes (tokens) within
@@ -361,7 +430,7 @@ metric
         """
         phrases: typing.Dict[Span, float] = {
             span: sum(
-                ranks[(token.lemma_, token.pos_)]
+                ranks[Lemma(token.lemma_, token.pos_)]
                 for token in span
                 if self._keep_token(token)
             )
@@ -424,7 +493,7 @@ an ordered list of ranked phrases
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: list((rank, spans) for text, rank, spans in g)
 
-        phrases: PhraseLike = groupby_apply(
+        phrases: typing.List[typing.Tuple[str, typing.List[typing.Tuple[float, Span]]]] = groupby_apply(
             data,
             keyfunc,
             applyfunc,
@@ -432,10 +501,10 @@ an ordered list of ranked phrases
 
         phrase_list: typing.List[Phrase] = [
             Phrase(
-                text=p[0],
-                rank=max(rank for rank, span in p[1]),
-                count=len(p[1]),
-                chunks=list(span for rank, span in p[1]),
+                text = p[0],
+                rank = max(rank for rank, span in p[1]),
+                count = len(p[1]),
+                chunks = list(span for rank, span in p[1]),
             )
             for p in phrases
         ]
@@ -443,74 +512,97 @@ an ordered list of ranked phrases
         return phrase_list
 
 
-    def calc_sent_rank (
+    def get_unit_vector (
         self,
         limit_phrases: int,
-        ) -> typing.Dict[int, float]:
+        ) -> typing.List[VectorElem]:
         """
-Calculates a rank for each sentence in the document, based on its distance
-(per sentence) from a *unit vector* of the top-ranked phrases.
+Construct a *unit vector* representing the top-ranked phrases in a
+`spaCy` [`Doc`](https://spacy.io/api/doc) document.
+This provides a *characteristic* for comparing each sentence to the
+entire document.
+Taking the ranked phrases in descending order, the unit vector is a
+normalized list of their calculated ranks, up to the specified limit.
 
     limit_phrases:
 maximum number of top-ranked phrases to use in the *unit vector*
 
     returns:
-a dictionary of the calculated ranks per sentence
+the unit vector, as a list of `VectorElem` objects
         """
-        # generate a list of sentence boundaries, each of which will
-        # be populated with a phrase vector
-        sent_bounds = [ [s.start, s.end, set([])] for s in self.doc.sents ]
+        unit_vector: typing.List[VectorElem] = [
+            VectorElem(
+                phrase = p,
+                phrase_id = phrase_id,
+                coord = p.rank,
+                )
+            for phrase_id, p in enumerate(self.doc._.phrases)
+            ]
 
-        # TODO: the `sent_bounds` tuples should be NamedTuple objects
-        # -- including position in the doc and rank metric -- returned
-        # by this method
+        # truncate to the specified limit
+        limit = min(limit_phrases, len(unit_vector))
+        unit_vector = unit_vector[:limit]
 
-        # iterate through top-ranked phrases in order, adding each in
-        # turn to the phrase vector for the sentence in which it
-        # appears, and meanwhile constructing the `unit_vector` to
-        # provide a *characteristic* for comparing each sentence to
-        # the entire document
-        unit_vector: typing.List[float] = []
-        phrase_id = 0
+        # normalize the phrase coordinates, such that the unit vector
+        # has length = 1.0
+        sum_length = sum([ elem.coord for elem in unit_vector ])
 
-        for p in self.doc._.phrases:
-            unit_vector.append(p.rank)
+        for elem in unit_vector:
+            if sum_length > 0.0:
+                elem.coord = elem.coord / sum_length
+            else:
+                elem.coord = 0.0
 
-            for chunk in p.chunks:
-                for sent_start, sent_end, sent_vector in sent_bounds:
-                    if chunk.start >= sent_start and chunk.start <= sent_end:
-                        sent_vector.add(phrase_id)
+        return unit_vector
+
+
+    def calc_sent_dist (
+        self,
+        limit_phrases: int,
+        ) -> typing.List[Sentence]:
+        """
+For each sentence in the document, calculate its distance from a *unit
+vector* of top-ranked phrases.
+
+    limit_phrases:
+maximum number of top-ranked phrases to use in the *unit vector*
+
+    returns:
+a list of sentence distance measures
+        """
+        unit_vector = self.get_unit_vector(limit_phrases)
+
+        sent_dist: typing.List[Sentence] = [
+            Sentence(
+                start = s.start,
+                end = s.end,
+                sent_id = sent_id,
+                phrases = set(),
+                distance = 0.0,
+                )
+            for sent_id, s in enumerate(self.doc.sents)
+            ]
+
+        # identify the top-ranked phrases in each sentence
+        for elem in unit_vector:
+            for chunk in elem.phrase.chunks:
+                for sent in sent_dist:
+                    if chunk.start >= sent.start and chunk.start <= sent.end:
+                        sent.phrases.add(elem.phrase_id)
                         break
 
-            phrase_id += 1
-
-            if phrase_id == limit_phrases:
-                break
-
-        # normalize the unit vector of top-ranked phrases
-        sum_ranks = sum(unit_vector)
-
-        try:
-            unit_vector = [ rank/sum_ranks for rank in unit_vector ]
-        except ZeroDivisionError:
-            unit_vector = list((0.0,) * len(unit_vector))
-
-        # iterate through each sentence, calculating its euclidean
-        # distance from the unit vector
-        sent_rank: typing.Dict[int, float] = {}
-        sent_id = 0
-
-        for sent_start, sent_end, sent_vector in sent_bounds:
+        # calculate a euclidean distance for each sentence; in other
+        # words, test for inclusion of each phrase in the unit vector
+        for sent in sent_dist:
             sum_sq = 0.0
 
-            for phrase_id, _ in enumerate(unit_vector):
-                if phrase_id not in sent_vector:
-                    sum_sq += unit_vector[phrase_id]**2.0
+            for elem in unit_vector:
+                if elem.phrase_id not in sent.phrases:
+                    sum_sq += elem.coord**2.0
 
-            sent_rank[sent_id] = math.sqrt(sum_sq)
-            sent_id += 1
+            sent.distance = math.sqrt(sum_sq)
 
-        return sent_rank
+        return sent_dist
 
 
     def summary (
@@ -521,9 +613,9 @@ a dictionary of the calculated ranks per sentence
         preserve_order: bool = False,
         ) -> typing.Iterator[str]:
         """
-Run
+Run an
 [*extractive summarization*](https://derwen.ai/docs/ptr/glossary/#extractive-summarization),
-based on a vector distance (per sentence) for each of the top-ranked phrases.
+based on the vector distance (per sentence) for each of the top-ranked phrases.
 
     limit_phrases:
 maximum number of top-ranked phrases to use in the distance vectors
@@ -538,30 +630,27 @@ the source text; defaults to `False`
     yields:
 texts for sentences, in order
         """
-        # build a list of sentence indices, sorted by rank and
-        # truncated to the specified limit
-        sent_rank: typing.Dict[int, float] = self.calc_sent_rank(limit_phrases)
-        top_sent_ids: typing.List[int] = list(range(len(sent_rank)))
+        # build a list of sentence indices sorted by distance
+        sent_dist: typing.List[Sentence] = self.calc_sent_dist(limit_phrases)
 
-        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
-        top_sent_ids = top_sent_ids[:limit_sentences]
+        top_sent_ids: typing.List[int] = [
+            sent.sent_id
+            for sent in sorted(sent_dist, key=lambda sent: sent.distance)
+            ]
+
+        # truncated to the specified limit
+        limit = min(limit_sentences, len(top_sent_ids))
+        top_sent_ids = top_sent_ids[:limit]
 
         # optional: sort in ascending order of index to preserve the
         # order in which sentences appear in the original text
         if preserve_order:
             top_sent_ids.sort()
 
-        # extract the sentences with the lowest distance
-        sent_text: typing.Dict[int, str] = {}
-        sent_id = 0
-
-        for sent in self.doc.sents:
-            sent_text[sent_id] = sent
-            sent_id += 1
-
-        # yield results, up to the limit requested
+        # extract sentences with the least distance, up to the limit
+        # requested
         for sent_id in top_sent_ids:
-            yield sent_text[sent_id]
+            yield sent_dist[sent_id].text(self.doc)
 
 
     def write_dot (
@@ -577,15 +666,15 @@ path for the output file; defaults to `"graph.dot"`
         """
         dot = graphviz.Digraph()
 
-        for lemma, pos in self.lemma_graph.nodes():
-            node_key = (lemma, pos,)
-            rank = self.ranks[node_key]
+        for lemma in self.lemma_graph.nodes():
+            rank = self.ranks[lemma]
+            key = lemma.label()
 
-            label = "{} ({:.4f})".format(lemma, rank)
-            dot.node(str(node_key), label)
+            label = "{} ({:.4f})".format(key, rank)
+            dot.node(key, label)
 
         for edge in self.lemma_graph.edges():
-            dot.edge(str(edge[0]), str(edge[1]), constraint="false")
+            dot.edge(edge[0].label(), edge[1].label(), constraint="false")
 
         with open(path, "w") as f:
             f.write(dot.source)
