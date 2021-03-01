@@ -55,14 +55,14 @@ for p in doc._.phrases:
 ```
 
 See the **tutorial notebooks** in the `examples` subdirectory for
-sample code and patterns to use in integrating **pytextrank** with
+sample code and patterns to use in integrating **PyTextTank** with
 related libraries in Python:
 <https://derwen.ai/docs/ptr/tutorial/>
 
 
 ## Semantic Versioning
 
-Generally speaking the major release number of **pytextrank** will
+Generally speaking the major release number of **PyTextRank** will
 track with the major release number of the associated `spaCy` version.
 
 We try to minimize any breaking changes between releases and provide

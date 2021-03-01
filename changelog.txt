@@ -7,6 +7,9 @@
   * updated links on PyPi
   * `pylint` coverage for code checking
   * linking definitions and citations in source code apidocs to our online docs
+  * add `get_unit_vector()` method to expose the characteristic *unit vector*
+  * add `calc_sent_dist()` method to expose the sentence distance measures (for summarization)
+  * unit test for summarization
 
 
 ## 3.0.1
