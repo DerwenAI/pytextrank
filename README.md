@@ -74,7 +74,7 @@ careful notes in the `changelog.txt` file.
 We welcome people getting involved as contributors to this open source
 project!
 Please see the
-[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/main/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/master/CONTRIBUTING.md)
 file for instructions.
 
 
