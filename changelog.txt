@@ -10,6 +10,7 @@
   * add `get_unit_vector()` method to expose the characteristic *unit vector*
   * add `calc_sent_dist()` method to expose the sentence distance measures (for summarization)
   * unit test for summarization
+  * add contributor instructions
 
 
 ## 3.0.1
