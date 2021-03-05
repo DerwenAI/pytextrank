@@ -85,7 +85,7 @@ get help about **pytextrank** and related
 [KG](glossary/#kg)
 topics.
 
-  * [community Slack](https://knowledgegraphconf.slack.com/archives/C017LUAML8Z) – specifically on the `#ask` channel
+  * [community Slack](https://knowledgegraphconf.slack.com/ssb/redirect) – specifically on the `#ask` channel
   * [*Graph-Based Data Science*](https://www.linkedin.com/groups/6725785/) group on LinkedIn – join to receive related updates, news, conference coupons, etc.
 
 [KGC](glossary/#knowledge-graph-conference)

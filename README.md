@@ -69,9 +69,20 @@ We try to minimize any breaking changes between releases and provide
 careful notes in the `changelog.txt` file.
 
 
+## Contributing Code
+
+We welcome people getting involved as contributors to this open source
+project!
+Please see the
+[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/main/CONTRIBUTING.md)
+file for instructions.
+
+
 ## Build Instructions
 
-**Note: most use cases won't need to build this package locally.**
+**Note: unless you are contributing code and updates,
+in most use cases won't need to build this package locally.**
+
 Instead, simply install from
 [PyPi](https://pypi.python.org/pypi/pytextrank)
 or [Conda](https://docs.conda.io/).
