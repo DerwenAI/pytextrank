@@ -3,13 +3,13 @@ from spacy.language import Language
 from spacy.tokens import Doc
 
 import sys ; sys.path.insert(0, "../pytextrank")
-from pytextrank.base import BaseTextRank
+from pytextrank.base import BaseTextRankFactory
 
 
 def test_base_text_rank (doc: Doc):
     """It ranks unique keywords in a document, sorted decreasing by centrality."""
     # given
-    base_text_rank = BaseTextRank()
+    base_text_rank = BaseTextRankFactory()
 
     # when
     processed_doc = base_text_rank(doc)
@@ -24,7 +24,7 @@ def test_base_text_rank (doc: Doc):
 def test_add_pipe (nlp: Language):
     """It works as a pipeline component and can be disabled."""
     # given
-    base_text_rank = BaseTextRank()
+    # base_text_rank = BaseTextRankFactory()
     nlp.add_pipe("textrank", last=True)
 
     # works as a pipeline component
@@ -80,7 +80,7 @@ def test_summary (nlp: Language):
         [17, [2]],
         ]
 
-    with open("dat/lee.txt", "r") as f:
+    with open("../dat/lee.txt", "r") as f:
         text = f.read()
         doc = nlp(text)
         tr = doc._.textrank
