@@ -3,9 +3,11 @@ Implements the *PositionRank* algorithm.
 """
 
 import typing
-from .base import BaseTextRank, Lemma
+from .base import BaseTextRankFactory, BaseTextRank, Lemma
 from .util import groupby_apply
 
+class PositionRankFactory(BaseTextRankFactory):
+    pass
 
 class PositionRank (BaseTextRank):
     """
