@@ -95,3 +95,33 @@ def test_summary (nlp: Language):
 
         # then
         assert trace == expected_trace
+
+
+def test_multiple_summary(nlp: Language):
+    """
+    Summarization produces consistent results when called upon multiple docs
+    """
+    texts = []
+    with open("../dat/lee.txt", "r") as f:
+        text = f.read()
+        texts.append(text)
+
+    with open("../dat/mih.txt", "r") as f:
+        text = f.read()
+        texts.append(text)
+
+    docs = [nlp(text) for text in texts]
+
+    trace1 = [
+        [sent_dist.sent_id, list(sent_dist.phrases)]
+        for sent_dist in docs[0]._.textrank.calc_sent_dist(limit_phrases=10)
+        if not sent_dist.empty()
+    ]
+
+    trace2 = [
+        [sent_dist.sent_id, list(sent_dist.phrases)]
+        for sent_dist in docs[1]._.textrank.calc_sent_dist(limit_phrases=10)
+        if not sent_dist.empty()
+    ]
+
+    assert trace1 != trace2
