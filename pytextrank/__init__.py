@@ -1,6 +1,6 @@
-from .base import BaseTextRankFactory, Lemma, Phrase, Sentence, VectorElem
+from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, VectorElem
 
-from .positionrank import PositionRankFactory
+from .positionrank import PositionRankFactory, PositionRank
 
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
 

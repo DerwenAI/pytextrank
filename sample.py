@@ -64,9 +64,10 @@ print("\n----\n")
 
 # now add `"word": ["NOUN"]` to the stop words, to remove instances
 # of `"word"` or `"words"` then see how the ranked phrases differ...
-tr.load_stopwords(data = { "word": ["NOUN"] })
-
 doc = nlp(text)
+tr = doc._.textrank
+
+tr.load_stopwords(data = { "word": ["NOUN"] })
 
 for phrase in doc._.phrases[:10]:
     ic(phrase)
@@ -80,4 +81,3 @@ tr.write_dot(path="lemma_graph.dot")
 # yielding its top 5 sentences...
 for sent in tr.summary(limit_phrases=15, limit_sentences=5):
     ic(sent)
-

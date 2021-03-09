@@ -1,4 +1,61 @@
 # Reference: `pytextrank` package
+## [`BaseTextRankFactory` class](#BaseTextRankFactory)
+
+A factory class that provides the documnt with its instance of
+`BaseTextRank`
+    
+---
+#### [`__init__` method](#pytextrank.BaseTextRankFactory.__init__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L118)
+
+```python
+__init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None)
+```
+Constructor for a `Factory` object
+
+  * `edge_weight` : `float`  
+default weight for an edge
+
+  * `pos_kept` : `typing.List[str]`  
+parts of speech tags to be kept; adjust this if strings representing
+
+  * `token_lookback` : `int`  
+the window for neighboring tokens (similar to a skip gram)
+
+  * `scrubber` : `typing.Union[typing.Callable, NoneType]`  
+optional "scrubber" function to clean up punctuation from a token;
+
+
+
+---
+#### [`__call__` method](#pytextrank.BaseTextRankFactory.__call__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L168)
+
+```python
+__call__(doc)
+```
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component* for `TextRank` as
+a stateful component, invoked when the document gets processed.
+See: <https://spacy.io/usage/processing-pipelines#pipelines>
+
+  * `doc` : `spacy.tokens.doc.Doc`  
+a document container for accessing the annotations produced by earlier
+
+
+
+---
+#### [`reset` method](#pytextrank.BaseTextRankFactory.reset)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L197)
+
+```python
+reset()
+```
+Reinitialize the data structures needed for extracting phrases,
+removing any pre-existing state.
+
+
+
 ## [`BaseTextRank` class](#BaseTextRank)
 
 Implements the *TextRank* algorithm defined by
@@ -7,10 +64,10 @@ deployed as a `spaCy` pipeline component.
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L120)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L223)
 
 ```python
-__init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None)
+__init__(doc, edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None)
 ```
 Constructor for a `TextRank` object
 
@@ -29,25 +86,8 @@ optional "scrubber" function to clean up punctuation from a token;
 
 
 ---
-#### [`__call__` method](#pytextrank.BaseTextRank.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L170)
-
-```python
-__call__(doc)
-```
-Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component factory* for `TextRank` as
-a stateful component, invoked when the document gets processed.
-See: <https://spacy.io/usage/processing-pipelines#pipelines>
-
-  * `doc` : `spacy.tokens.doc.Doc`  
-a document container for accessing the annotations produced by earlier
-
-
-
----
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L193)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L273)
 
 ```python
 reset()
@@ -59,7 +99,7 @@ removing any pre-existing state.
 
 ---
 #### [`load_stopwords` method](#pytextrank.BaseTextRank.load_stopwords)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L207)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L287)
 
 ```python
 load_stopwords(data=None, path=None)
@@ -82,7 +122,7 @@ optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html)
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L242)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L322)
 
 ```python
 calc_textrank()
@@ -100,7 +140,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L288)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L368)
 
 ```python
 get_personalization()
@@ -118,7 +158,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L515)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L595)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -140,7 +180,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L559)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L639)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -158,7 +198,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L608)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L688)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -183,7 +223,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L656)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L736)
 
 ```python
 write_dot(path="graph.dot")
@@ -195,6 +235,29 @@ path for the output file; defaults to `"graph.dot"`
 
 
 
+## [`PositionRankFactory` class](#PositionRankFactory)
+
+A factory class that provides the documnt with its instance of
+`PositionRank`
+    
+---
+#### [`__call__` method](#pytextrank.PositionRankFactory.__call__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L19)
+
+```python
+__call__(doc)
+```
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component* for `PositionRank` as a
+stateful component, invoked when the document gets processed.
+
+See: <https://spacy.io/usage/processing-pipelines#pipelines>
+
+  * `doc` : `spacy.tokens.doc.Doc`  
+a document container for accessing the annotations produced by earlier stages of the `spaCy` pipeline
+
+
+
 ## [`PositionRank` class](#PositionRank)
 
 Implements the *PositionRank* algorithm described by
@@ -203,7 +266,7 @@ deployed as a `spaCy` pipeline component.
     
 ---
 #### [`get_personalization` method](#pytextrank.PositionRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L17)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L55)
 
 ```python
 get_personalization()

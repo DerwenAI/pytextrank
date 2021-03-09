@@ -17,7 +17,9 @@ if __name__ == "__main__":
     import pytextrank
 
     class_list = [
+        "BaseTextRankFactory",
         "BaseTextRank",
+        "PositionRankFactory",
         "PositionRank",
         "Lemma",
         "Phrase",

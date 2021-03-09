@@ -2,32 +2,45 @@
 Implements the *PositionRank* algorithm.
 """
 
+from spacy.tokens import Doc  # type: ignore
 import typing
-from spacy.tokens import Doc
+
 from .base import BaseTextRankFactory, BaseTextRank, Lemma
 from .util import groupby_apply
 
-class PositionRankFactory(BaseTextRankFactory):
-    pass
 
-    def __call__(self,doc: Doc,) -> Doc:
+class PositionRankFactory (BaseTextRankFactory):
+    """
+A factory class that provides the documnt with its instance of
+`PositionRank`
+    """
+
+
+    def __call__ (
+        self,
+        doc: Doc,
+        ) -> Doc:
         """
-        Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-        document to create a *pipeline component* for `PositionRank` as
-        a stateful component, invoked when the document gets processed.
-        See: <https://spacy.io/usage/processing-pipelines#pipelines>
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component* for `PositionRank` as a
+stateful component, invoked when the document gets processed.
 
-            doc:
-        a document container for accessing the annotations produced by earlier
-        stages of the `spaCy` pipeline
+See: <https://spacy.io/usage/processing-pipelines#pipelines>
+
+    doc:
+a document container for accessing the annotations produced by earlier stages of the `spaCy` pipeline
         """
-
         Doc.set_extension("textrank", force=True, default=None)
         Doc.set_extension("phrases", force=True, default=[])
-        doc._.textrank = PositionRank(doc, edge_weight=self.edge_weight,
-                                      pos_kept=self.pos_kept,
-                                      token_lookback=self.token_lookback,
-                                      scrubber=self.scrubber, )
+
+        doc._.textrank = PositionRank(
+            doc,
+            edge_weight=self.edge_weight,
+            pos_kept=self.pos_kept,
+            token_lookback=self.token_lookback,
+            scrubber=self.scrubber,
+            )
+
         doc._.phrases = doc._.textrank.calc_textrank()
         return doc
 
