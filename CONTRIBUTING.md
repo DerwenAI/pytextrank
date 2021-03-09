@@ -45,7 +45,7 @@ publicly**, so that more people can benefit.
 ## Code of conduct
 
 In all communications and collaborations, we adhere to the
-[Contributor Covenant Code of Conduct](https://github.com/DerwenAI/pytextrank/blob/master/code_of_conduct.md).
+[Contributor Covenant Code of Conduct](https://github.com/DerwenAI/pytextrank/blob/main/code_of_conduct.md).
 By participating, you are expected to follow this code.
 
 
@@ -101,7 +101,7 @@ You can also use the issue to ask questions, or share your work in
 progress.
 Then when you're ready to submit code for review, please use a 
 [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
-on our `master` repo branch.
+on our `main` repo branch.
 
 
 ## Project roadmap

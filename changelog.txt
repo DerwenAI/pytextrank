@@ -12,6 +12,7 @@
   * unit test for summarization
   * add contributor instructions
   * add a factory class that assigns each doc its own Textrank object; kudos @Ankush-Chander
+  * rename `master` branch to `main`
 
 
 ## 3.0.1
