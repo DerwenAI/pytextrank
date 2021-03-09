@@ -49,7 +49,7 @@ and
 [`coverage`](https://coverage.readthedocs.io/)
 for *unit test* coverage. 
 Source for unit tests is in the 
-[`tests`](https://github.com/DerwenAI/pytextrank/tree/master/tests)
+[`tests`](https://github.com/DerwenAI/pytextrank/tree/main/tests)
 subdirectory.
 
 To run unit tests:
@@ -84,7 +84,7 @@ To generate documentation pages, this project uses:
   * [`Flask`](https://flask.palletsprojects.com/)
 
 Source for the documentation is in the 
-[`docs`](https://github.com/DerwenAI/pytextrank/tree/master/docs)
+[`docs`](https://github.com/DerwenAI/pytextrank/tree/main/docs)
 subdirectory.
 
 To build the documentation:

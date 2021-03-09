@@ -74,7 +74,7 @@ careful notes in the `changelog.txt` file.
 We welcome people getting involved as contributors to this open source
 project!
 Please see the
-[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/master/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/main/CONTRIBUTING.md)
 file for instructions.
 
 
@@ -91,7 +91,7 @@ To set up the build environment locally, see the
 ["Build Instructions"](https://derwen.ai/docs/ptr/build/)
 section of the online documentation.
 
-[![thanks noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/assets/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
+[![thanks noam](https://github.com/DerwenAI/pytextrank/blob/main/docs/assets/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
 
 
 ## License and Copyright
