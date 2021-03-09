@@ -1,6 +1,6 @@
-from .base import BaseTextRank, Lemma, Phrase, Sentence, VectorElem
+from .base import BaseTextRankFactory, Lemma, Phrase, Sentence, VectorElem
 
-from .positionrank import PositionRank
+from .positionrank import PositionRankFactory
 
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
 
@@ -15,9 +15,9 @@ import typing
 
 
 _DEFAULT_CONFIG = {
-    "edge_weight": BaseTextRank._EDGE_WEIGHT,  # pylint: disable=W0212
-    "pos_kept": BaseTextRank._POS_KEPT,  # pylint: disable=W0212
-    "token_lookback": BaseTextRank._TOKEN_LOOKBACK,  # pylint: disable=W0212
+    "edge_weight": BaseTextRankFactory._EDGE_WEIGHT,  # pylint: disable=W0212
+    "pos_kept": BaseTextRankFactory._POS_KEPT,  # pylint: disable=W0212
+    "token_lookback": BaseTextRankFactory._TOKEN_LOOKBACK,  # pylint: disable=W0212
     "scrubber": None,
     }
 
@@ -30,11 +30,11 @@ def _create_component_tr (
     pos_kept: typing.List[str],
     token_lookback: int,
     scrubber: typing.Optional[typing.Callable],
-    ) -> BaseTextRank:
+    ) -> BaseTextRankFactory:
     """
 Component factory for the `TextRank` base class.
     """
-    return BaseTextRank(
+    return BaseTextRankFactory(
         edge_weight = edge_weight,
         pos_kept = pos_kept,
         token_lookback = token_lookback,
@@ -49,11 +49,11 @@ def _create_component_pr (
     pos_kept: typing.List[str],
     token_lookback: int,
     scrubber: typing.Optional[typing.Callable],
-    ) -> BaseTextRank:
+    ) -> PositionRankFactory:
     """
 Component factory for the `PositionRank` extended class.
     """
-    return PositionRank(
+    return PositionRankFactory(
         edge_weight = edge_weight,
         pos_kept = pos_kept,
         token_lookback = token_lookback,

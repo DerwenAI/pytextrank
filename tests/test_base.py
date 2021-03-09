@@ -3,13 +3,13 @@ from spacy.language import Language
 from spacy.tokens import Doc
 
 import sys ; sys.path.insert(0, "../pytextrank")
-from pytextrank.base import BaseTextRank
+from pytextrank.base import BaseTextRankFactory
 
 
 def test_base_text_rank (doc: Doc):
     """It ranks unique keywords in a document, sorted decreasing by centrality."""
     # given
-    base_text_rank = BaseTextRank()
+    base_text_rank = BaseTextRankFactory()
 
     # when
     processed_doc = base_text_rank(doc)
@@ -24,7 +24,7 @@ def test_base_text_rank (doc: Doc):
 def test_add_pipe (nlp: Language):
     """It works as a pipeline component and can be disabled."""
     # given
-    base_text_rank = BaseTextRank()
+    # base_text_rank = BaseTextRankFactory()
     nlp.add_pipe("textrank", last=True)
 
     # works as a pipeline component
@@ -80,7 +80,7 @@ def test_summary (nlp: Language):
         [17, [2]],
         ]
 
-    with open("dat/lee.txt", "r") as f:
+    with open("../dat/lee.txt", "r") as f:
         text = f.read()
         doc = nlp(text)
         tr = doc._.textrank
@@ -95,3 +95,33 @@ def test_summary (nlp: Language):
 
         # then
         assert trace == expected_trace
+
+
+def test_multiple_summary(nlp: Language):
+    """
+    Summarization produces consistent results when called upon multiple docs
+    """
+    texts = []
+    with open("../dat/lee.txt", "r") as f:
+        text = f.read()
+        texts.append(text)
+
+    with open("../dat/mih.txt", "r") as f:
+        text = f.read()
+        texts.append(text)
+
+    docs = [nlp(text) for text in texts]
+
+    trace1 = [
+        [sent_dist.sent_id, list(sent_dist.phrases)]
+        for sent_dist in docs[0]._.textrank.calc_sent_dist(limit_phrases=10)
+        if not sent_dist.empty()
+    ]
+
+    trace2 = [
+        [sent_dist.sent_id, list(sent_dist.phrases)]
+        for sent_dist in docs[1]._.textrank.calc_sent_dist(limit_phrases=10)
+        if not sent_dist.empty()
+    ]
+
+    assert trace1 != trace2

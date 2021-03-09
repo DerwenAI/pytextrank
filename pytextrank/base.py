@@ -104,12 +104,9 @@ A data class representing one element in the *unit vector* of the document.
     phrase_id: int
     coord: float
 
-
-class BaseTextRank:
+class BaseTextRankFactory:
     """
-Implements the *TextRank* algorithm defined by
-[[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank),
-deployed as a `spaCy` pipeline component.
+Factory class that provides doc with it"s instance of BaseTextRank
     """
 
     _EDGE_WEIGHT: float = 1.0
@@ -126,7 +123,7 @@ deployed as a `spaCy` pipeline component.
         scrubber: typing.Optional[typing.Callable] = None,
         ) -> None:
         """
-Constructor for a `TextRank` object
+Constructor for a `Factory` object
 
     edge_weight:
 default weight for an edge
@@ -173,7 +170,7 @@ if `None` then defaults to `pytextrank.default_scrubber`
         ) -> Doc:
         """
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component factory* for `TextRank` as
+document to create a *pipeline component* for `TextRank` as
 a stateful component, invoked when the document gets processed.
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
@@ -181,14 +178,92 @@ See: <https://spacy.io/usage/processing-pipelines#pipelines>
 a document container for accessing the annotations produced by earlier
 stages of the `spaCy` pipeline
         """
-        self.doc = doc
 
+        Doc.set_extension("textrank", force=True, default=None)
         Doc.set_extension("phrases", force=True, default=[])
-        Doc.set_extension("textrank", force=True, default=self)
-        doc._.phrases = self.calc_textrank()
-
+        doc._.textrank = BaseTextRank(doc, edge_weight = self.edge_weight,
+                                        pos_kept = self.pos_kept,
+                                        token_lookback = self.token_lookback,
+                                        scrubber = self.scrubber,)
+        doc._.phrases = doc._.textrank.calc_textrank()
         return doc
 
+
+    def reset (
+        self
+        ) -> None:
+        """
+Reinitialize the data structures needed for extracting phrases,
+removing any pre-existing state.
+        """
+        self.elapsed_time = 0.0
+        self.lemma_graph = nx.DiGraph()
+        self.phrases = defaultdict(list)
+        self.ranks = {}
+        self.seen_lemma = OrderedDict()
+
+
+class BaseTextRank:
+    """
+Implements the *TextRank* algorithm defined by
+[[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank),
+deployed as a `spaCy` pipeline component.
+    """
+
+    _EDGE_WEIGHT: float = 1.0
+    _POS_KEPT: typing.List[str] = ["ADJ", "NOUN", "PROPN", "VERB"]
+    _TOKEN_LOOKBACK: int = 3
+
+
+    def __init__ (
+        self,
+        doc,
+        *,
+        edge_weight: float = _EDGE_WEIGHT,
+        pos_kept: typing.List[str] = None,
+        token_lookback: int = _TOKEN_LOOKBACK,
+        scrubber: typing.Optional[typing.Callable] = None,
+        ) -> None:
+        """
+Constructor for a `TextRank` object
+
+    edge_weight:
+default weight for an edge
+
+    pos_kept:
+parts of speech tags to be kept; adjust this if strings representing
+the POS tags change
+
+    token_lookback:
+the window for neighboring tokens (similar to a skip gram)
+
+    scrubber:
+optional "scrubber" function to clean up punctuation from a token;
+if `None` then defaults to `pytextrank.default_scrubber`
+        """
+        self.edge_weight: float = edge_weight
+        self.token_lookback: int = token_lookback
+
+        if pos_kept:
+            self.pos_kept: typing.List[str] = pos_kept
+        else:
+            self.pos_kept = self._POS_KEPT
+
+        if scrubber:
+            self.scrubber: typing.Callable = scrubber
+        else:
+            self.scrubber = default_scrubber
+
+        self.doc: Doc = doc
+        self.stopwords: dict = defaultdict(list)
+
+        # effectively, performs the same work as the `reset()` method;
+        # called explicitly here for the sake of type annotations
+        self.elapsed_time: float = 0.0
+        self.lemma_graph: nx.DiGraph = nx.DiGraph()
+        self.phrases: dict = defaultdict(list)
+        self.ranks: typing.Dict[Lemma, float] = {}
+        self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
 
     def reset (
         self
