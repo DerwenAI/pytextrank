@@ -106,7 +106,8 @@ A data class representing one element in the *unit vector* of the document.
 
 class BaseTextRankFactory:
     """
-Factory class that provides doc with it"s instance of BaseTextRank
+A factory class that provides the documnt with its instance of
+`BaseTextRank`
     """
 
     _EDGE_WEIGHT: float = 1.0
@@ -178,13 +179,17 @@ See: <https://spacy.io/usage/processing-pipelines#pipelines>
 a document container for accessing the annotations produced by earlier
 stages of the `spaCy` pipeline
         """
-
         Doc.set_extension("textrank", force=True, default=None)
         Doc.set_extension("phrases", force=True, default=[])
-        doc._.textrank = BaseTextRank(doc, edge_weight = self.edge_weight,
-                                        pos_kept = self.pos_kept,
-                                        token_lookback = self.token_lookback,
-                                        scrubber = self.scrubber,)
+
+        doc._.textrank = BaseTextRank(
+            doc,
+            edge_weight = self.edge_weight,
+            pos_kept = self.pos_kept,
+            token_lookback = self.token_lookback,
+            scrubber = self.scrubber,
+            )
+
         doc._.phrases = doc._.textrank.calc_textrank()
         return doc
 

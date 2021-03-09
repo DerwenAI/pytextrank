@@ -11,6 +11,7 @@
   * add `calc_sent_dist()` method to expose the sentence distance measures (for summarization)
   * unit test for summarization
   * add contributor instructions
+  * add a factory class that assigns each doc its own Textrank object; kudos @Ankush-Chander
 
 
 ## 3.0.1

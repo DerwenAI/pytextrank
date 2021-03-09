@@ -80,7 +80,7 @@ def test_summary (nlp: Language):
         [17, [2]],
         ]
 
-    with open("../dat/lee.txt", "r") as f:
+    with open("dat/lee.txt", "r") as f:
         text = f.read()
         doc = nlp(text)
         tr = doc._.textrank
@@ -97,16 +97,17 @@ def test_summary (nlp: Language):
         assert trace == expected_trace
 
 
-def test_multiple_summary(nlp: Language):
+def test_multiple_summary (nlp: Language):
     """
     Summarization produces consistent results when called upon multiple docs
     """
     texts = []
-    with open("../dat/lee.txt", "r") as f:
+
+    with open("dat/lee.txt", "r") as f:
         text = f.read()
         texts.append(text)
 
-    with open("../dat/mih.txt", "r") as f:
+    with open("dat/mih.txt", "r") as f:
         text = f.read()
         texts.append(text)
 

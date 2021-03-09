@@ -4,8 +4,10 @@
 
 Many thanks to our contributors:
 [@louisguitton](https://github.com/louisguitton),
+[@Ankush-Chander](https://github.com/Ankush-Chander),
 [@Lord-V15](https://github.com/Lord-V15),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
+[@dvsrepo](https://github.com/dvsrepo),
 [@kavorite](https://github.com/kavorite),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
@@ -14,14 +16,12 @@ Many thanks to our contributors:
 [@HarshGrandeur](https://github.com/HarshGrandeur),
 [@mnowotka](https://github.com/mnowotka),
 [@kjam](https://github.com/kjam),
-[@dvsrepo](https://github.com/dvsrepo),
 [@SaiThejeshwar](https://github.com/SaiThejeshwar),
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
 [@jake-aft](https://github.com/jake-aft),
 [@junchen1992](https://github.com/junchen1992),
-[@Ankush-Chander](https://github.com/Ankush-Chander),
 [@shyamcody](https://github.com/shyamcody),
 [@chikubee](https://github.com/chikubee),
 outstanding NLP research work led by [@mihalcea](https://github.com/mihalcea),
@@ -78,7 +78,7 @@ Stanford, CMU, UC&nbsp;Berkeley,
 U&nbsp;da&nbsp;Coruña, U&nbsp;Manchester,
 KTH, NYU, GWU,
 U&nbsp;Maryland, Cal&nbsp;Poly, UT/Austin,
-U&nbsp;Virginia, CU&nbsp;Boulder.
+Northeastern, U&nbsp;Virginia, CU&nbsp;Boulder.
 
 
 ## Attribution
