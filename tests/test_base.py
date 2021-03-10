@@ -1,13 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Unit tests for BaseTextRank."""
 from spacy.language import Language
 from spacy.tokens import Doc
+import spacy
 
 import sys ; sys.path.insert(0, "../pytextrank")
 from pytextrank.base import BaseTextRankFactory
 
 
 def test_base_text_rank (doc: Doc):
-    """It ranks unique keywords in a document, sorted decreasing by centrality."""
+    """
+Ranks unique keywords in a document correctly, sorted decreasing by
+centrality.
+    """
     # given
     base_text_rank = BaseTextRankFactory()
 
@@ -22,7 +29,9 @@ def test_base_text_rank (doc: Doc):
 
 
 def test_add_pipe (nlp: Language):
-    """It works as a pipeline component and can be disabled."""
+    """
+Works as a pipeline component and can be disabled.
+    """
     # given
     # base_text_rank = BaseTextRankFactory()
     nlp.add_pipe("textrank", last=True)
@@ -39,7 +48,12 @@ def test_add_pipe (nlp: Language):
 
     # identifies phrases not in noun chunks
     # when
-    text = "everything you need to know about student loan interest rates variable and fixed rates capitalization amortization student loan refinancing and more."
+    text = """
+everything you need to know about student loan interest rates variable
+and fixed rates capitalization amortization student loan refinancing
+and more.
+"""
+
     doc = nlp(text)
     phrases = [ p.text for p in doc._.phrases ]
 
@@ -65,7 +79,9 @@ def test_add_pipe (nlp: Language):
 
 
 def test_summary (nlp: Language):
-    """Summarization produces the expected results."""
+    """
+Summarization produces the expected results.
+    """
     # given
     expected_trace = [
         [0, [0, 2, 6, 7, 8]],
@@ -99,7 +115,8 @@ def test_summary (nlp: Language):
 
 def test_multiple_summary (nlp: Language):
     """
-    Summarization produces consistent results when called upon multiple docs
+Summarization produces consistent results when called across multiple
+docs.
     """
     texts = []
 
@@ -126,3 +143,35 @@ def test_multiple_summary (nlp: Language):
     ]
 
     assert trace1 != trace2
+
+
+def test_stop_words ():
+    """
+Works as a pipeline component and can be disabled.
+    """
+    # given
+    nlp = spacy.load("en_core_web_sm")
+    nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+
+    # when
+    _expected_phrases = [
+        "sentences",
+        "Mihalcea et al",
+        "text summarization",
+        "gensim implements",
+        "Okapi BM25 function",
+        ]
+
+    # add `"word": ["NOUN"]` to the *stop words*, to remove instances
+    # of `"word"` or `"words"` then see how the ranked phrases differ?
+
+    # then
+    with open("dat/gen.txt", "r") as f:
+        doc = nlp(f.read())
+
+        phrases = [
+            phrase.text
+            for phrase in doc._.phrases[:5]
+            ]
+
+        assert phrases == _expected_phrases

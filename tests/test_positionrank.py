@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Unit tests for PositionRank."""
 from spacy.tokens import Doc
 
@@ -7,7 +10,10 @@ from pytextrank.positionrank import PositionRankFactory
 
 
 def test_position_rank (doc: Doc):
-    """It ranks keywords that appear early in the document higher than TextRank."""
+    """
+Ranks keywords that appear early in the document higher than TextRank
+does.
+    """
     # given
     position_rank = PositionRankFactory()
     base_text_rank = BaseTextRankFactory()
@@ -20,6 +26,7 @@ def test_position_rank (doc: Doc):
 
     # then
     assert set(p.rank for p in phrases) != set(p.rank for p in comparison_phrases)
+
     # the test article mentions Chelsea at the begginning of the article
     # while it mentions Shanghai Shenhua annecdotally later in the article
     # with normal TextRank, Shanghai Shenhua is part of top 10 phrases and Chelsea is not

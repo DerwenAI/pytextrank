@@ -9,7 +9,7 @@ import typing
 ## Python version checking
 
 MIN_PY_VERSION: typing.Tuple = (3, 7,)
-__version__: str = "3.0.2"
+__version__: str = "3.1.0"
 
 
 def _versify (
