@@ -1,18 +1,19 @@
 # PyTextRank changelog
 
-## 3.0.2
+## 3.1.0
 
 2021-03-??
 
-  * updated links on PyPi
-  * `pylint` coverage for code checking
-  * linking definitions and citations in source code apidocs to our online docs
+  * rename `master` branch to `main`
+  * add a factory class that assigns each doc its own Textrank object; kudos @Ankush-Chander
+  * refactor the stopwords feature as a constructor argument
   * add `get_unit_vector()` method to expose the characteristic *unit vector*
   * add `calc_sent_dist()` method to expose the sentence distance measures (for summarization)
-  * unit test for summarization
-  * add contributor instructions
-  * add a factory class that assigns each doc its own Textrank object; kudos @Ankush-Chander
-  * rename `master` branch to `main`
+  * include a unit test for summarization
+  * updated contributor instructions
+  * `pylint` coverage for code checking
+  * linking definitions and citations in source code apidocs to our online docs
+  * updated links on PyPi
 
 
 ## 3.0.1

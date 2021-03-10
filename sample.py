@@ -64,6 +64,10 @@ print("\n----\n")
 
 # now add `"word": ["NOUN"]` to the stop words, to remove instances
 # of `"word"` or `"words"` then see how the ranked phrases differ...
+
+# TODO: refactor stopwords as a constructor argument
+#nlp.add_pipe("textrank")
+
 doc = nlp(text)
 tr = doc._.textrank
 
