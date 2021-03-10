@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Implements the base class for `TextRank`, with placeholder methods
-to be used by subclasses for algorithm extensions.
+Implements the base class for `TextRank` –
+with placeholder methods to be used by subclasses for algorithm extensions.
 """
 
 from .util import groupby_apply, default_scrubber
@@ -104,9 +104,10 @@ A data class representing one element in the *unit vector* of the document.
     phrase_id: int
     coord: float
 
+
 class BaseTextRankFactory:
     """
-A factory class that provides the documnt with its instance of
+A factory class that provides the document with its instance of
 `BaseTextRank`
     """
 
@@ -124,21 +125,19 @@ A factory class that provides the documnt with its instance of
         scrubber: typing.Optional[typing.Callable] = None,
         ) -> None:
         """
-Constructor for a `Factory` object
+Constructor for a factory used to instantiate the PyTextRank pipeline components.
 
     edge_weight:
 default weight for an edge
 
     pos_kept:
-parts of speech tags to be kept; adjust this if strings representing
-the POS tags change
+parts of speech tags to be kept; adjust this if strings representing the POS tags change
 
     token_lookback:
-the window for neighboring tokens (similar to a skip gram)
+the window for neighboring tokens – similar to a *skip gram*
 
     scrubber:
-optional "scrubber" function to clean up punctuation from a token;
-if `None` then defaults to `pytextrank.default_scrubber`
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
         """
         self.edge_weight: float = edge_weight
         self.token_lookback: int = token_lookback
@@ -153,16 +152,7 @@ if `None` then defaults to `pytextrank.default_scrubber`
         else:
             self.scrubber = default_scrubber
 
-        self.doc: Doc = None
         self.stopwords: dict = defaultdict(list)
-
-        # effectively, performs the same work as the `reset()` method;
-        # called explicitly here for the sake of type annotations
-        self.elapsed_time: float = 0.0
-        self.lemma_graph: nx.DiGraph = nx.DiGraph()
-        self.phrases: dict = defaultdict(list)
-        self.ranks: typing.Dict[Lemma, float] = {}
-        self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
 
 
     def __call__ (
@@ -173,11 +163,11 @@ if `None` then defaults to `pytextrank.default_scrubber`
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
 document to create a *pipeline component* for `TextRank` as
 a stateful component, invoked when the document gets processed.
+
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
     doc:
-a document container for accessing the annotations produced by earlier
-stages of the `spaCy` pipeline
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
         """
         Doc.set_extension("textrank", force=True, default=None)
         Doc.set_extension("phrases", force=True, default=[])
@@ -194,72 +184,47 @@ stages of the `spaCy` pipeline
         return doc
 
 
-    def reset (
-        self
-        ) -> None:
-        """
-Reinitialize the data structures needed for extracting phrases,
-removing any pre-existing state.
-        """
-        self.elapsed_time = 0.0
-        self.lemma_graph = nx.DiGraph()
-        self.phrases = defaultdict(list)
-        self.ranks = {}
-        self.seen_lemma = OrderedDict()
-
-
 class BaseTextRank:
     """
 Implements the *TextRank* algorithm defined by
 [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank),
 deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
     """
-
-    _EDGE_WEIGHT: float = 1.0
-    _POS_KEPT: typing.List[str] = ["ADJ", "NOUN", "PROPN", "VERB"]
-    _TOKEN_LOOKBACK: int = 3
-
 
     def __init__ (
         self,
-        doc,
-        *,
-        edge_weight: float = _EDGE_WEIGHT,
-        pos_kept: typing.List[str] = None,
-        token_lookback: int = _TOKEN_LOOKBACK,
-        scrubber: typing.Optional[typing.Callable] = None,
+        doc: Doc,
+        edge_weight: float,
+        pos_kept: typing.List[str],
+        token_lookback: int,
+        scrubber: typing.Callable,
         ) -> None:
         """
-Constructor for a `TextRank` object
+Constructor for a `TextRank` object.
+
+    doc:
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
 
     edge_weight:
 default weight for an edge
 
     pos_kept:
-parts of speech tags to be kept; adjust this if strings representing
-the POS tags change
+parts of speech tags to be kept; adjust this if strings representing the POS tags change
 
     token_lookback:
-the window for neighboring tokens (similar to a skip gram)
+the window for neighboring tokens – similar to a *skip gram*
 
     scrubber:
-optional "scrubber" function to clean up punctuation from a token;
-if `None` then defaults to `pytextrank.default_scrubber`
+optional "scrubber" function to clean up punctuation from a token
         """
+        self.doc: Doc = doc
         self.edge_weight: float = edge_weight
         self.token_lookback: int = token_lookback
-
-        if pos_kept:
-            self.pos_kept: typing.List[str] = pos_kept
-        else:
-            self.pos_kept = self._POS_KEPT
-
-        if scrubber:
-            self.scrubber: typing.Callable = scrubber
-        else:
-            self.scrubber = default_scrubber
-
-        self.doc: Doc = doc
+        self.pos_kept: typing.List[str] = pos_kept
+        self.scrubber: typing.Callable = scrubber
         self.stopwords: dict = defaultdict(list)
 
         # effectively, performs the same work as the `reset()` method;
@@ -269,6 +234,7 @@ if `None` then defaults to `pytextrank.default_scrubber`
         self.phrases: dict = defaultdict(list)
         self.ranks: typing.Dict[Lemma, float] = {}
         self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
+
 
     def reset (
         self
@@ -300,13 +266,10 @@ Note: be cautious about use of this feature, since it can get "greedy"
 and bias/distort the results.
 
     data:
-dictionary of `lemma: [pos]` items to define the stop words, where
-each item has a key as a lemmatized token and a value as a list of POS
-tags
+dictionary of `lemma: [pos]` items to define the stop words, where each item has a key as a lemmatized token and a value as a list of POS tags
 
     path:
-optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html)
-of a JSON file – in lieu of providing a `data` parameter
+optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) of a JSON file – in lieu of providing a `data` parameter
         """
         if data:
             self.stopwords = data
@@ -332,9 +295,8 @@ This method represents the heart of the *TextRank* algorithm.
     returns:
 list of ranked phrases, in descending order
         """
-        self.reset()
         t0 = time.time()
-
+        self.reset()
         self.lemma_graph = self._construct_graph()
 
         # to run the algorithm, we use the NetworkX implementation
@@ -416,8 +378,7 @@ Otherwise, track this token in the `seen_lemma` dictionary.
 a parsed `spaCy` [`Token`](https://spacy.io/api/token) to be evaluated
 
     returns:
-boolean value for whether to keep this token as a node in the lemma
-graph
+boolean value for whether to keep this token as a node in the lemma graph
         """
         lemma = token.lemma_.lower().strip()
 
@@ -505,8 +466,7 @@ spans of noun chuncks
 rank metrics corresponding to each node
 
     returns:
-phrases extracted from the lemma graph, each with an aggregate rank
-metric
+phrases extracted from the lemma graph, each with an aggregate rank metric
         """
         phrases: typing.Dict[Span, float] = {
             span: sum(
@@ -704,8 +664,7 @@ maximum number of top-ranked phrases to use in the distance vectors
 total number of sentences to yield for the extractive summarization
 
     preserve_order:
-flag to preserve the order of sentences as they originally occurred in
-the source text; defaults to `False`
+flag to preserve the order of sentences as they originally occurred in the source text; defaults to `False`
 
     yields:
 texts for sentences, in order

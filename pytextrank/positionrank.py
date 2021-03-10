@@ -11,7 +11,7 @@ from .util import groupby_apply
 
 class PositionRankFactory (BaseTextRankFactory):
     """
-A factory class that provides the documnt with its instance of
+A factory class that provides the document with its instance of
 `PositionRank`
     """
 
@@ -22,23 +22,23 @@ A factory class that provides the documnt with its instance of
         ) -> Doc:
         """
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component* for `PositionRank` as a
-stateful component, invoked when the document gets processed.
+document to create a *pipeline component* for `PositionRank` as
+a stateful component, invoked when the document gets processed.
 
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
     doc:
-a document container for accessing the annotations produced by earlier stages of the `spaCy` pipeline
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
         """
         Doc.set_extension("textrank", force=True, default=None)
         Doc.set_extension("phrases", force=True, default=[])
 
         doc._.textrank = PositionRank(
             doc,
-            edge_weight=self.edge_weight,
-            pos_kept=self.pos_kept,
-            token_lookback=self.token_lookback,
-            scrubber=self.scrubber,
+            edge_weight = self.edge_weight,
+            pos_kept = self.pos_kept,
+            token_lookback = self.token_lookback,
+            scrubber = self.scrubber,
             )
 
         doc._.phrases = doc._.textrank.calc_textrank()
@@ -50,6 +50,9 @@ class PositionRank (BaseTextRank):
 Implements the *PositionRank* algorithm described by
 [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17),
 deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
     """
 
     def get_personalization (

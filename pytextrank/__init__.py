@@ -41,6 +41,7 @@ Component factory for the `TextRank` base class.
         scrubber = scrubber,
         )
 
+
 @Language.factory("positionrank", default_config=_DEFAULT_CONFIG)
 def _create_component_pr (
     nlp: Language,  # pylint: disable=W0613
