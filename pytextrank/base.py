@@ -21,6 +21,10 @@ import time
 import typing
 
 
+# parameter type annotation for a *stop words* source
+StopWordsLike = typing.Union[ str, pathlib.Path, typing.Dict[str, typing.List[str]] ]
+
+
 @dataclass(order=True, frozen=True)
 class Lemma:
     """
@@ -123,6 +127,7 @@ A factory class that provides the document with its instance of
         pos_kept: typing.List[str] = None,
         token_lookback: int = _TOKEN_LOOKBACK,
         scrubber: typing.Optional[typing.Callable] = None,
+        stopwords: typing.Optional[StopWordsLike] = None,
         ) -> None:
         """
 Constructor for a factory used to instantiate the PyTextRank pipeline components.
@@ -138,6 +143,9 @@ the window for neighboring tokens – similar to a *skip gram*
 
     scrubber:
 optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
+
+    stopwords:
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags; may be a file name (string) or a [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) for a JSON file; otherwise throws a `TypeError` exception
         """
         self.edge_weight: float = edge_weight
         self.token_lookback: int = token_lookback
@@ -152,7 +160,48 @@ optional "scrubber" function to clean up punctuation from a token; if `None` the
         else:
             self.scrubber = default_scrubber
 
-        self.stopwords: dict = defaultdict(list)
+        if stopwords:
+            self.stopwords: typing.Dict[str, typing.List[str]] = self._load_stopwords(stopwords)
+        else:
+            self.stopwords = defaultdict(list)
+
+
+    @classmethod
+    def _load_stopwords (
+        cls,
+        stopwords: typing.Optional[StopWordsLike] = None,
+        ) -> typing.Dict[str, typing.List[str]]:
+        """
+Load a dictionary of
+[*stop words*](https://derwen.ai/docs/ptr/glossary/#stop-words)
+– i.e., tokens to be ignored when constructing the
+[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
+
+Note: be cautious about the use of this feature, since it can get
+"greedy" and bias or otherwise distort the results.
+
+    stopwords:
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags; may be a file name (string) or a [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) for a JSON file; otherwise throws a `TypeError` exception
+
+    returns:
+the *stop words* dictionary
+        """
+        if isinstance(stopwords, dict):
+            return stopwords
+
+        if isinstance(stopwords, pathlib.Path):
+            path: pathlib.Path = stopwords
+        else:
+            path = pathlib.Path(str)  # type: ignore
+
+        if path.exists():
+            with open(path, "r") as f:
+                data = json.load(f)
+
+                if data:
+                    return data.items()
+
+        raise TypeError("cannot parse the stopwords source as a dictionary")
 
 
     def __call__ (
@@ -178,6 +227,7 @@ a document container, providing the annotations produced by earlier stages of th
             pos_kept = self.pos_kept,
             token_lookback = self.token_lookback,
             scrubber = self.scrubber,
+            stopwords = self.stopwords,
             )
 
         doc._.phrases = doc._.textrank.calc_textrank()
@@ -201,6 +251,7 @@ instead.
         pos_kept: typing.List[str],
         token_lookback: int,
         scrubber: typing.Callable,
+        stopwords: typing.Dict[str, typing.List[str]],
         ) -> None:
         """
 Constructor for a `TextRank` object.
@@ -219,13 +270,16 @@ the window for neighboring tokens – similar to a *skip gram*
 
     scrubber:
 optional "scrubber" function to clean up punctuation from a token
+
+    stopwords:
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags
         """
         self.doc: Doc = doc
         self.edge_weight: float = edge_weight
         self.token_lookback: int = token_lookback
         self.pos_kept: typing.List[str] = pos_kept
         self.scrubber: typing.Callable = scrubber
-        self.stopwords: dict = defaultdict(list)
+        self.stopwords: typing.Dict[str, typing.List[str]] = stopwords
 
         # effectively, performs the same work as the `reset()` method;
         # called explicitly here for the sake of type annotations
@@ -248,38 +302,6 @@ removing any pre-existing state.
         self.phrases = defaultdict(list)
         self.ranks = {}
         self.seen_lemma = OrderedDict()
-
-
-    def load_stopwords (
-        self,
-        *,
-        data: typing.Optional[typing.Dict[str, typing.List[str]]] = None,
-        path: typing.Optional[pathlib.Path] = None,
-        ) -> None:
-        """
-Load a dictionary of
-[*stop words*](https://derwen.ai/docs/ptr/glossary/#stop-words)
-– i.e., tokens to be ignored when constructing the
-[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
-
-Note: be cautious about use of this feature, since it can get "greedy"
-and bias/distort the results.
-
-    data:
-dictionary of `lemma: [pos]` items to define the stop words, where each item has a key as a lemmatized token and a value as a list of POS tags
-
-    path:
-optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) of a JSON file – in lieu of providing a `data` parameter
-        """
-        if data:
-            self.stopwords = data
-        elif path and path.exists():
-            with open(path, "r") as f:
-                data = json.load(f)
-
-                if data:
-                    for lemma, pos_list in data.items():
-                        self.stopwords[lemma] = pos_list
 
 
     def calc_textrank (
@@ -382,7 +404,7 @@ boolean value for whether to keep this token as a node in the lemma graph
         """
         lemma = token.lemma_.lower().strip()
 
-        if lemma in self.stopwords and token.pos_ in self.stopwords[lemma]:
+        if self._is_stopword(lemma, token):
             return False
 
         if token.pos_ not in self.pos_kept:
@@ -397,6 +419,21 @@ boolean value for whether to keep this token as a node in the lemma graph
             self.seen_lemma[key].add(token.i)
 
         return True
+
+
+    def _is_stopword (
+        self,
+        lemma: str,
+        token: Token,
+        ) -> bool:
+        """
+Determine whether the given (lemma, pos) pair was identified with in
+the *stop words* list.
+
+    returns:
+boolean result of the test
+        """
+        return lemma in self.stopwords and token.pos_ in self.stopwords[lemma]
 
 
     @property
@@ -695,7 +732,7 @@ texts for sentences, in order
     def write_dot (
         self,
         *,
-        path: str = "graph.dot"
+        path: typing.Optional[typing.Union[ str, pathlib.Path ]] = "graph.dot",
         ) -> None:
         """
 Serialize the lemma graph in the `Dot` file format.
@@ -715,5 +752,8 @@ path for the output file; defaults to `"graph.dot"`
         for edge in self.lemma_graph.edges():
             dot.edge(edge[0].label(), edge[1].label(), constraint="false")
 
-        with open(path, "w") as f:
+        if isinstance(path, str):
+            path = pathlib.Path(path)
+
+        with open(path, "w") as f:  # type: ignore
             f.write(dot.source)

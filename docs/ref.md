@@ -1,35 +1,38 @@
 # Reference: `pytextrank` package
 ## [`BaseTextRankFactory` class](#BaseTextRankFactory)
 
-A factory class that provides the documnt with its instance of
+A factory class that provides the document with its instance of
 `BaseTextRank`
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRankFactory.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L118)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L123)
 
 ```python
-__init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None)
+__init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None)
 ```
-Constructor for a `Factory` object
+Constructor for a factory used to instantiate the PyTextRank pipeline components.
 
   * `edge_weight` : `float`  
 default weight for an edge
 
   * `pos_kept` : `typing.List[str]`  
-parts of speech tags to be kept; adjust this if strings representing
+parts of speech tags to be kept; adjust this if strings representing the POS tags change
 
   * `token_lookback` : `int`  
-the window for neighboring tokens (similar to a skip gram)
+the window for neighboring tokens – similar to a *skip gram*
 
   * `scrubber` : `typing.Union[typing.Callable, NoneType]`  
-optional "scrubber" function to clean up punctuation from a token;
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
+
+  * `stopwords` : `typing.Union[str, pathlib.Path, typing.Dict[str, typing.List[str]], NoneType]`  
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags; may be a file name (string) or a [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) for a JSON file; otherwise throws a `TypeError` exception
 
 
 
 ---
 #### [`__call__` method](#pytextrank.BaseTextRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L168)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L207)
 
 ```python
 __call__(doc)
@@ -37,22 +40,11 @@ __call__(doc)
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
 document to create a *pipeline component* for `TextRank` as
 a stateful component, invoked when the document gets processed.
+
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
   * `doc` : `spacy.tokens.doc.Doc`  
-a document container for accessing the annotations produced by earlier
-
-
-
----
-#### [`reset` method](#pytextrank.BaseTextRankFactory.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L197)
-
-```python
-reset()
-```
-Reinitialize the data structures needed for extracting phrases,
-removing any pre-existing state.
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
 
 
 
@@ -61,33 +53,42 @@ removing any pre-existing state.
 Implements the *TextRank* algorithm defined by
 [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank),
 deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L223)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L247)
 
 ```python
-__init__(doc, edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None)
+__init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords)
 ```
-Constructor for a `TextRank` object
+Constructor for a `TextRank` object.
+
+  * `doc` : `spacy.tokens.doc.Doc`  
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
 
   * `edge_weight` : `float`  
 default weight for an edge
 
   * `pos_kept` : `typing.List[str]`  
-parts of speech tags to be kept; adjust this if strings representing
+parts of speech tags to be kept; adjust this if strings representing the POS tags change
 
   * `token_lookback` : `int`  
-the window for neighboring tokens (similar to a skip gram)
+the window for neighboring tokens – similar to a *skip gram*
 
-  * `scrubber` : `typing.Union[typing.Callable, NoneType]`  
-optional "scrubber" function to clean up punctuation from a token;
+  * `scrubber` : `typing.Callable`  
+optional "scrubber" function to clean up punctuation from a token
+
+  * `stopwords` : `typing.Dict[str, typing.List[str]]`  
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags
 
 
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L273)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L293)
 
 ```python
 reset()
@@ -98,31 +99,8 @@ removing any pre-existing state.
 
 
 ---
-#### [`load_stopwords` method](#pytextrank.BaseTextRank.load_stopwords)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L287)
-
-```python
-load_stopwords(data=None, path=None)
-```
-Load a dictionary of
-[*stop words*](https://derwen.ai/docs/ptr/glossary/#stop-words)
-– i.e., tokens to be ignored when constructing the
-[*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
-
-Note: be cautious about use of this feature, since it can get "greedy"
-and bias/distort the results.
-
-  * `data` : `typing.Union[typing.Dict[str, typing.List[str]], NoneType]`  
-dictionary of `lemma: [pos]` items to define the stop words, where
-
-  * `path` : `typing.Union[pathlib.Path, NoneType]`  
-optional [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html)
-
-
-
----
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L322)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L307)
 
 ```python
 calc_textrank()
@@ -140,7 +118,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L368)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L352)
 
 ```python
 get_personalization()
@@ -158,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L595)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L592)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -180,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L639)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L636)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -198,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L688)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L685)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -214,7 +192,7 @@ maximum number of top-ranked phrases to use in the distance vectors
 total number of sentences to yield for the extractive summarization
 
   * `preserve_order` : `bool`  
-flag to preserve the order of sentences as they originally occurred in
+flag to preserve the order of sentences as they originally occurred in the source text; defaults to `False`
 
   * *yields* :  
 texts for sentences, in order
@@ -223,21 +201,21 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L736)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L732)
 
 ```python
 write_dot(path="graph.dot")
 ```
 Serialize the lemma graph in the `Dot` file format.
 
-  * `path` : `str`  
+  * `path` : `typing.Union[str, pathlib.Path, NoneType]`  
 path for the output file; defaults to `"graph.dot"`
 
 
 
 ## [`PositionRankFactory` class](#PositionRankFactory)
 
-A factory class that provides the documnt with its instance of
+A factory class that provides the document with its instance of
 `PositionRank`
     
 ---
@@ -248,13 +226,13 @@ A factory class that provides the documnt with its instance of
 __call__(doc)
 ```
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component* for `PositionRank` as a
-stateful component, invoked when the document gets processed.
+document to create a *pipeline component* for `PositionRank` as
+a stateful component, invoked when the document gets processed.
 
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
 
   * `doc` : `spacy.tokens.doc.Doc`  
-a document container for accessing the annotations produced by earlier stages of the `spaCy` pipeline
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
 
 
 
@@ -263,10 +241,13 @@ a document container for accessing the annotations produced by earlier stages of
 Implements the *PositionRank* algorithm described by
 [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17),
 deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
     
 ---
 #### [`get_personalization` method](#pytextrank.PositionRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L55)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L59)
 
 ```python
 get_personalization()
@@ -308,7 +289,7 @@ __setattr__(name, value)
 
 ---
 #### [`label` method](#pytextrank.Lemma.label)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L33)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L37)
 
 ```python
 label()
@@ -363,7 +344,7 @@ __init__(start, end, sent_id, phrases, distance)
 
 ---
 #### [`empty` method](#pytextrank.Sentence.empty)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L69)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L73)
 
 ```python
 empty()
@@ -377,7 +358,7 @@ Test whether this sentence includes any ranked phrases.
 
 ---
 #### [`text` method](#pytextrank.Sentence.text)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L81)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L85)
 
 ```python
 text(doc)
@@ -526,3 +507,8 @@ text per paragraph
 
 ---
 ## [module types](#pytextrank)
+#### [`StopWordsLike` type](#pytextrank.StopWordsLike)
+```python
+StopWordsLike = typing.Union[str, pathlib.Path, typing.Dict[str, typing.List[str]]]
+```
+

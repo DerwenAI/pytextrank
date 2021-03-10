@@ -39,6 +39,7 @@ a document container, providing the annotations produced by earlier stages of th
             pos_kept = self.pos_kept,
             token_lookback = self.token_lookback,
             scrubber = self.scrubber,
+            stopwords = self.stopwords,
             )
 
         doc._.phrases = doc._.textrank.calc_textrank()

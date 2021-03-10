@@ -51,7 +51,7 @@ for phrase in doc._.phrases[:20]:
 
 print("\n----\n")
 
-# show use of stopwords: first we output a baseline...
+# to show use of stopwords: first we output a baseline...
 with open("dat/gen.txt", "r") as f:
     text = f.read()
 
@@ -65,13 +65,10 @@ print("\n----\n")
 # now add `"word": ["NOUN"]` to the stop words, to remove instances
 # of `"word"` or `"words"` then see how the ranked phrases differ...
 
-# TODO: refactor stopwords as a constructor argument
-#nlp.add_pipe("textrank")
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
 
 doc = nlp(text)
-tr = doc._.textrank
-
-tr.load_stopwords(data = { "word": ["NOUN"] })
 
 for phrase in doc._.phrases[:10]:
     ic(phrase)
@@ -79,6 +76,7 @@ for phrase in doc._.phrases[:10]:
 print("\n----\n")
 
 # generate a GraphViz doc to visualize the lemma graph
+tr = doc._.textrank
 tr.write_dot(path="lemma_graph.dot")
 
 # summarize the document based on its top 15 phrases, 

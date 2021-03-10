@@ -1,4 +1,4 @@
-from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, VectorElem
+from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, VectorElem, StopWordsLike
 
 from .positionrank import PositionRankFactory, PositionRank
 
@@ -11,6 +11,7 @@ from .version import MIN_PY_VERSION, _versify, _check_version, __version__
 ## add component factories to the spaCy pipeline namespace
 
 from spacy.language import Language  # type: ignore
+import pathlib
 import typing
 
 
@@ -19,6 +20,7 @@ _DEFAULT_CONFIG = {
     "pos_kept": BaseTextRankFactory._POS_KEPT,  # pylint: disable=W0212
     "token_lookback": BaseTextRankFactory._TOKEN_LOOKBACK,  # pylint: disable=W0212
     "scrubber": None,
+    "stopwords": None,
     }
 
 
@@ -30,6 +32,7 @@ def _create_component_tr (
     pos_kept: typing.List[str],
     token_lookback: int,
     scrubber: typing.Optional[typing.Callable],
+    stopwords: typing.Optional[StopWordsLike],
     ) -> BaseTextRankFactory:
     """
 Component factory for the `TextRank` base class.
@@ -39,6 +42,7 @@ Component factory for the `TextRank` base class.
         pos_kept = pos_kept,
         token_lookback = token_lookback,
         scrubber = scrubber,
+        stopwords = stopwords,
         )
 
 
@@ -50,6 +54,7 @@ def _create_component_pr (
     pos_kept: typing.List[str],
     token_lookback: int,
     scrubber: typing.Optional[typing.Callable],
+    stopwords: typing.Optional[StopWordsLike],
     ) -> PositionRankFactory:
     """
 Component factory for the `PositionRank` extended class.
@@ -59,4 +64,5 @@ Component factory for the `PositionRank` extended class.
         pos_kept = pos_kept,
         token_lookback = token_lookback,
         scrubber = scrubber,
+        stopwords = stopwords,
         )
