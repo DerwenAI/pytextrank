@@ -2,7 +2,7 @@
 
 ## 3.1.0
 
-2021-03-??
+2021-03-12
 
   * rename `master` branch to `main`
   * add a factory class that assigns each doc its own Textrank object; kudos @Ankush-Chander
