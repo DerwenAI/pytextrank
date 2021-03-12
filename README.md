@@ -116,7 +116,7 @@ this library.
   title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
   year = 2016,
   publisher = {Derwen},
-  doi = {10.5281/zenodo.4568079},
+  doi = {10.5281/zenodo.4602393},
   url = {https://github.com/DerwenAI/pytextrank}
 }
 ```
