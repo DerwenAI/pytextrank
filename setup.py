@@ -76,15 +76,14 @@ if __name__ == "__main__":
             "Topic :: Text Processing :: Linguistic",
             ],
 
-        url = "http://github.com/DerwenAI/pytextrank",
+        url = "https://derwen.ai/docs/ptr/",
         project_urls = {
-            "Documentation": "https://derwen.ai/docs/ptr/",
+            "Source": "http://github.com/DerwenAI/pytextrank",
             "spaCy uniVerse": "https://spacy.io/universe/project/spacy-pytextrank",
             "Issue Tracker": "https://github.com/DerwenAI/pytextrank/issues",
             "Discussion Forum": "https://www.linkedin.com/groups/6725785/",
             "StackOverflow": "https://stackoverflow.com/search?q=pytextrank",
             "Citations": "https://scholar.google.com/scholar?q=related:5tl6J4xZlCIJ:scholar.google.com/&scioq=&hl=en&as_sdt=0,5",
-            "DOI": "https://doi.org/10.5281/zenodo.4540784",
             },
 
         zip_safe=False,
