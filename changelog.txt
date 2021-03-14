@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 3.1.1
+
+2021-03-??
+
+  * fix the span length calculation in explanation notebook; kudos @Ankush-Chander
+
+
 ## 3.1.0
 
 2021-03-12
