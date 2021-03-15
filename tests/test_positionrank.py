@@ -27,10 +27,13 @@ does.
     # then
     assert set(p.rank for p in phrases) != set(p.rank for p in comparison_phrases)
 
-    # the test article mentions Chelsea at the begginning of the article
-    # while it mentions Shanghai Shenhua annecdotally later in the article
-    # with normal TextRank, Shanghai Shenhua is part of top 10 phrases and Chelsea is not
-    # with PositionRank, the situation is the opposite, which is desired for a piece of news.
+    # The test article mentions `Chelsea` at the begginning of the
+    # article while it mentions `Shanghai Shenhua` anecdotally later
+    # in the article. However, with normal TextRank, `Shanghai
+    # Shenhua` is part of top 10 phrases and `Chelsea` isn't. With
+    # PositionRank, the situation is the opposite, which is the
+    # desired outcome when parsing a news article.
+
     assert "Chelsea" in [p.text for p in phrases[:10]]
     assert "Chelsea" not in [p.text for p in comparison_phrases[:10]]
     assert "Shanghai Shenhua" not in [p.text for p in phrases[:10]]
