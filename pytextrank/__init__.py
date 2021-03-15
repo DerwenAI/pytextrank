@@ -2,6 +2,7 @@ from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, Ve
 
 from .positionrank import PositionRankFactory, PositionRank
 
+from .biasedrank import BiasedTextRankFactory, BiasedTextRank
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
 
 from .version import MIN_PY_VERSION, _versify, _check_version, __version__
@@ -60,6 +61,28 @@ def _create_component_pr (
 Component factory for the `PositionRank` extended class.
     """
     return PositionRankFactory(
+        edge_weight = edge_weight,
+        pos_kept = pos_kept,
+        token_lookback = token_lookback,
+        scrubber = scrubber,
+        stopwords = stopwords,
+        )
+
+
+@Language.factory("biasedtextrank", default_config=_DEFAULT_CONFIG)
+def _create_component_pr (
+    nlp: Language,  # pylint: disable=W0613
+    name: str,  # pylint: disable=W0613
+    edge_weight: float,
+    pos_kept: typing.List[str],
+    token_lookback: int,
+    scrubber: typing.Optional[typing.Callable],
+    stopwords: typing.Optional[StopWordsLike],
+    ) -> BiasedTextRankFactory:
+    """
+Component factory for the `BiasedTextRank` extended class.
+    """
+    return BiasedTextRankFactory(
         edge_weight = edge_weight,
         pos_kept = pos_kept,
         token_lookback = token_lookback,

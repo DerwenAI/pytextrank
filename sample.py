@@ -83,3 +83,29 @@ tr.write_dot(path="lemma_graph.dot")
 # yielding its top 5 sentences...
 for sent in tr.summary(limit_phrases=15, limit_sentences=5):
     ic(sent)
+
+print("\n----\n")
+
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("biasedtextrank")
+
+with open("dat/lee.txt", "r") as f:
+    text = f.read()
+doc = nlp(text)
+
+tr = doc._.textrank
+
+phrases = tr.get_phrases()
+
+for phrase in phrases[:20]:
+    ic(phrase)
+
+print("\n----\n")
+
+phrases = tr.get_phrases(focus="It wasn't until the following year that Deep Blue topped Kasparov over the course of a six-game contest.", bias=10)
+
+for phrase in phrases[:20]:
+    ic(phrase)
+
+print("\n----\n")
+
