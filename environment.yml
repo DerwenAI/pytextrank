@@ -1,0 +1,12 @@
+name: pytextrank
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python >= 3.6
+  - pip
+  - graphviz >= 0.13
+  - networkx >= 2.0
+  - spacy >= 3.0
+  - pip:
+    - icecream >= 2.0.0
