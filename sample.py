@@ -19,9 +19,7 @@ nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe("textrank")
 
 # parse the document
-with open("dat/mih.txt", "r") as f:
-    text = f.read()
-
+text = pathlib.Path("dat/mih.txt").read_text()
 doc = nlp(text)
 
 ## access the TextRank component, for post-processing
@@ -41,9 +39,7 @@ for phrase in doc._.phrases:
 print("\n----\n")
 
 # switch to a longer text document...
-with open("dat/lee.txt", "r") as f:
-    text = f.read()
-
+text = pathlib.Path("dat/lee.txt").read_text()
 doc = nlp(text)
 
 for phrase in doc._.phrases[:20]:
@@ -52,9 +48,7 @@ for phrase in doc._.phrases[:20]:
 print("\n----\n")
 
 # to show use of stopwords: first we output a baseline...
-with open("dat/gen.txt", "r") as f:
-    text = f.read()
-
+text = pathlib.Path("dat/gen.txt").read_text()
 doc = nlp(text)
 
 for phrase in doc._.phrases[:10]:
@@ -83,3 +77,37 @@ tr.write_dot(path="lemma_graph.dot")
 # yielding its top 5 sentences...
 for sent in tr.summary(limit_phrases=15, limit_sentences=5):
     ic(sent)
+
+print("\n----\n")
+
+# show use of Biased TextRank algorithm
+EXPECTED_PHRASES = [
+    "grandmaster Lee Sedol",
+    "Lee Sedol",
+    "more international titles",
+    "world chess champion Gary Kasparov",
+    "Deep Blue",
+    "Gary Kasparov",
+    "Wednesday afternoon",
+]
+
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("biasedtextrank")
+
+text = pathlib.Path("dat/lee.txt").read_text()
+doc = nlp(text)
+
+for phrase in doc._.phrases[:len(EXPECTED_PHRASES)]:
+    ic(phrase)
+
+print("\n----\n")
+tr = doc._.textrank
+
+phrases = tr.change_focus(
+    focus="It wasn't until the following year that Deep Blue topped Kasparov over the course of a six-game contest.",
+    bias=10.0,
+    )
+
+for phrase in phrases[:len(EXPECTED_PHRASES)]:
+    ic(phrase.text)
+    assert phrase.text in EXPECTED_PHRASES

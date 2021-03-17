@@ -210,7 +210,7 @@ the *stop words* dictionary
         ) -> Doc:
         """
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component* for `TextRank` as
+document to create a *pipeline component* for `BaseTextRank` as
 a stateful component, invoked when the document gets processed.
 
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
@@ -281,6 +281,10 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
         self.scrubber: typing.Callable = scrubber
         self.stopwords: typing.Dict[str, typing.List[str]] = stopwords
 
+        # internal data for BiasedTextRank
+        self.focus_tokens: typing.Set[str] = set()
+        self.node_bias = 1.0
+
         # effectively, performs the same work as the `reset()` method;
         # called explicitly here for the sake of type annotations
         self.elapsed_time: float = 0.0
@@ -327,12 +331,11 @@ list of ranked phrases, in descending order
         self.ranks = nx.pagerank(
             self.lemma_graph,
             personalization = self.get_personalization(),
-        )
+            )
 
         # agglomerate the lemmas ranked in the lemma graph into ranked
         # phrases, leveraging information from earlier stages of the
         # pipeline: noun chunks and named entities
-
         nc_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.noun_chunks, self.ranks)
         ent_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.ents, self.ranks)
         all_phrases: typing.Dict[Span, float] = { **nc_phrases, **ent_phrases }
