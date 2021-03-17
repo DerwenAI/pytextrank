@@ -331,7 +331,7 @@ biased restart probabilities to use in the *PageRank* algorithm.
 change_focus(focus=None, bias=1.0)
 ```
 Re-runs the *Biased TextRank* algorithm with the given focus.
-This approach allows an applicatino to "change focus" without
+This approach allows an application to "change focus" without
 re-running the entire pipeline.
 
   * `focus` : `str`  
