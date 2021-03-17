@@ -45,6 +45,15 @@ open: <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20
 *arXiv* (2020)
 
 
+## – K –
+
+### kazemi2011corr
+
+["Biased TextRank: Unsupervised Graph-Based Content Extraction"](https://arxiv.org/abs/2011.01026)  
+**Ashkan Kazemi**, **Verónica Pérez-Rosas**, **Rada Mihalcea**  
+*CoRR* (2011)
+
+
 ## – P –
 
 ### page1998

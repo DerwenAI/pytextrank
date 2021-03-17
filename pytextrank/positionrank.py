@@ -106,12 +106,12 @@ Biased restart probabilities to use in the *PageRank* algorithm.
             for k, w in accumulated_weighted_tokens
         }
 
-        weighted_nodes = {
-            # while the authors assign higher probability to a "word",
-            # our *lemma graph* vertices are (lemma, pos) tuples,
-            # therefore we map each `Lemma` weight to all the *lemma
-            # graph* vertices which contain it
-            # TODO: should this map to (lemma, pos) pairs instead?
+        # while the authors assign higher probability to a "word",
+        # our *lemma graph* vertices are (lemma, pos) tuples,
+        # therefore we map each `Lemma` weight to all the *lemma
+        # graph* vertices which contain it
+        # TODO: should this map to (lemma, pos) pairs instead?
+        weighted_nodes: typing.Dict[Lemma, float] = {
             Lemma(token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
             for token in self.doc
             if token.pos_ in self.pos_kept

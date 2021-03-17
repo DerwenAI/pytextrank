@@ -21,6 +21,8 @@ if __name__ == "__main__":
         "BaseTextRank",
         "PositionRankFactory",
         "PositionRank",
+        "BiasedTextRankFactory",
+        "BiasedTextRank",
         "Lemma",
         "Phrase",
         "Sentence",

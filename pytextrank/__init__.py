@@ -3,6 +3,7 @@ from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, Ve
 from .positionrank import PositionRankFactory, PositionRank
 
 from .biasedrank import BiasedTextRankFactory, BiasedTextRank
+
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
 
 from .version import MIN_PY_VERSION, _versify, _check_version, __version__
@@ -70,7 +71,7 @@ Component factory for the `PositionRank` extended class.
 
 
 @Language.factory("biasedtextrank", default_config=_DEFAULT_CONFIG)
-def _create_component_pr (
+def _create_component_br (
     nlp: Language,  # pylint: disable=W0613
     name: str,  # pylint: disable=W0613
     edge_weight: float,
