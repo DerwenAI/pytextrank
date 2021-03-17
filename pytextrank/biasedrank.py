@@ -119,7 +119,7 @@ biased restart probabilities to use in the *PageRank* algorithm.
         ) -> typing.List[Phrase]:
         """
 Re-runs the *Biased TextRank* algorithm with the given focus.
-This approach allows an applicatino to "change focus" without
+This approach allows an application to "change focus" without
 re-running the entire pipeline.
 
     focus:
