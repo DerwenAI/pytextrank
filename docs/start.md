@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Sample Usage
 
 To use **pytextrank** in its simplest form:
-```
+```python
 import spacy
 import pytextrank
 
@@ -29,7 +29,7 @@ text = "Compatibility of systems of linear constraints over the set of natural n
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank to the spaCy pipeline
-nlp.add_pipe("textrank", last=True)
+nlp.add_pipe("textrank")
 doc = nlp(text)
 
 # examine the top-ranked phrases in the document

@@ -28,9 +28,11 @@ The *TextRank* algorithm implementation here is based on research
 published in
 [[mihalcea04textrank]](biblio/#mihalcea04textrank),
 plus subsequent research by
-[[florescuc17]](biblio/#florescuc17).
-See current research at <https://lit.eecs.umich.edu/textgraphs/>
-in general.
+[[florescuc17]](biblio/#florescuc17)
+and
+[[kazemi2011corr]](biblio/#kazemi2011corr).
+See the current *textgraph* research at <https://lit.eecs.umich.edu/textgraphs/>
+in general for more details.
 
 Some modifications in **PyTextRank** attempt to improve on the
 original algorithm description:
@@ -49,7 +51,7 @@ additional AI techniques.
 While there have been many amazing innovations since late 2017 
 in the application of *deep learning* for
 [*language models*](http://nlpprogress.com/english/language_modeling.html),
-these "transformer* models tend to imply trade-offs:
+these *transformer* models tend to imply trade-offs:
 
   * emphasis on predictive power for recognizing sequences
   * models which require substantial resources to train, deploy, etc.

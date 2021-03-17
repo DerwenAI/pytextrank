@@ -18,7 +18,9 @@ nav:
         - Build Instructions: build.md
         - Project TODO List: todo.md
     - Tutorial:
-        - Setup: tutorial.md
+        - Syllabus: tutorial.md
+        - Setup: setup.md
+        - Sample Usage: sample.md
         - TextRank algorithm explained: explain_algo.md
         - Extractive Summarization: explain_summ.md
         - Misc. Talks: talks.md
