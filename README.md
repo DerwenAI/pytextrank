@@ -106,13 +106,11 @@ See:
 [changelog.txt](https://github.com/DerwenAI/pytextrank/blob/main/changelog.txt)
 </details>
 
-<a
- href="https://memegenerator.net/img/instances/66942896.jpg"
-><img
+<img
  alt="thanks noam!"
  src="https://raw.githubusercontent.com/DerwenAI/pytextrank/main/docs/assets/noam.jpg"
  width="231"
- /></a>
+/>
 
 
 ## License and Copyright
