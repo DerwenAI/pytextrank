@@ -38,7 +38,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 __call__(doc)
 ```
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
-document to create a *pipeline component* for `TextRank` as
+document to create a *pipeline component* for `BaseTextRank` as
 a stateful component, invoked when the document gets processed.
 
 See: <https://spacy.io/usage/processing-pipelines#pipelines>
@@ -88,7 +88,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L293)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L297)
 
 ```python
 reset()
@@ -100,7 +100,7 @@ removing any pre-existing state.
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L307)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L311)
 
 ```python
 calc_textrank()
@@ -118,7 +118,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L352)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L355)
 
 ```python
 get_personalization()
@@ -136,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L592)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L595)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L636)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L639)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L685)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L688)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -201,7 +201,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L732)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L735)
 
 ```python
 write_dot(path="graph.dot")
@@ -272,6 +272,76 @@ From the cited reference:
 
   * *returns* : `typing.Union[typing.Dict[pytextrank.base.Lemma, float], NoneType]`  
 Biased restart probabilities to use in the *PageRank* algorithm.
+
+
+
+## [`BiasedTextRankFactory` class](#BiasedTextRankFactory)
+
+A factory class that provides the document with its instance of
+`BiasedTextRank`
+    
+---
+#### [`__call__` method](#pytextrank.BiasedTextRankFactory.__call__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L17)
+
+```python
+__call__(doc)
+```
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component* for `BiasedTextRank` as
+a stateful component, invoked when the document gets processed.
+
+See: <https://spacy.io/usage/processing-pipelines#pipelines>
+
+  * `doc` : `spacy.tokens.doc.Doc`  
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
+
+
+
+## [`BiasedTextRank` class](#BiasedTextRank)
+
+Implements the *Biased TextRank* algorithm described by
+[[kazemi2011corr]](https://derwen.ai/docs/ptr/biblio/#kazemi2011corr),
+deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
+    
+---
+#### [`get_personalization` method](#pytextrank.BiasedTextRank.get_personalization)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L83)
+
+```python
+get_personalization()
+```
+Get the *node weights* for initializing the use of the
+[*Personalized PageRank*](https://derwen.ai/docs/ptr/glossary/#personalized-pagerank)
+algorithm.
+
+  * *returns* : `typing.Union[typing.Dict[pytextrank.base.Lemma, float], NoneType]`  
+biased restart probabilities to use in the *PageRank* algorithm.
+
+
+
+---
+#### [`change_focus` method](#pytextrank.BiasedTextRank.change_focus)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L115)
+
+```python
+change_focus(focus=None, bias=1.0)
+```
+Re-runs the *Biased TextRank* algorithm with the given focus.
+This approach allows an applicatino to "change focus" without
+re-running the entire pipeline.
+
+  * `focus` : `str`  
+optional text (string) with space-delimited tokens to use for the *focus set*; defaults to `None`
+
+  * `bias` : `float`  
+optional bias for *node weight* values on tokens found within the *focus set*; defaults to `1.0`
+
+  * *returns* : `typing.List[pytextrank.base.Phrase]`  
+list of ranked phrases, in descending order
 
 
 

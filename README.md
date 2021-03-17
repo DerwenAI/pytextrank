@@ -1,6 +1,8 @@
 # PyTextRank
 
 [![DOI](https://zenodo.org/badge/69814684.svg)](https://zenodo.org/badge/latestdoi/69814684)
+![Licence](https://img.shields.io/github/license/DerwenAI/pytextrank)
+![Repo size](https://img.shields.io/github/repo-size/DerwenAI/pytextrank)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
@@ -33,8 +35,14 @@ dependencies as well:
 pip install -r requirements.txt
 ```
 
-Then to use the library with a simple use case:
+Alternatively, to install dependencies using `conda`:
 ```
+conda env create -f environment.yml
+conda activate kglab
+```
+
+Then to use the library with a simple use case:
+```python
 import spacy
 import pytextrank
 
@@ -60,38 +68,51 @@ related libraries in Python:
 <https://derwen.ai/docs/ptr/tutorial/>
 
 
-## Semantic Versioning
-
-Generally speaking the major release number of **PyTextRank** will
-track with the major release number of the associated `spaCy` version.
-
-We try to minimize any breaking changes between releases and provide
-careful notes in the `changelog.txt` file.
-
-
-## Contributing Code
+<details>
+  <summary>Contributing Code</summary>
 
 We welcome people getting involved as contributors to this open source
 project!
-Please see the
+
+For detailed instructions please see:
 [CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/main/CONTRIBUTING.md)
-file for instructions.
+</details>
 
+<details>
+  <summary>Build Instructions</summary>
 
-## Build Instructions
-
-**Note: unless you are contributing code and updates,
-in most use cases won't need to build this package locally.**
+<strong>
+Note: unless you are contributing code and updates,
+in most use cases won't need to build this package locally.
+</strong>
 
 Instead, simply install from
 [PyPi](https://pypi.python.org/pypi/pytextrank)
-or [Conda](https://docs.conda.io/).
+or use [Conda](https://docs.conda.io/).
 
 To set up the build environment locally, see the 
 ["Build Instructions"](https://derwen.ai/docs/ptr/build/)
 section of the online documentation.
+</details>
 
-[![thanks noam](https://github.com/DerwenAI/pytextrank/blob/main/docs/assets/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
+<details>
+  <summary>Semantic Versioning</summary>
+
+Generally speaking the major release number of <strong>PyTextRank</strong> 
+will track with the major release number of the associated <code>spaCy</code>
+version.
+
+See:
+[changelog.txt](https://github.com/DerwenAI/pytextrank/blob/main/changelog.txt)
+</details>
+
+<a
+ href="https://memegenerator.net/img/instances/66942896.jpg"
+><img
+ alt="thanks noam!"
+ src="https://raw.githubusercontent.com/DerwenAI/pytextrank/main/docs/assets/noam.jpg"
+ width="231"
+ /></a>
 
 
 ## License and Copyright
