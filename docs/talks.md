@@ -15,6 +15,10 @@ For a general overview of this Python library and its usage, see:
 [*IIT Patna*](http://www.iitp.ac.in/~ai-nlp-ml/nlp-connect.html) (2020-02-21)  
 [video](https://youtu.be/ZwlPsdRDtMI)
 
+["Graph-Based Data Science"](https://derwen.ai/s/kcgh)  
+**Paco Nathan**  
+Derwen (2021-01-30)
+
 For related course materials and training, please check for calendar
 updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
@@ -60,7 +64,7 @@ very late one evening near the beach in A Coruña, Galica, while the
 author was teaching an NLP seminar at the university during 
 [Big Data Coruña 2019](https://www.citic-research.org/actividades/big-data-coruna-2019.htm).
 
-What a beautiful city there within ancient Celtic lands, guarded by
+What a beautiful city, there within ancient Celtic lands, guarded by
 the [Tower of Hercules](https://en.wikipedia.org/wiki/Tower_of_Hercules).
 More than a bit reminiscent of Santa Cruz, California.
 
