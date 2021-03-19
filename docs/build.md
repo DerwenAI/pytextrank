@@ -41,6 +41,17 @@ pylint pytextrank/*.py
 ```
 
 
+## Security Issues
+
+This project uses [`bandit`](https://bandit.readthedocs.io/) to check
+for *security issues*.
+
+To run these tests:
+```
+bandit kglab/*.py
+```
+
+
 ## Test Coverage
 
 This project uses

@@ -74,6 +74,14 @@ input text
     returns:
 scrubbed text
     """
+    # some web content returns "not string" ??
+    # ostensibly this is no longer possible in Py 3.x ...
+    # even so some crazy-making "mixed modes" of character encodings
+    # have been found in the wild -- YMMV
+
+    if type(text).__name__ != "str":
+        print("not a string?", type(text), text)
+
     x = " ".join(map(lambda s: s.strip(), text.split("\n"))).strip()
 
     x = x.replace('“', '"').replace('”', '"')
@@ -81,16 +89,6 @@ scrubbed text
     x = x.replace("…", "...").replace("–", "-")
 
     x = str(unicodedata.normalize("NFKD", x).encode("ascii", "ignore").decode("utf-8"))
-
-    # some web content returns "not string" ??
-    # ostensibly this is no longer possible in Py 3.x ...
-    # even so some crazy-making "mixed modes" of character encodings
-    # have been found in the wild -- YMMV
-
-    try:
-        assert type(x).__name__ == "str"
-    except AssertionError:
-        print("not a string?", type(text), text)
 
     return x
 
