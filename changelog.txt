@@ -7,6 +7,7 @@
   * fix the span length calculation in explanation notebook; kudos @Ankush-Chander
   * add `BiasedTextRank` by @Ankush-Chander (many thanks!)
   * add conda `environment.yml` plus instructions
+  * use `bandit` to check for security issues
 
 
 ## 3.1.0

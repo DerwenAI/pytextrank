@@ -1,3 +1,4 @@
+bandit
 coverage
 flask
 mkdocs-git-revision-date-plugin

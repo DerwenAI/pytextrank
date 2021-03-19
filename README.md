@@ -5,6 +5,7 @@
 ![Repo size](https://img.shields.io/github/repo-size/DerwenAI/pytextrank)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
