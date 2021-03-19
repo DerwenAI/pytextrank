@@ -12,7 +12,7 @@ simply install based on the instructions in
 
 To set up the build environment locally:
 ```
-pip install -r requirements_build.txt
+pip install -r requirements-dev.txt
 ```
 
 You will also need to download
