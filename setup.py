@@ -36,7 +36,7 @@ if __name__ == "__main__":
     pytr_version._check_version()
 
     base_packages = parse_requirements_file("requirements.txt")
-    docs_packages = parse_requirements_file("requirements_build.txt")
+    docs_packages = parse_requirements_file("requirements-dev.txt")
 
     setuptools.setup(
         name="pytextrank",
