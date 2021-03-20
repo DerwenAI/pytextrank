@@ -133,10 +133,7 @@ All materials herein are Copyright &copy; 2016-2021 Derwen, Inc.
 ## Attribution
 
 Please use the following BibTeX entry for citing **PyTextRank** if you 
-use it in your research or software.
-Citations are helpful for the continued development and maintenance of
-this library.
-
+use it in your research or software:
 ```bibtex
 @software{PyTextRank,
   author = {Paco Nathan},
@@ -147,6 +144,11 @@ this library.
   url = {https://github.com/DerwenAI/pytextrank}
 }
 ```
+
+Citations are helpful for the continued development and maintenance of
+this library.
+For example, see our citations listed on
+[Google Scholar](https://scholar.google.com/scholar?q=related:5tl6J4xZlCIJ:scholar.google.com/&scioq=&hl=en&as_sdt=0,5).
 
 
 ## Kudos
