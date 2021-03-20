@@ -8,6 +8,7 @@
   * add `BiasedTextRank` by @Ankush-Chander (many thanks!)
   * add conda `environment.yml` plus instructions
   * use `bandit` to check for security issues
+  * use `codespell` to check for spelling errors
   * add `pre-commit` checks in general
 
 

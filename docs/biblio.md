@@ -1,12 +1,18 @@
 # Bibliography
 
-Where possible, the following citations are based on conventions at <https://www.bibsonomy.org/>
+Where possible, the following citations are based on conventions at
+<https://www.bibsonomy.org/>
 
-Journal abbrevations use ISO 4, available at <https://academic-accelerator.com/Journal-Abbreviation/System>
+Journal abbreviations use *ISO 4*, which is available at 
+<https://academic-accelerator.com/Journal-Abbreviation/System>
 
-Links to online versions of cited works use [DOIs](https://www.doi.org/) when available, 
-then separately list [open access](https://peerj.com/preprints/3119v1/) URLs obtained
-through <https://github.com/Coleridge-Initiative/RCApi>
+Links to online versions of cited works use
+[DOIs](https://www.doi.org/)
+
+when available, then separately list
+[open access](https://peerj.com/preprints/3119v1/)
+URLs obtained through
+<https://github.com/Coleridge-Initiative/RCApi>
 
 
 ## – F –

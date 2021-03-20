@@ -9,14 +9,20 @@
 
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
-for graph-based natural language work (with related knowledge graph
-practices) which gets used to:
+for graph-based natural language work -- and related knowledge graph practices.
+This includes [*textgraphs*](http://www.textgraphs.org/) algorithms:
 
-  - extract the top-ranked phrases from a text document
-  - run low-cost extractive summarization of a text document
+  - *TextRank* by [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
+  - *PositionRank* by [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17)
+  - *Biased TextRank* by [[kazemi2011corr]](https://derwen.ai/docs/ptr/biblio/#kazemi2011corr)
+
+Popular use cases for this library include:
+
+  - *phrase extraction*: get the top-ranked phrases from a text document
+  - low-cost *extractive summarization* of a text document
   - help infer links from unstructured text into more structured representation
 
-Documentation: <https://derwen.ai/docs/ptr/>
+See our full documentation at: <https://derwen.ai/docs/ptr/>
 
 
 ## Getting Started

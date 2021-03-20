@@ -494,7 +494,7 @@ scrubbed text
 
 ---
 #### [`filter_quotes` function](#pytextrank.filter_quotes)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L126)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L124)
 
 ```python
 filter_quotes(text, is_email=True)
@@ -560,7 +560,7 @@ scrubbed text
 
 ---
 #### [`split_grafs` function](#pytextrank.split_grafs)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L98)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L96)
 
 ```python
 split_grafs(lines)

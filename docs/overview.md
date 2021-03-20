@@ -25,7 +25,7 @@ Each lemma is unique within the lemma graph, such that repeated
 instances collect more links.
 
 A *centrality* measure gets calculated for each node in the graph,
-then the nouns can be ranked in decending order.
+then the nouns can be ranked in descending order.
 
 An additional pass through the graph uses both *noun chunks* and
 *named entities* to help agglomerate adjacent nouns into ranked
