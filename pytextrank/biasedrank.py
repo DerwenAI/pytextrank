@@ -2,7 +2,7 @@
 Implements the *BiasedTextrank* algorithm.
 """
 
-from spacy.tokens import Doc, Token  # type: ignore
+from spacy.tokens import Doc, Token  # type: ignore # pylint: disable=E0401
 import typing
 
 from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase
@@ -91,7 +91,9 @@ algorithm.
     returns:
 biased restart probabilities to use in the *PageRank* algorithm.
         """
-        # TODO: lookup bias based on (lemma, pos) instead, similar to *PositionRank*?
+        # TODO: # pylint: disable=W0511
+        # => lookup bias based on (lemma, pos) instead, similar to *PositionRank*?
+
         weighted_nodes: typing.Dict[Lemma, float] = {
             Lemma(token.lemma_, token.pos_): self._get_node_bias(token)
             for token in self.doc
@@ -141,4 +143,5 @@ list of ranked phrases, in descending order
 
         # update the textrank phrase extraction
         self.doc._.phrases = self.calc_textrank()
+
         return self.doc._.phrases

@@ -2,7 +2,7 @@
 Implements the *PositionRank* algorithm.
 """
 
-from spacy.tokens import Doc  # type: ignore
+from spacy.tokens import Doc  # type: ignore # pylint: disable=E0401
 import typing
 
 from .base import BaseTextRankFactory, BaseTextRank, Lemma
@@ -110,7 +110,10 @@ Biased restart probabilities to use in the *PageRank* algorithm.
         # our *lemma graph* vertices are (lemma, pos) tuples,
         # therefore we map each `Lemma` weight to all the *lemma
         # graph* vertices which contain it
-        # TODO: should this map to (lemma, pos) pairs instead?
+
+        # TODO: # pylint: disable=W0511
+        # => should this map to (lemma, pos) pairs instead?
+
         weighted_nodes: typing.Dict[Lemma, float] = {
             Lemma(token.lemma_, token.pos_): norm_weighted_tokens[token.lemma_]
             for token in self.doc

@@ -289,7 +289,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
         # called explicitly here for the sake of type annotations
         self.elapsed_time: float = 0.0
         self.lemma_graph: nx.DiGraph = nx.DiGraph()
-        self.phrases: dict = defaultdict(list)
+        self.phrases: typing.List[Phrase] = []
         self.ranks: typing.Dict[Lemma, float] = {}
         self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
 
@@ -303,7 +303,7 @@ removing any pre-existing state.
         """
         self.elapsed_time = 0.0
         self.lemma_graph = nx.DiGraph()
-        self.phrases = defaultdict(list)
+        self.phrases = []
         self.ranks = {}
         self.seen_lemma = OrderedDict()
 

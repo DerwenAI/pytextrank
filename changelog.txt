@@ -10,6 +10,7 @@
   * use `bandit` to check for security issues
   * use `codespell` to check for spelling errors
   * add `pre-commit` checks in general
+  * update `doc._.phrases` in the call to `change_focus()` so summary sync with the latest focus
 
 
 ## 3.1.0
