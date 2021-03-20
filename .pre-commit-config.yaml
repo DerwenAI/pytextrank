@@ -1,6 +1,21 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+default_stages: [commit, push]
+default_language_version:
+    python: python3
 repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-builtin-literals
+    -   id: check-executables-have-shebangs
+    -   id: check-merge-conflict
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: detect-private-key
+    -   id: no-commit-to-branch
+        args: ['--branch', 'main']
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.0
     hooks:
