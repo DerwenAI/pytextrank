@@ -33,9 +33,10 @@ nlp.add_pipe("textrank")
 doc = nlp(text)
 
 # examine the top-ranked phrases in the document
-for p in doc._.phrases:
-    print("{:.4f} {:5d}  {}".format(p.rank, p.count, p.text))
-    print(p.chunks)
+for phrase in doc._.phrases:
+    print(phrase.text)
+    print(phrase.rank, phrase.count)
+    print(phrase.chunks)
 ```
 
 
