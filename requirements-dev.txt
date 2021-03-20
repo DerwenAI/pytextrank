@@ -1,4 +1,5 @@
 bandit
+codespell
 coverage
 flask
 mkdocs-git-revision-date-plugin

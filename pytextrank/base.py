@@ -10,12 +10,12 @@ from .util import groupby_apply, default_scrubber
 
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
-from icecream import ic  # type: ignore # pylint: disable=W0611
-from spacy.tokens import Doc, Span, Token  # type: ignore
-import graphviz  # type: ignore
+from icecream import ic  # type: ignore # pylint: disable=E0401,W0611
+from spacy.tokens import Doc, Span, Token  # type: ignore # pylint: disable=E0401
+import graphviz  # type: ignore # pylint: disable=E0401
 import json
 import math
-import networkx as nx  # type: ignore
+import networkx as nx  # type: ignore # pylint: disable=E0401
 import pathlib
 import time
 import typing
@@ -500,7 +500,7 @@ Aggregate the rank metrics of the individual nodes (tokens) within
 each phrase.
 
     spans:
-spans of noun chuncks
+spans of noun chunks
 
     ranks:
 rank metrics corresponding to each node

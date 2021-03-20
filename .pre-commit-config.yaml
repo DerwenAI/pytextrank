@@ -13,3 +13,12 @@ repos:
     rev: pylint-2.7.2
     hooks:
     -   id: pylint
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.0.0
+    hooks:
+    -   id: codespell
+        name: codespell
+        description: Checks for common misspellings in text files.
+        entry: codespell --ignore-words ignore-spelling-words.txt pytextrank/*.py *.md docs/*.md
+        language: python
+        types: [text]

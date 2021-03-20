@@ -30,8 +30,7 @@ The pre-commit hooks use
 and
 [`mypy`](https://mypy.readthedocs.io/)
 for *type checking*.
-
-To run type checking specifically:
+To run these tests specifically:
 ```
 mypy pytextrank/*.py
 ```
@@ -42,10 +41,20 @@ mypy pytextrank/*.py
 The pre-commit hooks use
 [`pylint`](https://www.pylint.org/)
 for *code checking*.
-
-To run code checking specifically:
+To run these tests specifically:
 ```
 pylint pytextrank/*.py
+```
+
+
+## Spelling Errors
+
+The pre-commit hooks use
+[`codespell`](https://github.com/codespell-project/codespell)
+to check for *spelling errors*.
+To run these tests specifically:
+```
+codespell pytextrank/*.py *.md docs/*.md
 ```
 
 
@@ -54,7 +63,6 @@ pylint pytextrank/*.py
 The pre-commit hooks use
 [`bandit`](https://bandit.readthedocs.io/)
 to check for *security issues*.
-
 To run these tests specifically:
 ```
 bandit kglab/*.py
@@ -72,7 +80,7 @@ Source for unit tests is in the
 [`tests`](https://github.com/DerwenAI/pytextrank/tree/main/tests)
 subdirectory.
 
-To run unit tests:
+To run the unit tests:
 ```
 coverage run -m pytest tests
 ```
@@ -105,7 +113,8 @@ To generate documentation pages, this project uses:
 
 You will also need to download
 [`ChromeDriver`](https://chromedriver.chromium.org/downloads) 
-for your version of the `Chrome` brower, saved as `chromedriver` in this directory.
+for your version of the `Chrome` browser, saved as `chromedriver` in
+this directory.
 
 Source for the documentation is in the 
 [`docs`](https://github.com/DerwenAI/pytextrank/tree/main/docs)
