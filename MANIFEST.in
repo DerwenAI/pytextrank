@@ -1,3 +1,5 @@
 include README.md
+include LICENSE
 include changelog.txt
+recursive-include tests *.py
 
