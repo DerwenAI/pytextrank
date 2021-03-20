@@ -3,7 +3,7 @@
 
 """
 Implements the base class for `TextRank` –
-with placeholder methods to be used by subclasses for algorithm extensions.
+with placeholder methods to be used by the subclasses for algorithm extensions.
 """
 
 from .util import groupby_apply, default_scrubber

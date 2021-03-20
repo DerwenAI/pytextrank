@@ -7,14 +7,15 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:
-    -   id: no-commit-to-branch
-        args: ['--branch', 'main']
     -   id: check-added-large-files
+    -   id: check-builtin-literals
     -   id: check-executables-have-shebangs
     -   id: check-merge-conflict
     -   id: check-yaml
     -   id: debug-statements
     -   id: detect-private-key
+    -   id: no-commit-to-branch
+        args: ['--branch', 'main']
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.0
     hooks:
