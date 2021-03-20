@@ -15,17 +15,23 @@ To set up the build environment locally:
 pip install -r requirements-dev.txt
 ```
 
-You will also need to download
-[`ChromeDriver`](https://chromedriver.chromium.org/downloads) 
-for your version of the `Chrome` brower, saved as `chromedriver` in this directory.
+We use *pre-commit hooks* based on [`pre-commit`](https://pre-commit.com/)
+and to configure that locally:
+```
+pre-commit install
+git config --local core.hooksPath .git/hooks/
+```
 
 
 ## Type Checking
 
-This project uses [`typing`](https://docs.python.org/3/library/typing.html)
-and [`mypy`](https://mypy.readthedocs.io/) for *type checking*.
+The pre-commit hooks use
+[`typing`](https://docs.python.org/3/library/typing.html)
+and
+[`mypy`](https://mypy.readthedocs.io/)
+for *type checking*.
 
-To run type checking:
+To run type checking specifically:
 ```
 mypy pytextrank/*.py
 ```
@@ -33,9 +39,11 @@ mypy pytextrank/*.py
 
 ## Code Checking
 
-This project uses [`pylint`](https://www.pylint.org/) for *code checking*.
+The pre-commit hooks use
+[`pylint`](https://www.pylint.org/)
+for *code checking*.
 
-To run code checking:
+To run code checking specifically:
 ```
 pylint pytextrank/*.py
 ```
@@ -43,10 +51,11 @@ pylint pytextrank/*.py
 
 ## Security Issues
 
-This project uses [`bandit`](https://bandit.readthedocs.io/) to check
-for *security issues*.
+The pre-commit hooks use
+[`bandit`](https://bandit.readthedocs.io/)
+to check for *security issues*.
 
-To run these tests:
+To run these tests specifically:
 ```
 bandit kglab/*.py
 ```
@@ -93,6 +102,10 @@ To generate documentation pages, this project uses:
   * [`Selenium`](https://selenium-python.readthedocs.io/)
   * [`Chrome`](https://www.google.com/chrome/)
   * [`Flask`](https://flask.palletsprojects.com/)
+
+You will also need to download
+[`ChromeDriver`](https://chromedriver.chromium.org/downloads) 
+for your version of the `Chrome` brower, saved as `chromedriver` in this directory.
 
 Source for the documentation is in the 
 [`docs`](https://github.com/DerwenAI/pytextrank/tree/main/docs)
