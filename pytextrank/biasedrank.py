@@ -140,4 +140,5 @@ list of ranked phrases, in descending order
         self.node_bias = bias
 
         # update the textrank phrase extraction
-        return self.calc_textrank()
+        self.doc._.phrases = self.calc_textrank()
+        return self.doc._.phrases
