@@ -54,7 +54,7 @@ This class does not get called directly; instantiate its factory
 instead.
     """
 
-    _NODE_BIAS: float = 1.0
+    _DEFAULT_BIAS: float = 1.0
 
 
     def _get_node_bias (
@@ -77,7 +77,7 @@ bias to apply for the *node weight*
         if token.lemma_ in self.focus_tokens:
             return self.node_bias
 
-        return self._NODE_BIAS
+        return self._DEFAULT_BIAS
 
 
     def get_personalization (
@@ -117,7 +117,7 @@ biased restart probabilities to use in the *PageRank* algorithm.
     def change_focus (
         self,
         focus: str = None,
-        bias: float = _NODE_BIAS
+        bias: float = _DEFAULT_BIAS
         ) -> typing.List[Phrase]:
         """
 Re-runs the *Biased TextRank* algorithm with the given focus.
