@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from icecream import ic
+from icecream import ic  # pylint: disable=E0401
 import pathlib
-import pytextrank
-import spacy
-import sys
+import pytextrank  # pylint: disable=W0611
+import spacy  # pylint: disable=E0401
+import sys  # pylint: disable=W0611
 
 
 ######################################################################
@@ -73,7 +73,7 @@ print("\n----\n")
 tr = doc._.textrank
 tr.write_dot(path="lemma_graph.dot")
 
-# summarize the document based on its top 15 phrases, 
+# summarize the document based on its top 15 phrases,
 # yielding its top 5 sentences...
 for sent in tr.summary(limit_phrases=15, limit_sentences=5):
     ic(sent)
@@ -103,12 +103,15 @@ for phrase in doc._.phrases[:len(EXPECTED_PHRASES)]:
 print("\n----\n")
 tr = doc._.textrank
 
+# note how the bias parameters get set here, to help emphasize the
+# *focus set*
+
 phrases = tr.change_focus(
     focus="It wasn't until the following year that Deep Blue topped Kasparov over the course of a six-game contest.",
     bias=10.0,
-    default_bias=0.0
+    default_bias=0.0,
     )
 
 for phrase in phrases[:len(EXPECTED_PHRASES)]:
     ic(phrase.text)
-    assert phrase.text in EXPECTED_PHRASES
+    assert phrase.text in EXPECTED_PHRASES  # nosec

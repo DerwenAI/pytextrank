@@ -88,7 +88,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L297)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L298)
 
 ```python
 reset()
@@ -100,7 +100,7 @@ removing any pre-existing state.
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L311)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L312)
 
 ```python
 calc_textrank()
@@ -118,7 +118,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L355)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L356)
 
 ```python
 get_personalization()
@@ -136,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L595)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L596)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L639)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L640)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L688)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L689)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -201,7 +201,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L735)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L736)
 
 ```python
 write_dot(path="graph.dot")
@@ -325,10 +325,10 @@ biased restart probabilities to use in the *PageRank* algorithm.
 
 ---
 #### [`change_focus` method](#pytextrank.BiasedTextRank.change_focus)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L115)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L117)
 
 ```python
-change_focus(focus=None, bias=1.0)
+change_focus(focus=None, bias=1.0, default_bias=1.0)
 ```
 Re-runs the *Biased TextRank* algorithm with the given focus.
 This approach allows an application to "change focus" without
@@ -339,6 +339,9 @@ optional text (string) with space-delimited tokens to use for the *focus set*; d
 
   * `bias` : `float`  
 optional bias for *node weight* values on tokens found within the *focus set*; defaults to `1.0`
+
+  * `default_bias` : `float`  
+optional bias for *node weight* values on tokens not found within the *focus set*; set to `0.0` to enhance the focus, especially in the case of long documents; defaults to `1.0`
 
   * *returns* : `typing.List[pytextrank.base.Phrase]`  
 list of ranked phrases, in descending order

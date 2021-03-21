@@ -32,20 +32,20 @@ section of the online documentation.
 
 To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 ```
-pip install pytextrank
-python -m spacy download en_core_web_sm
+python3 -m pip install pytextrank
+python3 -m spacy download en_core_web_sm
 ```
 
 If you work directly from this Git repo, be sure to install the
 dependencies as well:
 ```
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 Alternatively, to install dependencies using `conda`:
 ```
 conda env create -f environment.yml
-conda activate kglab
+conda activate pytextrank
 ```
 
 Then to use the library with a simple use case:

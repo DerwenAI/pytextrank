@@ -1,5 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# see license https://github.com/DerwenAI/pytextrank#license-and-copyright
+
 """
-Implements the *BiasedTextrank* algorithm.
+Implements the *Biased TextRank* algorithm.
 """
 
 from spacy.tokens import Doc, Token  # type: ignore # pylint: disable=E0401
@@ -66,7 +70,7 @@ Assign the bias to use, where focus nodes get the preset bias and
 other nodes get the default (`1.0`) value.
 
     token:
-`spaCy` token to use for lookup in the focus set
+`spaCy` token to use for lookup in the *focus set*
 
     returns:
 bias to apply for the *node weight*
@@ -118,7 +122,7 @@ biased restart probabilities to use in the *PageRank* algorithm.
         self,
         focus: str = None,
         bias: float = _DEFAULT_BIAS,
-        default_bias= _DEFAULT_BIAS
+        default_bias: float = _DEFAULT_BIAS,
         ) -> typing.List[Phrase]:
         """
 Re-runs the *Biased TextRank* algorithm with the given focus.
@@ -132,7 +136,7 @@ optional text (string) with space-delimited tokens to use for the *focus set*; d
 optional bias for *node weight* values on tokens found within the *focus set*; defaults to `1.0`
 
     default_bias:
-optional bias for *node weight* values on tokens not found within the *focus set*; defaults to `1.0`
+optional bias for *node weight* values on tokens not found within the *focus set*; set to `0.0` to enhance the focus, especially in the case of long documents; defaults to `1.0`
 
     returns:
 list of ranked phrases, in descending order
