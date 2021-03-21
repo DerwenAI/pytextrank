@@ -32,7 +32,7 @@ python3 -m spacy download en_core_web_sm
 Alternatively, to install the dependencies using `conda`:
 ```
 conda env create -f environment.yml
-conda activate kglab
+conda activate pytextrank
 python3 -m spacy download en_core_web_sm
 ```
 
@@ -43,7 +43,7 @@ Next, make sure to install
 
 If you're using `pip` then you can run:
 ```
-pip install jupyterlab
+python3 -m pip install jupyterlab
 ```
 
 If you need to install via `pip install --user` then you must add the

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# see license https://github.com/DerwenAI/pytextrank#license-and-copyright
 
 import itertools
 import re

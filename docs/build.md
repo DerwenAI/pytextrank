@@ -12,7 +12,7 @@ simply install based on the instructions in
 
 To set up the build environment locally:
 ```
-pip install -r requirements-dev.txt
+python3 -m pip install -r requirements-dev.txt
 ```
 
 We use *pre-commit hooks* based on [`pre-commit`](https://pre-commit.com/)
@@ -65,7 +65,7 @@ The pre-commit hooks use
 to check for *security issues*.
 To run these tests specifically:
 ```
-bandit kglab/*.py
+bandit pytextrank/*.py
 ```
 
 
