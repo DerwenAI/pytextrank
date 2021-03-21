@@ -84,11 +84,11 @@ print("\n----\n")
 EXPECTED_PHRASES = [
     "grandmaster Lee Sedol",
     "Lee Sedol",
-    "more international titles",
-    "world chess champion Gary Kasparov",
     "Deep Blue",
+    "world chess champion Gary Kasparov",
     "Gary Kasparov",
-    "Wednesday afternoon",
+    "the following year",
+    "Kasparov",
 ]
 
 nlp = spacy.load("en_core_web_sm")
@@ -106,6 +106,7 @@ tr = doc._.textrank
 phrases = tr.change_focus(
     focus="It wasn't until the following year that Deep Blue topped Kasparov over the course of a six-game contest.",
     bias=10.0,
+    default_bias=0.0
     )
 
 for phrase in phrases[:len(EXPECTED_PHRASES)]:

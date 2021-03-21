@@ -284,6 +284,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
         # internal data for BiasedTextRank
         self.focus_tokens: typing.Set[str] = set()
         self.node_bias = 1.0
+        self.default_bias = 1.0
 
         # effectively, performs the same work as the `reset()` method;
         # called explicitly here for the sake of type annotations

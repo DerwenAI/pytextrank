@@ -54,7 +54,7 @@ This class does not get called directly; instantiate its factory
 instead.
     """
 
-    _NODE_BIAS: float = 1.0
+    _DEFAULT_BIAS: float = 1.0
 
 
     def _get_node_bias (
@@ -77,7 +77,7 @@ bias to apply for the *node weight*
         if token.lemma_ in self.focus_tokens:
             return self.node_bias
 
-        return self._NODE_BIAS
+        return self.default_bias
 
 
     def get_personalization (
@@ -117,7 +117,8 @@ biased restart probabilities to use in the *PageRank* algorithm.
     def change_focus (
         self,
         focus: str = None,
-        bias: float = _NODE_BIAS
+        bias: float = _DEFAULT_BIAS,
+        default_bias= _DEFAULT_BIAS
         ) -> typing.List[Phrase]:
         """
 Re-runs the *Biased TextRank* algorithm with the given focus.
@@ -130,6 +131,9 @@ optional text (string) with space-delimited tokens to use for the *focus set*; d
     bias:
 optional bias for *node weight* values on tokens found within the *focus set*; defaults to `1.0`
 
+    default_bias:
+optional bias for *node weight* values on tokens not found within the *focus set*; defaults to `1.0`
+
     returns:
 list of ranked phrases, in descending order
         """
@@ -140,6 +144,7 @@ list of ranked phrases, in descending order
             self.focus_tokens = set()
 
         self.node_bias = bias
+        self.default_bias = default_bias
 
         # update the textrank phrase extraction
         self.doc._.phrases = self.calc_textrank()
