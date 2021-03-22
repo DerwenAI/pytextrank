@@ -11,7 +11,7 @@ from pytextrank.biasedrank  import BiasedTextRankFactory
 
 def test_default_biased_rank (doc: Doc):
     """
-	 biasedrank should behave like base text rank by default.
+    Biasedrank should behave like base textrank by default.
     """
     # given
     biased_rank = BiasedTextRankFactory()
@@ -30,7 +30,7 @@ def test_default_biased_rank (doc: Doc):
 
 def test_biased_rank (long_doc: Doc):
     """
-    Rank phrases close to focus higher.
+    Rank phrases close to 'focus' higher.
     """
     # given
     biased_rank = BiasedTextRankFactory()
@@ -47,9 +47,9 @@ def test_biased_rank (long_doc: Doc):
     comparison_doc = biased_rank(long_doc)
     tr = comparison_doc._.textrank
     tr.change_focus(
-	    "Chess",
-	    bias=10.0,
-	    default_bias=0.0)
+        "Chess",
+        bias=10.0,
+        default_bias=0.0)
 
     biased_phrases = comparison_doc._.phrases
 
