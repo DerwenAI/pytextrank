@@ -25,8 +25,6 @@ def test_default_biased_rank (doc: Doc):
     comparison_phrases = comparison_doc._.phrases
 
     # then
-    print(phrases)
-    print(comparison_phrases)
     assert tuple(p.text for p in phrases) == tuple(p.text for p in comparison_phrases)
 
 
