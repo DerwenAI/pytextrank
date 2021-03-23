@@ -1,11 +1,13 @@
+# type: ignore
+
 import importlib.util
 import pathlib
 import setuptools
-import sys
 import typing
 
 
 KEYWORDS = [
+    "biased textrank",
     "entity linking",
     "extractive summarization",
     "graph algorithms",
@@ -33,7 +35,7 @@ if __name__ == "__main__":
     spec = importlib.util.spec_from_file_location("pytextrank.version", "pytextrank/version.py")
     pytr_version = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pytr_version)
-    pytr_version._check_version()
+    pytr_version._check_version()  # pylint: disable=W0212
 
     base_packages = parse_requirements_file("requirements.txt")
     docs_packages = parse_requirements_file("requirements-dev.txt")
@@ -42,7 +44,7 @@ if __name__ == "__main__":
         name="pytextrank",
         version = pytr_version.__version__,
 
-        python_requires = ">=" + pytr_version._versify(pytr_version.MIN_PY_VERSION),
+        python_requires = ">=" + pytr_version._versify(pytr_version.MIN_PY_VERSION),  # pylint: disable=W0212
         packages = setuptools.find_packages(exclude=[ "docs", "examples" ]),
         install_requires = base_packages,
         extras_require = {
@@ -54,7 +56,13 @@ if __name__ == "__main__":
         author_email="paco@derwen.ai",
         license="MIT",
 
-        description="Python implementation of TextRank for phrase extraction and lightweight summarization of text documents",
+        description="""
+Python implementation of TextRank as a spaCy pipeline extension, for
+graph-based natural language work plus related knowledge graph
+practices; used for for phrase extraction and lightweight extractive
+summarization of text documents.
+        """.strip(),
+
         long_description = pathlib.Path("README.md").read_text(),
         long_description_content_type = "text/markdown",
 

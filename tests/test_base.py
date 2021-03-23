@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# type: ignore
 
 """Unit tests for BaseTextRank."""
-from spacy.language import Language
-from spacy.tokens import Doc
-import spacy
+from spacy.language import Language  # pylint: disable=E0401
+from spacy.tokens import Doc  # pylint: disable=E0401
+import spacy  # pylint: disable=E0401
 
-import sys ; sys.path.insert(0, "../pytextrank")
-from pytextrank.base import BaseTextRankFactory
+import sys
+sys.path.insert(0, "../pytextrank")
+
+from pytextrank.base import BaseTextRankFactory  # pylint: disable=E0401
 
 
 def test_base_text_rank (doc: Doc):
