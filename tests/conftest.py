@@ -26,3 +26,14 @@ def doc (nlp: Language) -> Doc:
     text = pathlib.Path("dat/cfc.txt").read_text()
     doc = nlp(text)
     return doc
+
+@pytest.fixture(scope="session")
+def long_doc (nlp: Language) -> Doc:
+    """Doc shared fixture.
+
+    Returns:
+        spaCy EN doc containing a long text.
+    """
+    text = pathlib.Path("dat/lee.txt").read_text()
+    doc = nlp(text)
+    return doc
