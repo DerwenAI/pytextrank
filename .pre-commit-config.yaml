@@ -19,12 +19,12 @@ repos:
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.0
     hooks:
-    -   id: bandit
+    -   id: bandit # security vulnerabilities
         args: ["--exclude", "setup.py,tests"]
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.812
     hooks:
-    -   id: mypy
+    -   id: mypy # type annotations
         exclude: ^tests/,^examples/
 -   repo: https://github.com/PyCQA/pylint
     rev: pylint-2.7.2
@@ -33,9 +33,8 @@ repos:
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.0.0
     hooks:
-    -   id: codespell
-        name: codespell
-        description: Checks for common misspellings in text files.
-        entry: codespell --ignore-words ignore-spelling-words.txt pytextrank/*.py *.md docs/*.md
+    -   id: codespell # spell-check source code
+        args: ["--ignore-words=.dictionary", "pytextrank/*.py", "*.md", "docs/*.md"]
+        exclude: ^examples/
         language: python
         types: [text]

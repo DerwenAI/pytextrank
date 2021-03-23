@@ -24,6 +24,9 @@ This material is a work in progress, at "rough draft" stage.
 
 ### eigenvector centrality
 
+See: <https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/>
+
+
 ### entity linking
 
 ### extractive summarization
@@ -50,6 +53,9 @@ see: <https://derwen.ai/d/knowledge_graph>
 ## – L –
 
 ### language models
+
+See: <http://nlpprogress.com/english/language_modeling.html>
+
 
 ### lemma graph
 

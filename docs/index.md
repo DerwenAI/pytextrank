@@ -2,16 +2,22 @@
 
 <img src="assets/logo.png" width="113" alt="I did not have semantic relations with that corpus"/>
 
-The **PyTextRank** package is a Python implementation of *TextRank* as a
+**PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
-for graph-based natural language work (with related *knowledge graph*
-practices) which gets used to:
+for graph-based natural language work -- and related knowledge graph practices.
+This includes the [*textgraphs*](http://www.textgraphs.org/) algorithms:
 
-  - *phrase extraction*: extract the top-ranked phrases from a text document
-  - *extractive summarization*: run a simple, low-cost summarization of a text document
-  - *entity linking*: help infer links from unstructured text into more structured representation
+  - *TextRank* by [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
+  - *PositionRank* by [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17)
+  - *Biased TextRank* by [[kazemi2011corr]](https://derwen.ai/docs/ptr/biblio/#kazemi2011corr)
 
-The entity linking aspects here are a *work-in-progress*, based on
+Popular use cases for this library include:
+
+  - *phrase extraction*: get the top-ranked phrases from a text document
+  - low-cost *extractive summarization* of a text document
+  - help infer links from unstructured text into more structured representation
+
+The *entity linking* aspects here are a *work-in-progress*, based on
 [`kglab`](https://github.com/DerwenAI/kglab).
 
 
@@ -24,34 +30,31 @@ The entity linking aspects here are a *work-in-progress*, based on
 
 ## Motivations
 
-The *TextRank* algorithm implementation here is based on research
-published in
-[[mihalcea04textrank]](biblio/#mihalcea04textrank),
-plus subsequent research by
-[[florescuc17]](biblio/#florescuc17)
-and
-[[kazemi2011corr]](biblio/#kazemi2011corr).
-See the current *textgraph* research at <https://lit.eecs.umich.edu/textgraphs/>
-in general for more details.
-
-Some modifications in **PyTextRank** attempt to improve on the
-original algorithm description:
+Some modifications in **PyTextRank** attempt to improve on the base
+algorithm as originally described in
+[[mihalcea04textrank]](biblio/#mihalcea04textrank):
 
   - fixed a bug: see [Java impl, 2008](https://github.com/ceteri/textrank)
-  - use *lemmatization* in place of stemming
-  - leverage preprocessing via *noun chunking* and *named entity recognition*
+  - use *lemmatization* in place of out-dated stemming
   - integration with `spaCy` as a pipeline component factory
   - simple *extractive summarization* based on vector distance from ranked phrases
+  - leverage preprocessing via *noun chunking* and *named entity recognition*
   - optionally, include verbs in the graph (although not in the resulting ranked phrases)
 
-Use of *graph algorithms* in natural language work -- notably,
-[*eigenvector centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
--- help provides a more flexible and robust basis for integrating
+The use of *graph algorithms* within natural language work -- 
+notably, through
+[*eigenvector centrality*](glossary/#eigenvector-centrality)
+-- helps provide a more flexible and robust basis for integrating
 additional AI techniques.
-While there have been many amazing innovations since late 2017 
+There have been many amazing innovations since late 2017 
 in the application of *deep learning* for
-[*language models*](http://nlpprogress.com/english/language_modeling.html),
-these *transformer* models tend to imply trade-offs:
+[*language models*](glossary/#language-models).
+Most certainly these kinds of DL models get leveraged by
+**PyTextRank**, within `spaCy` 3.x during the earlier stages of
+processing.
+However, using transformers and related DL models throughout *all* of
+the NLP pipeline stages -- while popular -- also tends to imply
+certain trade-offs:
 
   * emphasis on predictive power for recognizing sequences
   * models which require substantial resources to train, deploy, etc.
@@ -63,8 +66,10 @@ Our experience with *textgraphs* is this category of algorithms
 provides computationally efficient methods that do not require
 substantial training in advance, which can import and leverage 
 domain expertise.
-Moreover, this approach can be integrated with embedding methods
-(deep learning) for complementary solutions.
+
+Moreover, this approach can be integrated downstream in *knowledge
+graph* use cases through *embedding* methods (deep learning) for
+complementary, hybrid AI solutions.
 
 
 ## Community Resources
