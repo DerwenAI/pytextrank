@@ -6,7 +6,7 @@ A factory class that provides the document with its instance of
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRankFactory.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L123)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L124)
 
 ```python
 __init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None)
@@ -32,7 +32,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`__call__` method](#pytextrank.BaseTextRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L207)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L208)
 
 ```python
 __call__(doc)
@@ -59,7 +59,7 @@ instead.
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L247)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L248)
 
 ```python
 __init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords)
@@ -88,7 +88,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L298)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L299)
 
 ```python
 reset()
@@ -100,7 +100,7 @@ removing any pre-existing state.
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L312)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L313)
 
 ```python
 calc_textrank()
@@ -118,7 +118,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L356)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L357)
 
 ```python
 get_personalization()
@@ -136,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L596)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L597)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L640)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L641)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L689)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L690)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -201,7 +201,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L736)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L737)
 
 ```python
 write_dot(path="graph.dot")
@@ -220,7 +220,7 @@ A factory class that provides the document with its instance of
     
 ---
 #### [`__call__` method](#pytextrank.PositionRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L19)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L23)
 
 ```python
 __call__(doc)
@@ -247,7 +247,7 @@ instead.
     
 ---
 #### [`get_personalization` method](#pytextrank.PositionRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L59)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/positionrank.py#L63)
 
 ```python
 get_personalization()
@@ -282,7 +282,7 @@ A factory class that provides the document with its instance of
     
 ---
 #### [`__call__` method](#pytextrank.BiasedTextRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L17)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L21)
 
 ```python
 __call__(doc)
@@ -309,7 +309,7 @@ instead.
     
 ---
 #### [`get_personalization` method](#pytextrank.BiasedTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L83)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L87)
 
 ```python
 get_personalization()
@@ -325,7 +325,7 @@ biased restart probabilities to use in the *PageRank* algorithm.
 
 ---
 #### [`change_focus` method](#pytextrank.BiasedTextRank.change_focus)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L117)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/biasedrank.py#L121)
 
 ```python
 change_focus(focus=None, bias=1.0, default_bias=1.0)
@@ -362,7 +362,7 @@ __setattr__(name, value)
 
 ---
 #### [`label` method](#pytextrank.Lemma.label)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L37)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L38)
 
 ```python
 label()
@@ -417,7 +417,7 @@ __init__(start, end, sent_id, phrases, distance)
 
 ---
 #### [`empty` method](#pytextrank.Sentence.empty)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L73)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L74)
 
 ```python
 empty()
@@ -431,7 +431,7 @@ Test whether this sentence includes any ranked phrases.
 
 ---
 #### [`text` method](#pytextrank.Sentence.text)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L85)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L86)
 
 ```python
 text(doc)
@@ -479,7 +479,7 @@ __repr__()
 ## [module functions](#pytextrank)
 ---
 #### [`default_scrubber` function](#pytextrank.default_scrubber)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L46)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L47)
 
 ```python
 default_scrubber(text)
@@ -497,7 +497,7 @@ scrubbed text
 
 ---
 #### [`filter_quotes` function](#pytextrank.filter_quotes)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L124)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L125)
 
 ```python
 filter_quotes(text, is_email=True)
@@ -518,7 +518,7 @@ the filtered text representing as a list of lines
 
 ---
 #### [`groupby_apply` function](#pytextrank.groupby_apply)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L11)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L12)
 
 ```python
 groupby_apply(data, keyfunc, applyfunc)
@@ -543,7 +543,7 @@ an iterable with the accumulated values
 
 ---
 #### [`maniacal_scrubber` function](#pytextrank.maniacal_scrubber)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L62)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L63)
 
 ```python
 maniacal_scrubber(text)
@@ -563,7 +563,7 @@ scrubbed text
 
 ---
 #### [`split_grafs` function](#pytextrank.split_grafs)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L96)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/util.py#L97)
 
 ```python
 split_grafs(lines)

@@ -27,32 +27,34 @@ python -m spacy info
 If you are running code inside of JupyterLab, there can also be
 conflicts among the path environment variables settings.
 
-In other words, your code within a JupyterLab kernel may be running a
-different Python executable than scripts launched from the same
-command line as JupyterLab.
+A JupyterLab kernel may be running a different Python executable than
+scripts launched from the same command line as JupyterLab.
+There is a known Conda problem; see
+<https://github.com/explosion/spaCy/discussions/7435>
+for details.
 
-To confirm, run the following code in a notebook cell and compare it
+To confirm, run the following code in a notebook cell and compare
 with the Python executable that you expect to find:
 ```
 import sys
 print(sys.executable)
 ```
 
-This is a known Conda problem, since it's quite aggressive about
-modifying Bash profiles – not in an especially helpful way.
-See <https://jupyterlab.readthedocs.io/en/stable/> for details.
+Conda is overly aggressive about how it modifies Bash profiles during
+installation – and not in an especially helpful way.
+
 
 
 ## AttributeError: type object 'Language' has no attribute 'factory'
 
 This message is a spaCy 2.x error.
-Somewhere, a Python environment with spaCy 2.x is getting used instead
-of the expected spaCy 3.x library.
 
+Somewhere, somehow, a Python environment with spaCy 2.x installed must
+be getting called instead of the expected spaCy 3.x library.
 Or perhaps you may be using **PyTextRank** 3.x with spaCy 2.x instead?
 
 To confirm, run the following code in your Python script and see if it
-has the expected executable:
+uses the expected executable:
 ```
 import sys
 print(sys.executable)
