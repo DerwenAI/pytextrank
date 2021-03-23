@@ -20,10 +20,12 @@ repos:
     rev: 1.7.0
     hooks:
     -   id: bandit
+        args: ["--exclude", "setup.py,tests"]
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.812
     hooks:
     -   id: mypy
+        exclude: ^tests/,^examples/
 -   repo: https://github.com/PyCQA/pylint
     rev: pylint-2.7.2
     hooks:

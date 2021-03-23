@@ -1,0 +1,4 @@
+[bandit]
+exclude_dirs:
+  - tests
+  - examples

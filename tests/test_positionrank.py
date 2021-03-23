@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# type: ignore
 
 """Unit tests for PositionRank."""
-from spacy.tokens import Doc
+from spacy.tokens import Doc  # pylint: disable=E0401
 
-import sys ; sys.path.insert(0, "../pytextrank")
-from pytextrank.base import BaseTextRankFactory
-from pytextrank.positionrank import PositionRankFactory
+import sys
+sys.path.insert(0, "../pytextrank")
+
+from pytextrank.base import BaseTextRankFactory  # pylint: disable=E0401
+from pytextrank.positionrank import PositionRankFactory  # pylint: disable=E0401
 
 
 def test_position_rank (doc: Doc):
@@ -27,7 +30,7 @@ does.
     # then
     assert set(p.rank for p in phrases) != set(p.rank for p in comparison_phrases)
 
-    # The test article mentions `Chelsea` at the begginning of the
+    # The test article mentions `Chelsea` at the beginning of the
     # article while it mentions `Shanghai Shenhua` anecdotally later
     # in the article. However, with normal TextRank, `Shanghai
     # Shenhua` is part of top 10 phrases and `Chelsea` isn't. With
