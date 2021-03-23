@@ -16,6 +16,7 @@ nav:
         - Package Reference: ref.md
         - Dependencies: depend.md
         - Build Instructions: build.md
+        - Troubleshooting FAQ: faq.md
         - Project TODO List: todo.md
     - Tutorial:
         - Syllabus: tutorial.md
