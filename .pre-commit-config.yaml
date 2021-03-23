@@ -15,7 +15,7 @@ repos:
     -   id: debug-statements
     -   id: detect-private-key
     -   id: no-commit-to-branch
-        args: ['--branch', 'main']
+        args: ["--branch", "main"]
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.0
     hooks:

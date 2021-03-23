@@ -2,3 +2,4 @@
 exclude_dirs:
   - tests
   - examples
+exclude: setup.py
