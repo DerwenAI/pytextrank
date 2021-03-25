@@ -37,20 +37,6 @@ DOI: 10.1137/140976649
 open: <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf>
 
 
-## – H –
-
-### hogan2020knowledge
-
-["Knowledge Graphs"](https://arxiv.org/abs/2003.02320)  
-**Aidan Hogan**, **Eva Blomqvist**, **Michael Cochez**, **Claudia d'Amato**,
-**Gerard de Melo**, **Claudio Gutierrez**, **José Emilio Labra Gayo**,
-**Sabrina Kirrane**, **Sebastian Neumaier**, **Axel Polleres**,
-**Roberto Navigli**, **Axel-Cyrille Ngonga Ngomo**, **Sabbir M. Rashid**,
-**Anisa Rula**, **Lukas Schmelzeisen**, **Juan Sequeda**, **Steffen Staab**,
-**Antoine Zimmermann**  
-*arXiv* (2020)
-
-
 ## – K –
 
 ### kazemi2011corr

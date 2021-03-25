@@ -4,14 +4,14 @@
 
 To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
 ```
-pip install pytextrank
-python -m spacy download en_core_web_sm
+python3 -m pip install pytextrank
+python3 -m spacy download en_core_web_sm
 ```
 
 If you work directly from this Git repo, be sure to install the 
 [dependencies](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format):
 ```
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 
