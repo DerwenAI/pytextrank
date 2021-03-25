@@ -2,7 +2,7 @@
 
 ## 3.1.1
 
-2021-03-35
+2021-03-25
 
   * fix the span length calculation in explanation notebook; kudos @Ankush-Chander
   * add `BiasedTextRank` by @Ankush-Chander (many thanks!)
@@ -10,7 +10,7 @@
   * use `bandit` to check for security issues
   * use `codespell` to check for spelling errors
   * add `pre-commit` checks in general
-  * update `doc._.phrases` in the call to `change_focus()` so summary sync with the latest focus
+  * update `doc._.phrases` in the call to `change_focus()` so the summarization will sync with the latest focus
 
 
 ## 3.1.0

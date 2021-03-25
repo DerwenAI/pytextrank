@@ -34,7 +34,7 @@ repos:
     rev: v2.0.0
     hooks:
     -   id: codespell # spell-check source code
-        args: ["--ignore-words=.dictionary", "pytextrank/*.py", "*.md", "docs/*.md"]
+        args: ["pytextrank/*.py", "*.md", "docs/*.md"]
         exclude: ^examples/
         language: python
         types: [text]
