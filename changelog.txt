@@ -2,7 +2,7 @@
 
 ## 3.1.1
 
-2021-03-??
+2021-03-35
 
   * fix the span length calculation in explanation notebook; kudos @Ankush-Chander
   * add `BiasedTextRank` by @Ankush-Chander (many thanks!)
