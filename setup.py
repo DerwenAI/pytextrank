@@ -56,13 +56,7 @@ if __name__ == "__main__":
         author_email="paco@derwen.ai",
         license="MIT",
 
-        description="""
-Python implementation of TextRank as a spaCy pipeline extension, for
-graph-based natural language work plus related knowledge graph
-practices; used for for phrase extraction and lightweight extractive
-summarization of text documents.
-        """.strip(),
-
+        description="Python implementation of TextRank as a spaCy pipeline extension, for graph-based natural language work plus related knowledge graph practices; used for for phrase extraction and lightweight extractive summarization of text documents.",
         long_description = pathlib.Path("README.md").read_text(),
         long_description_content_type = "text/markdown",
 
