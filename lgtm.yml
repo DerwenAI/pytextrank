@@ -1,0 +1,30 @@
+path_classifiers:
+  test:
+    - "tests/*.py"
+
+queries:
+  # start by hiding the results of all queries
+  - exclude: "*"
+  # then include queries tagged 'security' and 'correctness' with 'error' severity
+  - include:           
+      tags:
+        - "security"
+        - "correctness"           
+      severity: "error"
+
+extraction: 
+  python:
+    python_setup:
+      requirements_files:
+        - requirements.txt
+      version: 3
+    index:
+      exclude:
+        - archive
+        - bin
+        - docs
+        - examples
+        - wip
+        - pkg_doc.py
+        - pyfixdoc.py
+        - sample.py

@@ -37,19 +37,6 @@ See: <https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/>
 ### graph algorithms
 
 
-## – K –
-
-### knowledge graph
-
-One of the more concise, contemporary definitions is given in
-[[hogan2020knowledge]](../biblio/#hogan2020knowledge):
-
-> We refer to a knowledge graph as a data graph potentially enhanced with representations of schema, identity, context, ontologies and/or rules.
-
-see: <https://derwen.ai/d/knowledge_graph>
-
-
-
 ## – L –
 
 ### language models

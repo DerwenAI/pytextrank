@@ -89,7 +89,7 @@ using state of the art
 based on a combination of
 [*deep learning*](../glossary/#deep-learning)
 and
-[*knowledge graph*](../glossary/#knowledge-graph)
+[*knowledge graph*](https://derwen.ai/docs/kgl/glossary/#knowledge-graph)
 approaches.
 
 Even so, there are engineering and policy trade-offs[^1] to consider.

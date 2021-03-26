@@ -2,6 +2,7 @@ bandit
 codespell
 coverage
 flask
+grayskull
 mkdocs-git-revision-date-plugin
 mkdocs-material
 mknotebooks
