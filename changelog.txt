@@ -1,5 +1,13 @@
 # PyTextRank changelog
 
+## 3.1.2
+
+2021-04-??
+
+  * evaluating `grayskull` to generate a conda-forge recipe
+  * evaluating `lgtm` code reviews integrated into GitHub PRs
+
+
 ## 3.1.1
 
 2021-03-25

@@ -11,7 +11,7 @@ from .util import groupby_apply, default_scrubber
 
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
-from icecream import ic  # type: ignore # pylint: disable=E0401,W0611
+from icecream import ic  # type: ignore # pylint: disable=E0401,W0611 # lgtm[py/unused-import]
 from spacy.tokens import Doc, Span, Token  # type: ignore # pylint: disable=E0401
 import graphviz  # type: ignore # pylint: disable=E0401
 import json

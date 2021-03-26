@@ -148,3 +148,10 @@ To update the [release on PyPi](https://pypi.org/project/pytextrank/):
 ```
 ./bin/push_pypi.sh
 ```
+
+You can use `grayskull` to generate a
+[conda-forge recipe](https://github.com/conda-forge/staged-recipes):
+```
+grayskull pypi pytextrank
+mv pytextrank/meta.yaml ./
+```
