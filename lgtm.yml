@@ -28,5 +28,3 @@ extraction:
         - pkg_doc.py
         - pyfixdoc.py
         - sample.py
-      include:
-        - "pytextrank/*.py"
