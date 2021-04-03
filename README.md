@@ -154,7 +154,9 @@ For example, see our citations listed on
 
 ## Kudos
 
-Many thanks to our contributors:
+Many thanks to our open source [sponsors](https://github.com/sponsors/ceteri);
+and to our contributors:
+[@ceteri](https://github.com/ceteri),
 [@louisguitton](https://github.com/louisguitton),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@Lord-V15](https://github.com/Lord-V15),
@@ -175,7 +177,7 @@ Many thanks to our contributors:
 [@jake-aft](https://github.com/jake-aft),
 [@junchen1992](https://github.com/junchen1992),
 [@shyamcody](https://github.com/shyamcody),
-[@chikubee](https://github.com/chikubee),
-outstanding NLP research work led by [@mihalcea](https://github.com/mihalcea),
+[@chikubee](https://github.com/chikubee);
+also to [@mihalcea](https://github.com/mihalcea) who leads outstanding NLP research work,
 encouragement from the wonderful folks at Explosion who develop [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)

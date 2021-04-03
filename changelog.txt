@@ -6,6 +6,7 @@
 
   * add `lgtm` code reviews (slow, not integrating into GitHub PRs directly)
   * evaluating `grayskull` to generate a conda-forge recipe
+  * add use of `pipdeptree` to analyze dependencies
 
 
 ## 3.1.1

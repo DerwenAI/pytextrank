@@ -10,14 +10,14 @@ Microsoft Research on *YouTube* (2016-09-05)
 
 For a general overview of this Python library and its usage, see:
 
+["Graph-Based Data Science"](https://derwen.ai/s/kcgh)  
+**Paco Nathan**  
+Derwen (2021-01-30)
+
 ["PyTextRank"](https://derwen.ai/s/h88s)  
 **Paco Nathan**  
 [*IIT Patna*](http://www.iitp.ac.in/~ai-nlp-ml/nlp-connect.html) (2020-02-21)  
 [video](https://youtu.be/ZwlPsdRDtMI)
-
-["Graph-Based Data Science"](https://derwen.ai/s/kcgh)  
-**Paco Nathan**  
-Derwen (2021-01-30)
 
 For related course materials and training, please check for calendar
 updates in the article
@@ -66,7 +66,8 @@ author was teaching an NLP seminar at the university during
 
 What a beautiful city, there within ancient Celtic lands, guarded by
 the [Tower of Hercules](https://en.wikipedia.org/wiki/Tower_of_Hercules).
-More than a bit reminiscent of Santa Cruz, California.
+It's more than a bit reminiscent of Santa Cruz, California
+– or perhaps the other way around.
 
 Many thanks to Professor [Amparo Alonso Betanzos](https://pdi.udc.es/es/File/Pdi/AF2AF),
 *Catedrática de Ciencias de la Computación e Inteligencia Artificial de la UDC*,
