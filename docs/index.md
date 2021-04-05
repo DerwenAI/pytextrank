@@ -9,13 +9,13 @@ This includes the [*textgraphs*](http://www.textgraphs.org/) algorithms:
 
   - *TextRank* by [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
   - *PositionRank* by [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17)
-  - *Biased TextRank* by [[kazemi2011corr]](https://derwen.ai/docs/ptr/biblio/#kazemi2011corr)
+  - *Biased TextRank* by [[kazemi-etal-2020-biased]](https://derwen.ai/docs/ptr/biblio/#kazemi-etal-2020-biased)
 
 Popular use cases for this library include:
 
   - *phrase extraction*: get the top-ranked phrases from a text document
   - low-cost *extractive summarization* of a text document
-  - help infer links from unstructured text into more structured representation
+  - help infer concepts from unstructured text into more structured representation
 
 The *entity linking* aspects here are a *work-in-progress*, based on
 [`kglab`](https://github.com/DerwenAI/kglab).

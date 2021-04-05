@@ -1,18 +1,19 @@
 # Bibliography
 
-Where possible, the following citations are based on conventions at
+Where possible, the bibliography entries use conventions at
 <https://www.bibsonomy.org/>
+for [*citation keys*](https://bibdesk.sourceforge.io/manual/BibDeskHelp_2.html).
 
-Journal abbreviations use *ISO 4*, which is available at 
+Journal abbreviations come from
 <https://academic-accelerator.com/Journal-Abbreviation/System>
+based on [*ISO 4*](https://en.wikipedia.org/wiki/ISO_4) standards.
 
 Links to online versions of cited works use
-[DOIs](https://www.doi.org/)
-
-when available, then separately list
-[open access](https://peerj.com/preprints/3119v1/)
-URLs obtained through
-<https://github.com/Coleridge-Initiative/RCApi>
+[DOI](https://www.doi.org/)
+for [*persistent identifiers*](https://www.crossref.org/education/metadata/persistent-identifiers/).
+When available, 
+[*open access*](https://peerj.com/preprints/3119v1/)
+URLs are listed as well.
 
 
 ## – F –
@@ -20,10 +21,11 @@ URLs obtained through
 ### florescuc17
 
 ["PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents"](https://doi.org/10.18653/v1/P17-1102)  
-**Corina Florescu**, **Cornelia Caragea**  
-*Comput Linguist Assoc Comput Linguist* (2017)  
+[**Corina Florescu**](https://derwen.ai/s/y3w6mvj2r9wv), [**Cornelia Caragea**](https://derwen.ai/s/v3rq24nf6426)  
+[*Comput Linguist Assoc Comput Linguis*](https://www.mitpressjournals.org/loi/coli) pp. 1105-1115 (2017-07-30)  
 DOI: 10.18653/v1/P17-1102  
-open: <https://www.aclweb.org/anthology/P17-1102.pdf>
+open: <https://www.aclweb.org/anthology/P17-1102.pdf>  
+> The large and growing amounts of online scholarly data present both challenges and opportunities to enhance knowledge discovery. One such challenge is to automatically extract a small set of keyphrases from a document that can accurately describe the document’s content and can facilitate fast information processing. In this paper, we propose PositionRank, an unsupervised model for keyphrase extraction from scholarly documents that incorporates information from all positions of a word’s occurrences into a biased PageRank. Our model obtains remarkable improvements in performance over PageRank models that do not take into account word positions as well as over strong baselines for this task. Specifically, on several datasets of research papers, PositionRank achieves improvements as high as 29.09%.
 
 
 ## – G –
@@ -31,29 +33,23 @@ open: <https://www.aclweb.org/anthology/P17-1102.pdf>
 ### gleich15
 
 ["PageRank Beyond the Web"](https://doi.org/10.1137/140976649)  
-**David F. Gleich**  
-*SIAM Review* 57 (3): 321-363 (2015)  
+[**David Gleich**](https://derwen.ai/s/7zk738z8fn9t)  
+[*SIAM Review*](https://www.siam.org/publications/journals/siam-review-sirev) **57** 3 pp. 321-363 (2015-08-06)  
 DOI: 10.1137/140976649  
-open: <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf>
+open: <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf>  
+> Google&#39;s PageRank method was developed to evaluate the importance of web-pages via their link structure. The mathematics of PageRank, however, are entirely general and apply to any graph or network in any domain. Thus, PageRank is now regularly used in bibliometrics, social and information network analysis, and for link prediction and recommendation. It&#39;s even used for systems analysis of road networks, as well as biology, chemistry, neuroscience, and physics. We&#39;ll see the mathematics and ideas that unite these diverse applications.
 
 
 ## – K –
 
-### kazemi2011corr
+### kazemi-etal-2020-biased
 
-["Biased TextRank: Unsupervised Graph-Based Content Extraction"](https://arxiv.org/abs/2011.01026)  
-**Ashkan Kazemi**, **Verónica Pérez-Rosas**, **Rada Mihalcea**  
-*CoRR* (2011)
-
-
-## – P –
-
-### page1998
-
-["The PageRank Citation Ranking: Bringing Order to the Web"](http://ilpubs.stanford.edu:8090/422/)  
-**Lawrence Page**, **Sergey Brin**, **Rajeev Motwani**, **Terry Winograd**  
-Stanford University Database Group (1998)  
-open: <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf>
+["Biased TextRank: Unsupervised Graph-Based Content Extraction"](https://doi.org/10.18653/v1/2020.coling-main.144)  
+[**Ashkan Kazemi**](https://derwen.ai/s/rjsnrs5jhswk), [**Verónica Pérez-Rosas**](https://derwen.ai/s/svmndvvnndkv), [**Rada Mihalcea**](https://derwen.ai/s/wwrw59tbtzzp)  
+[*COLING*](https://www.aclweb.org/anthology/venues/coling/) **28** pp. 1642-1652 (2020-12-08)  
+DOI: 10.18653/v1/2020.coling-main.144  
+open: <https://www.aclweb.org/anthology/2020.coling-main.144.pdf>  
+> We introduce Biased TextRank, a graph-based content extraction method inspired by the popular TextRank algorithm that ranks text spans according to their importance for language processing tasks and according to their relevance to an input &#39;focus&#39;. Biased TextRank enables focused content extraction for text by modifying the random restarts in the execution of TextRank. The random restart probabilities are assigned based on the relevance of the graph nodes to the focus of the task. We present two applications of Biased TextRank: focused summarization and explanation extraction, and show that our algorithm leads to improved performance on two different datasets by significant ROUGE-N score margins. Much like its predecessor, Biased TextRank is unsupervised, easy to implement and orders of magnitude faster and lighter than current state-of-the-art Natural Language Processing methods for similar tasks.
 
 
 ## – M –
@@ -61,15 +57,29 @@ open: <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf>
 ### mihalcea04textrank
 
 ["TextRank: Bringing Order into Text"](https://www.aclweb.org/anthology/W04-3252/)  
-**Rada Mihalcea**, **Paul Tarau**  
-*EMNLP* (2004)  
-open: <https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf>
+[**Rada Mihalcea**](https://derwen.ai/s/wwrw59tbtzzp), [**Paul Tarau**](https://derwen.ai/s/vnfvsgvc9gfy)  
+[*EMNLP*](https://www.aclweb.org/anthology/venues/emnlp/) pp. 404-411 (2004-07-25)  
+open: <https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf>  
+> In this paper, the authors introduce TextRank, a graph-based ranking model for text processing, and show how this model can be successfully used in natural language applications.
 
 
-## - W -
+## – P –
+
+### page1998
+
+["The PageRank Citation Ranking: Bringing Order to the Web"](http://ilpubs.stanford.edu:8090/422/)  
+[**Lawrence Page**](https://derwen.ai/s/mk6xj6cfrrxg), [**Sergey Brin**](https://derwen.ai/s/j636dghdyws5), [**Rajeev Motwani**](https://derwen.ai/s/9hhpmgjs7kwt), [**Terry Winograd**](https://derwen.ai/s/jdxk7fz84nzq)  
+[*Stanford InfoLab*](http://infolab.stanford.edu/) (1999-11-11)  
+open: <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf>  
+> The importance of a Web page is an inherently subjective matter, which depends on the readers interests, knowledge and attitudes. But there is still much that can be said objectively about the relative importance of Web pages. This paper describes PageRank, a method for rating Web pages objectively and mechanically, effectively measuring the human interest and attention devoted to them. We compare PageRank to an idealized random Web surfer. We show how to efficiently compute PageRank for large numbers of pages. And, we show how to apply PageRank to search and to user navigation.
+
+
+## – W –
 
 ### williams2016
 
-["Text summarization, topic models and RNNs"](http://mike.place/2016/summarization/)  
-**Mike Williams**  
-*PyGotham*, (2016-09-25)
+["Summarizing documents"](https://mike.place/talks/pygotham/)  
+[**Mike Williams**](https://derwen.ai/s/2t2mbms2x4p3)  
+(2016-09-25)  
+> I&#39;ve recently given a couple of talks (PyGotham video, PyGotham slides, Strata NYC slides) about text summarization. I cover three ways of automatically summarizing text. One is an extremely simple algorithm from the 1950s, one uses Latent Dirichlet Allocation, and one uses skipthoughts and recurrent neural networks. The talk is conceptual, and avoids code and mathematics. So here is a list of resources if you&#39;re interested in text summarization and want to dive deeper. This list useful is hopefully also useful if you&#39;re interested in topic modelling or neural networks for other reasons.
+
