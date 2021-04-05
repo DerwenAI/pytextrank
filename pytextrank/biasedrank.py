@@ -51,7 +51,7 @@ a document container, providing the annotations produced by earlier stages of th
 class BiasedTextRank (BaseTextRank):
     """
 Implements the *Biased TextRank* algorithm described by
-[[kazemi2011corr]](https://derwen.ai/docs/ptr/biblio/#kazemi2011corr),
+[[kazemi-etal-2020-biased]](https://derwen.ai/docs/ptr/biblio/#kazemi-etal-2020-biased),
 deployed as a `spaCy` pipeline component.
 
 This class does not get called directly; instantiate its factory
