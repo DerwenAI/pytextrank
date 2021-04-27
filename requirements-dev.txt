@@ -17,3 +17,4 @@ pymdown-extensions
 selenium
 twine
 wheel
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
