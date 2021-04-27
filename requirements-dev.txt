@@ -8,10 +8,10 @@ mkdocs-material
 mknotebooks
 mypy
 nbconvert
-notebook
+notebook >= 6.1.5
 pipdeptree
 pre-commit
-pylint
+pylint >= 2.7.0
 pytest
 pymdown-extensions
 selenium
