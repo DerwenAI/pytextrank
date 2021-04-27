@@ -8,6 +8,7 @@
   * evaluating `grayskull` to generate a conda-forge recipe
   * add use of `pipdeptree` to analyze dependencies
   * use KG from `biblio.ttl` to generate bibliography
+  * fixed overlooked comment from earlier code; kudos @debraj135
 
 
 ## 3.1.1

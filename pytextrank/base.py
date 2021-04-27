@@ -546,8 +546,23 @@ normalized rank metric
         non_lemma = len([tok for tok in span if tok.pos_ not in self.pos_kept])
         non_lemma_discount = len(span) / (len(span) + (2.0 * non_lemma) + 1.0)
 
-        # use a root mean square (RMS) to normalize the contributions
-        # of all the tokens
+        # NB:
+        # This implements a *point estimate* for the ratio of the span
+        # of an extracted phrase divided by the number of non-lemma
+        # tokens within that span.
+        #
+        # The algorithm defined as in the original paper
+        # [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
+        # only considered multi-word phrases which had adjacent lemmas.
+        # Early use cases in industry (circa 2009) required better recall
+        # of phrases so this approach of using a point estimate here to
+        # "normalize" the rank metric causes the longer phrases to get
+        # discounted when they included too many non-lemma tokens.
+        # In other words, we allow some non-lemmas, but avoid having
+        # the algorithm become too "greedy" as it builds phrases.
+        #
+        # Kudos to @debraj135 who asked for an explanation about this
+        # section of the code.
         phrase_rank = math.sqrt(sum_rank / (len(span) + non_lemma))
 
         return phrase_rank * non_lemma_discount
