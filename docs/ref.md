@@ -136,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L597)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L612)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L641)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L656)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L690)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L705)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -201,7 +201,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L737)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L752)
 
 ```python
 write_dot(path="graph.dot")
