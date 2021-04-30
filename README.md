@@ -1,6 +1,6 @@
 # PyTextRank
 
-[![DOI](https://zenodo.org/badge/69814684.svg)](https://zenodo.org/badge/latestdoi/69814684)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4637885.svg)](https://doi.org/10.5281/zenodo.4637885)
 ![Licence](https://img.shields.io/github/license/DerwenAI/pytextrank)
 ![Repo size](https://img.shields.io/github/repo-size/DerwenAI/pytextrank)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
@@ -141,7 +141,7 @@ use it in your research or software:
   title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
   year = 2016,
   publisher = {Derwen},
-  doi = {10.5281/zenodo.4602393},
+  doi = {10.5281/zenodo.4637885},
   url = {https://github.com/DerwenAI/pytextrank}
 }
 ```
