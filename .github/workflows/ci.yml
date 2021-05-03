@@ -1,0 +1,22 @@
+name: ci-checks-and-test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          spacy download en_core_web_sm
+          pip install pre-commit pytest
+      - uses: pre-commit/action@v2.0.2
+      - name: Run tests
+        run: |
+          pytest
