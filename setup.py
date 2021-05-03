@@ -39,6 +39,7 @@ if __name__ == "__main__":
 
     base_packages = parse_requirements_file("requirements.txt")
     docs_packages = parse_requirements_file("requirements-dev.txt")
+    viz_packages = parse_requirements_file("requirements-viz.txt")
 
     setuptools.setup(
         name="pytextrank",
@@ -50,6 +51,7 @@ if __name__ == "__main__":
         extras_require = {
             "base": base_packages,
             "docs": docs_packages,
+            "viz": viz_packages
             },
 
         author="Paco Nathan",
