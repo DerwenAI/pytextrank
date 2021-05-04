@@ -21,6 +21,14 @@ import pathlib
 import time
 import typing
 
+try:
+    import pandas as pd
+    import altair as alt
+except ImportError:
+    _has_altair_and_pandas = False
+else:
+    _has_altair_and_pandas = True
+
 
 # parameter type annotation for a *stop words* source
 StopWordsLike = typing.Union[ str, pathlib.Path, typing.Dict[str, typing.List[str]] ]
@@ -777,3 +785,17 @@ path for the output file; defaults to `"graph.dot"`
 
         with open(path, "w") as f:  # type: ignore
             f.write(dot.source)
+
+
+    def plot_keyphrases(self):
+        """Plot a document's keyphrases rank profile."""
+        if not _has_altair_and_pandas:
+            raise ImportError("altair and pandas are required to use this method. Install them with `pip install 'pytextrank[viz]'`")
+        source = pd.DataFrame([p.__dict__ for p in self.doc._.phrases]).drop("chunks", axis=1).reset_index()
+        c = (
+            alt.Chart(source)
+            .mark_bar()
+            .encode(x="index", y="rank", color="count", tooltip=["text", "rank", "count"])
+            .properties(title="Keyphrase profile of the document")
+        )
+        return c
