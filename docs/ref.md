@@ -6,7 +6,7 @@ A factory class that provides the document with its instance of
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRankFactory.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L124)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L132)
 
 ```python
 __init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None)
@@ -32,7 +32,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`__call__` method](#pytextrank.BaseTextRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L208)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L216)
 
 ```python
 __call__(doc)
@@ -59,7 +59,7 @@ instead.
     
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L248)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L256)
 
 ```python
 __init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords)
@@ -88,7 +88,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L299)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L307)
 
 ```python
 reset()
@@ -100,7 +100,7 @@ removing any pre-existing state.
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L313)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L321)
 
 ```python
 calc_textrank()
@@ -118,7 +118,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L357)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L365)
 
 ```python
 get_personalization()
@@ -136,7 +136,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L612)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L620)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +158,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L656)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L664)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +176,7 @@ a list of sentence distance measures
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L705)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L713)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
@@ -201,7 +201,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L752)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L760)
 
 ```python
 write_dot(path="graph.dot")
@@ -210,6 +210,21 @@ Serialize the lemma graph in the `Dot` file format.
 
   * `path` : `typing.Union[str, pathlib.Path, NoneType]`  
 path for the output file; defaults to `"graph.dot"`
+
+
+
+---
+#### [`plot_keyphrases` method](#pytextrank.BaseTextRank.plot_keyphrases)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L790)
+
+```python
+plot_keyphrases()
+```
+Plot a document's keyphrases rank profile using
+[`altair.Chart`](https://altair-viz.github.io/user_guide/generated/toplevel/altair.Chart.html)
+
+  * *returns* : `typing.Any`  
+the `altair` chart being rendered
 
 
 
@@ -362,7 +377,7 @@ __setattr__(name, value)
 
 ---
 #### [`label` method](#pytextrank.Lemma.label)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L38)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L46)
 
 ```python
 label()
@@ -417,7 +432,7 @@ __init__(start, end, sent_id, phrases, distance)
 
 ---
 #### [`empty` method](#pytextrank.Sentence.empty)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L74)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L82)
 
 ```python
 empty()
@@ -431,7 +446,7 @@ Test whether this sentence includes any ranked phrases.
 
 ---
 #### [`text` method](#pytextrank.Sentence.text)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L86)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L94)
 
 ```python
 text(doc)

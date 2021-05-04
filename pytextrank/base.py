@@ -22,8 +22,8 @@ import time
 import typing
 
 try:
-    import pandas as pd
-    import altair as alt
+    import pandas as pd  # type: ignore # pylint: disable=E0401
+    import altair as alt  # type: ignore # pylint: disable=E0401
 except ImportError:
     _has_altair_and_pandas = False
 else:
@@ -787,15 +787,26 @@ path for the output file; defaults to `"graph.dot"`
             f.write(dot.source)
 
 
-    def plot_keyphrases(self):
-        """Plot a document's keyphrases rank profile."""
+    def plot_keyphrases (
+        self
+        ) -> typing.Any:
+        """
+Plot a document's keyphrases rank profile using
+[`altair.Chart`](https://altair-viz.github.io/user_guide/generated/toplevel/altair.Chart.html)
+
+    returns:
+the `altair` chart being rendered
+        """
         if not _has_altair_and_pandas:
             raise ImportError("altair and pandas are required to use this method. Install them with `pip install 'pytextrank[viz]'`")
+
         source = pd.DataFrame([p.__dict__ for p in self.doc._.phrases]).drop("chunks", axis=1).reset_index()
+
         c = (
             alt.Chart(source)
             .mark_bar()
             .encode(x="index", y="rank", color="count", tooltip=["text", "rank", "count"])
             .properties(title="Keyphrase profile of the document")
         )
+
         return c
