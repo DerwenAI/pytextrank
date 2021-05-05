@@ -794,6 +794,8 @@ path for the output file; defaults to `"graph.dot"`
 Plot a document's keyphrases rank profile using
 [`altair.Chart`](https://altair-viz.github.io/user_guide/generated/toplevel/altair.Chart.html)
 
+Throws an `ImportError` if the `altair` and `pandas` libraries are not installed.
+
     returns:
 the `altair` chart being rendered
         """
