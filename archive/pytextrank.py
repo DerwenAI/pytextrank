@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+
+from .base import BaseTextRank
+from .positionrank import PositionRank
 
 from collections import defaultdict, OrderedDict
 from math import sqrt
-from operator import itemgetter
 from spacy.tokens import Doc
 import graphviz
 import json
@@ -21,7 +23,6 @@ import unicodedata
 
 ######################################################################
 ## utility functions
-######################################################################
 
 PAT_FORWARD = re.compile("\n\-+ Forwarded message \-+\n")
 PAT_REPLIED = re.compile("\nOn.*\d+.*\n?wrote\:\n+\>")
@@ -123,7 +124,6 @@ def default_scrubber (text):
 
 ######################################################################
 ## class definitions
-######################################################################
 
 class CollectedPhrase:
     """
@@ -216,6 +216,20 @@ class TextRank:
 
         self.doc = None
         self.reset()
+
+
+    def __call__ (self, doc: Doc) -> Doc:
+        """
+        define a custom pipeline component for spaCy and extend the
+        Doc class to add TextRank, when doc gets processed
+        """
+        self.doc = doc
+
+        Doc.set_extension("phrases", force=True, default=[])
+        Doc.set_extension("textrank", force=True, default=self)
+        doc._.phrases = self.calc_textrank()
+
+        return doc
 
 
     def reset (self):
@@ -458,7 +472,7 @@ class TextRank:
             f.write(dot.source)
 
 
-    def summary (self, limit_phrases=10, limit_sentences=4):
+    def summary (self, limit_phrases=10, limit_sentences=4, preserve_order=False):
         """
         run extractive summarization, based on vector distance 
         per sentence from the top-ranked phrases
@@ -535,26 +549,16 @@ class TextRank:
             sent_text[sent_id] = sent
             sent_id += 1
 
+        # build a list of sentence indices, sorted according to their
+        # corresponding rank
+        top_sent_ids = list(range(len(sent_rank)))
+        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
+        # truncate to the given limit
+        top_sent_ids = top_sent_ids[:limit_sentences]
+        # sort in ascending order of index to preserve the order in which the
+        # sentences appear in the original text
+        if preserve_order:
+            top_sent_ids.sort()
         # yield results, up to the limit requested
-
-        num_sent = 0
-
-        for sent_id, rank in sorted(sent_rank.items(), key=itemgetter(1)):
+        for sent_id in top_sent_ids:
             yield sent_text[sent_id]
-            num_sent += 1
-
-            if num_sent == limit_sentences:
-                break
-
-
-    def PipelineComponent (self, doc):
-        """
-        define a custom pipeline component for spaCy and extend the
-        Doc class to add TextRank
-        """
-        self.doc = doc
-        Doc.set_extension("phrases", force=True, default=[])
-        Doc.set_extension("textrank", force=True, default=self)
-        doc._.phrases = self.calc_textrank()
-
-        return doc

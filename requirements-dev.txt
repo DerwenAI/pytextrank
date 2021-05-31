@@ -1,0 +1,19 @@
+bandit
+codespell
+coverage
+flask
+grayskull
+mkdocs-git-revision-date-plugin
+mkdocs-material
+mknotebooks
+mypy
+nbconvert
+notebook >= 6.1.5
+pipdeptree
+pre-commit
+pylint >= 2.7.0
+pytest
+pymdown-extensions
+selenium
+twine
+wheel

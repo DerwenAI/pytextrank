@@ -1,0 +1,237 @@
+@prefix derw:		<https://derwen.ai/ns/v1#> .
+
+@prefix bibo:		<http://purl.org/ontology/bibo/> .
+@prefix dct:		<http://purl.org/dc/terms/> .
+@prefix foaf:		<http://xmlns.com/foaf/0.1/> .
+@prefix owl:		<http://www.w3.org/2002/07/owl#> .
+@prefix rdf:		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:		<http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:		<http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:		<http://www.w3.org/2001/XMLSchema#> .
+
+
+derw:citeKey rdfs:domain bibo:Document ;
+  rdfs:range xsd:string ;
+  skos:definition "bibliographic citekey for team use in related publications"@en ;
+.
+
+derw:openAccess rdfs:domain bibo:Document ;
+  rdfs:range dct:identifier ;
+  skos:definition "open access URL for a cited document"@en ;
+.
+
+
+<https://derwen.ai/s/7zk738z8fn9t>
+  a derw:Author ;
+  foaf:name "David Gleich"@en ;
+  dct:identifier <https://orcid.org/0000-0002-8107-6474>
+.
+
+<https://derwen.ai/s/2t2mbms2x4p3>
+  a derw:Author ;
+  foaf:name "Mike Williams"@en ;
+  dct:identifier <https://scholar.google.com/citations?user=MZ648iUAAAAJ>
+.
+
+<https://derwen.ai/s/v3rq24nf6426>
+  a derw:Author ;
+  foaf:name "Cornelia Caragea"@en ;
+  dct:identifier <https://dblp.org/pid/69/6680.html>
+.
+
+<https://derwen.ai/s/y3w6mvj2r9wv>
+  a derw:Author ;
+  foaf:name "Corina Florescu"@en ;
+  dct:identifier <https://dblp.org/pid/195/8141.html>
+.
+
+<https://derwen.ai/s/rjsnrs5jhswk>
+  a derw:Author ;
+  foaf:name "Ashkan Kazemi"@en ;
+  dct:identifier <https://dblp.org/pid/277/9400.html>
+.
+
+<https://derwen.ai/s/svmndvvnndkv>
+  a derw:Author ;
+  foaf:name "Verónica Pérez-Rosas"@en ;
+  dct:identifier <https://dblp.org/pid/53/9684.html>
+.
+
+<https://derwen.ai/s/wwrw59tbtzzp>
+  a derw:Author ;
+  foaf:name "Rada Mihalcea"@en ;
+  dct:identifier <https://dblp.org/pid/m/RadaMihalcea.html>
+.
+
+<https://derwen.ai/s/vnfvsgvc9gfy>
+  a derw:Author ;
+  foaf:name "Paul Tarau"@en ;
+  dct:identifier <https://dblp.org/pid/t/PaulTarau.html>
+.
+
+<https://derwen.ai/s/mk6xj6cfrrxg>
+  a derw:Author ;
+  foaf:name "Lawrence Page"@en ;
+  dct:identifier <https://dblp.org/pid/p/LawrencePage.html>
+.
+
+<https://derwen.ai/s/j636dghdyws5>
+  a derw:Author ;
+  foaf:name "Sergey Brin"@en ;
+  dct:identifier <https://dblp.org/pid/b/SergeyBrin.html>
+.
+
+<https://derwen.ai/s/9hhpmgjs7kwt>
+  a derw:Author ;
+  foaf:name "Rajeev Motwani"@en ;
+  dct:identifier <https://dblp.org/pid/m/RajeevMotwani.html>
+.
+
+<https://derwen.ai/s/jdxk7fz84nzq>
+  a derw:Author ;
+  foaf:name "Terry Winograd"@en ;
+  dct:identifier <https://dblp.org/pid/w/TerryWinograd.html>
+.
+
+
+<urn:issn:0891-2017>
+  a bibo:Journal ;
+  bibo:shortTitle "Comput Linguist Assoc Comput Linguis"@en ;
+  dct:title "Computational Linguistics"@en ;
+  dct:identifier <https://www.mitpressjournals.org/loi/coli>
+.
+
+<urn:issn:0036-1445>
+  a bibo:Journal ;
+  bibo:shortTitle "SIAM Review"@en ;
+  dct:title "Society for Industrial and Applied Mathematics"@en ;
+  dct:identifier <https://www.siam.org/publications/journals/siam-review-sirev>
+.
+
+<https://www.aclweb.org/anthology/venues/emnlp/>
+  a bibo:Proceedings ;
+  bibo:shortTitle "EMNLP"@en ;
+  dct:title "Proceedings of the 2004 Conference on Empirical Methods in Natural Language Processing"@en ;
+  dct:date "2004" ;
+  dct:identifier <https://www.aclweb.org/anthology/venues/emnlp/> ;
+  dct:publisher <https://www.aclweb.org/portal/>
+.
+
+<urn:issn:1525-2477>
+  a bibo:Journal ;
+  bibo:shortTitle "COLING"@en ;
+  dct:title "Proceedings - International Conference on Computational Linguistics"@en ;
+  dct:identifier <https://www.aclweb.org/anthology/venues/coling/>
+.
+
+<http://ilpubs.stanford.edu:8090/>
+  a bibo:Collection ;
+  bibo:shortTitle "Stanford InfoLab"@en ;
+  dct:title "Stanford InfoLab"@en ;
+  dct:identifier <http://infolab.stanford.edu/>
+.
+
+
+<https://doi.org/10.18653/v1/P17-1102>
+  a bibo:Article ;
+  derw:citeKey "florescuc17"@en ;
+  derw:openAccess <https://www.aclweb.org/anthology/P17-1102.pdf> ;
+  dct:title "PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents"@en ;
+  dct:isPartOf <urn:issn:0891-2017> ;
+  dct:language "en" ;
+  dct:date "2017-07-30" ;
+  bibo:pageStart "1105" ;
+  bibo:pageEnd "1115" ;
+  bibo:authorList (
+    <https://derwen.ai/s/y3w6mvj2r9wv>
+    <https://derwen.ai/s/v3rq24nf6426>
+  ) ;
+  bibo:doi "10.18653/v1/P17-1102" ;
+  bibo:abstract "The large and growing amounts of online scholarly data present both challenges and opportunities to enhance knowledge discovery. One such challenge is to automatically extract a small set of keyphrases from a document that can accurately describe the document’s content and can facilitate fast information processing. In this paper, we propose PositionRank, an unsupervised model for keyphrase extraction from scholarly documents that incorporates information from all positions of a word’s occurrences into a biased PageRank. Our model obtains remarkable improvements in performance over PageRank models that do not take into account word positions as well as over strong baselines for this task. Specifically, on several datasets of research papers, PositionRank achieves improvements as high as 29.09%."@en
+.
+
+<https://doi.org/10.1137/140976649>
+  a bibo:Article ;
+  derw:citeKey "gleich15"@en ;
+  derw:openAccess <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf> ;
+  dct:title "PageRank Beyond the Web"@en ;
+  dct:language "en" ;
+  dct:date "2015-08-06" ;
+  dct:isPartOf <urn:issn:0036-1445> ;
+  bibo:volume "57" ;
+  bibo:issue "3" ;
+  bibo:pageStart "321" ;
+  bibo:pageEnd "363" ;
+  bibo:authorList (
+    <https://derwen.ai/s/7zk738z8fn9t>
+  ) ;
+  bibo:doi "10.1137/140976649" ;
+  bibo:abstract "Google's PageRank method was developed to evaluate the importance of web-pages via their link structure. The mathematics of PageRank, however, are entirely general and apply to any graph or network in any domain. Thus, PageRank is now regularly used in bibliometrics, social and information network analysis, and for link prediction and recommendation. It's even used for systems analysis of road networks, as well as biology, chemistry, neuroscience, and physics. We'll see the mathematics and ideas that unite these diverse applications."@en
+.
+
+<https://doi.org/10.18653/v1/2020.coling-main.144>
+  a bibo:Article ;
+  derw:citeKey "kazemi-etal-2020-biased"@en ;
+  derw:openAccess <https://www.aclweb.org/anthology/2020.coling-main.144.pdf> ;
+  dct:title "Biased TextRank: Unsupervised Graph-Based Content Extraction"@en ;
+  dct:language "en" ;
+  dct:date "2020-12-08" ;
+  dct:isPartOf <urn:issn:1525-2477> ;
+  bibo:volume "28" ;
+  bibo:pageStart "1642" ;
+  bibo:pageEnd "1652" ;
+  bibo:authorList (
+    <https://derwen.ai/s/rjsnrs5jhswk>
+    <https://derwen.ai/s/svmndvvnndkv>
+    <https://derwen.ai/s/wwrw59tbtzzp>
+  ) ;
+  bibo:doi "10.18653/v1/2020.coling-main.144" ;
+  bibo:abstract "We introduce Biased TextRank, a graph-based content extraction method inspired by the popular TextRank algorithm that ranks text spans according to their importance for language processing tasks and according to their relevance to an input 'focus'. Biased TextRank enables focused content extraction for text by modifying the random restarts in the execution of TextRank. The random restart probabilities are assigned based on the relevance of the graph nodes to the focus of the task. We present two applications of Biased TextRank: focused summarization and explanation extraction, and show that our algorithm leads to improved performance on two different datasets by significant ROUGE-N score margins. Much like its predecessor, Biased TextRank is unsupervised, easy to implement and orders of magnitude faster and lighter than current state-of-the-art Natural Language Processing methods for similar tasks."@en
+.
+
+<http://ilpubs.stanford.edu:8090/422/>
+  a bibo:Article ;
+  derw:citeKey "page1998"@en ;
+  derw:openAccess <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf> ;
+  dct:title "The PageRank Citation Ranking: Bringing Order to the Web"@en ;
+  dct:language "en" ;
+  dct:date "1999-11-11" ;
+  dct:isPartOf <http://ilpubs.stanford.edu:8090/> ;
+  bibo:authorList (
+    <https://derwen.ai/s/mk6xj6cfrrxg>
+    <https://derwen.ai/s/j636dghdyws5>
+    <https://derwen.ai/s/9hhpmgjs7kwt>
+    <https://derwen.ai/s/jdxk7fz84nzq>
+  ) ;
+  bibo:abstract "The importance of a Web page is an inherently subjective matter, which depends on the readers interests, knowledge and attitudes. But there is still much that can be said objectively about the relative importance of Web pages. This paper describes PageRank, a method for rating Web pages objectively and mechanically, effectively measuring the human interest and attention devoted to them. We compare PageRank to an idealized random Web surfer. We show how to efficiently compute PageRank for large numbers of pages. And, we show how to apply PageRank to search and to user navigation."@en
+.
+
+<https://www.aclweb.org/anthology/W04-3252/>
+  a bibo:Article ;
+  derw:citeKey "mihalcea04textrank"@en ;
+  derw:openAccess <https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf> ;
+  dct:title "TextRank: Bringing Order into Text"@en ;
+  dct:language "en" ;
+  dct:date "2004-07-25" ;
+  dct:isPartOf <https://www.aclweb.org/anthology/venues/emnlp/> ;
+  bibo:pageStart "404" ;
+  bibo:pageEnd "411" ;
+  bibo:authorList (
+    <https://derwen.ai/s/wwrw59tbtzzp>
+    <https://derwen.ai/s/vnfvsgvc9gfy>
+  ) ;
+  bibo:abstract "In this paper, the authors introduce TextRank, a graph-based ranking model for text processing, and show how this model can be successfully used in natural language applications."@en
+.
+
+<https://mike.place/talks/pygotham/>
+  a bibo:Slideshow ;
+  derw:citeKey "williams2016"@en ;
+  dct:title "Summarizing documents"@en ;
+  dct:language "en" ;
+  dct:date "2016-09-25" ;
+  bibo:presentedAt <https://2016.pygotham.org/> ;
+  bibo:authorList (
+    <https://derwen.ai/s/2t2mbms2x4p3>
+  ) ;
+  bibo:abstract "I've recently given a couple of talks (PyGotham video, PyGotham slides, Strata NYC slides) about text summarization. I cover three ways of automatically summarizing text. One is an extremely simple algorithm from the 1950s, one uses Latent Dirichlet Allocation, and one uses skipthoughts and recurrent neural networks. The talk is conceptual, and avoids code and mathematics. So here is a list of resources if you're interested in text summarization and want to dive deeper. This list useful is hopefully also useful if you're interested in topic modelling or neural networks for other reasons."@en
+.

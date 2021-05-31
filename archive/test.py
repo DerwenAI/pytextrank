@@ -1,19 +1,17 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 
 import spacy
 import pytextrank
 import traceback
 import unittest
-import warnings
 
 
-class TestRCGraph (unittest.TestCase):
+class TestPTR (unittest.TestCase):
     def setUp (self):
         """set up a spaCy pipeline"""
         self.nlp = spacy.load("en_core_web_sm")
-        self.tr = pytextrank.TextRank(logger=None)
-        self.nlp.add_pipe(self.tr.PipelineComponent, name="textrank", last=True)
+        self.nlp.add_pipe("textrank", last=True)
 
 
     def test_minimal (self):
@@ -38,7 +36,7 @@ class TestRCGraph (unittest.TestCase):
         text = "linear constraints over the set of natural numbers"
         doc = self.nlp(text)
 
-        with self.nlp.disable_pipes("textrank"):
+        with self.nlp.select_pipes(disable=["textrank"]):
             doc = self.nlp(text)
             assert len(doc._.phrases) == 0
 

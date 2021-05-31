@@ -1,111 +1,56 @@
 # PyTextRank
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4637885.svg)](https://doi.org/10.5281/zenodo.4637885)
+![Licence](https://img.shields.io/github/license/DerwenAI/pytextrank)
+![Repo size](https://img.shields.io/github/repo-size/DerwenAI/pytextrank)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
+[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DerwenAI/pytextrank.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DerwenAI/pytextrank/context:python)
+
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
-used to:
+for graph-based natural language work -- and related knowledge graph practices.
+This includes the [*textgraphs*](http://www.textgraphs.org/) algorithms:
 
-  - extract the top-ranked phrases from text documents
-  - run low-cost extractive summarization of text documents
-  - help infer links from unstructured text into structured data
+  - *TextRank* by [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
+  - *PositionRank* by [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17)
+  - *Biased TextRank* by [[kazemi-etal-2020-biased]](https://derwen.ai/docs/ptr/biblio/#kazemi-etal-2020-biased)
 
-## Background
+Popular use cases for this library include:
 
-One of the goals for **PyTextRank** is to provide support (eventually) for
-[*entity linking*](http://nlpprogress.com/english/entity_linking.html),
-in contrast to the more commonplace usage of
-[*named entity recognition*](http://nlpprogress.com/english/named_entity_recognition.html).
-These approaches can be used together in complementary ways to improve
-the results overall.
+  - *phrase extraction*: get the top-ranked phrases from a text document
+  - low-cost *extractive summarization* of a text document
+  - help infer concepts from unstructured text into more structured representation
 
-The introduction of graph algorithms -- notably,
-[*eigenvector centrality*](https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/)
--- provides a more flexible and robust basis for integrating additional
-techniques that enhance the natural language work being performed.
-The entity linking aspects here are still a *work-in-progress* scheduled 
-for a later release.
-
-Internally **PyTextRank** constructs a *lemma graph* to represent links
-among the candidate phrases (e.g., unrecognized entities) and their
-supporting language.
-Generally speaking, any means of enriching that graph prior to phrase
-ranking will tend to improve results.
-Possible ways to enrich the lemma graph include
-[*coreference resolution*](http://nlpprogress.com/english/coreference_resolution.html)
-and
-[*semantic relations*](https://en.wikipedia.org/wiki/Hyponymy_and_hypernymy),
-as well as leveraging *knowledge graphs* in the general case.
-
-For example,
-[WordNet](https://spacy.io/universe/project/spacy-wordnet)
-and
-[DBpedia](https://wiki.dbpedia.org/)
-both provide means for inferring links among entities, and purpose-built knowledge
-graphs can be applied for specific use cases.
-These can help enrich a lemma graph even in cases where links are not explicit 
-within the text.
-Consider a paragraph that mentions `cats` and `kittens` in different sentences: 
-an implied semantic relation exists between the two nouns since the lemma `kitten` 
-is a hyponym of the lemma `cat` -- such that an inferred link can be added 
-between them.
-
-This has an additional benefit of linking parsed and annotated documents
-into more structured data, and can also be used to support
-[*knowledge graph construction*](https://www.akbc.ws/).
-
-The *TextRank* algorithm used here is based on research published in:  
-["TextRank: Bringing Order into Text"](https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf)  
-[**Rada Mihalcea**](https://web.eecs.umich.edu/~mihalcea/), 
-[**Paul Tarau**](https://www.cse.unt.edu/~tarau/)  
-[*Empirical Methods in Natural Language Processing*](https://www.researchgate.net/publication/200044196_TextRank_Bringing_Order_into_Texts) (2004)
-
-Several modifications in **PyTextRank** improve on the algorithm originally
-described in the paper:
-
-  - fixed a bug: see [Java impl, 2008](https://github.com/ceteri/textrank)
-  - use *lemmatization* in place of stemming
-  - include verbs in the graph (but not in the resulting phrases)
-  - leverage preprocessing via *noun chunking* and *named entity recognition*
-  - provide *extractive summarization* based on ranked phrases
-
-This implementation was inspired by the
-[Williams 2016](http://mike.place/2016/summarization/)
-talk on text summarization.
-Note that while **much better** approaches exit for
-[*summarizing text*](http://nlpprogress.com/english/summarization.html),
-questions linger about some of the top contenders -- see:
-[1](https://arxiv.org/abs/1909.03004),
-[2](https://arxiv.org/abs/1906.02243).
-Arguably, having alternatives such as this allow for cost trade-offs.
+See our full documentation at: <https://derwen.ai/docs/ptr/>
 
 
-## Installation
+## Getting Started
 
-Prerequisites:
-
-- [Python 3.5+](https://www.python.org/downloads/)
-- [spaCy](https://spacy.io/docs/usage/)
-- [NetworkX](http://networkx.readthedocs.io/)
-- [GraphViz](https://graphviz.readthedocs.io/)
+See the ["Getting Started"](https://derwen.ai/docs/ptr/start/)
+section of the online documentation.
 
 To install from [PyPi](https://pypi.python.org/pypi/pytextrank):
-
 ```
-pip install pytextrank
-python -m spacy download en_core_web_sm
-```
-
-If you install directly from this Git repo, be sure to install the dependencies
-as well:
-
-```
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
+python3 -m pip install pytextrank
+python3 -m spacy download en_core_web_sm
 ```
 
-
-## Usage
-
+If you work directly from this Git repo, be sure to install the
+dependencies as well:
 ```
+python3 -m pip install -r requirements.txt
+```
+
+Alternatively, to install dependencies using `conda`:
+```
+conda env create -f environment.yml
+conda activate pytextrank
+```
+
+Then to use the library with a simple use case:
+```python
 import spacy
 import pytextrank
 
@@ -116,92 +61,108 @@ text = "Compatibility of systems of linear constraints over the set of natural n
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank to the spaCy pipeline
-tr = pytextrank.TextRank()
-nlp.add_pipe(tr.PipelineComponent, name="textrank", last=True)
-
+nlp.add_pipe("textrank")
 doc = nlp(text)
 
 # examine the top-ranked phrases in the document
-for p in doc._.phrases:
-    print("{:.4f} {:5d}  {}".format(p.rank, p.count, p.text))
-    print(p.chunks)
+for phrase in doc._.phrases:
+    print(phrase.text)
+    print(phrase.rank, phrase.count)
+    print(phrase.chunks)
 ```
 
-For other example usage, see the 
-[PyTextRank wiki](https://github.com/DerwenAI/pytextrank/wiki).
-If you need to troubleshoot any problems:
-
-  - use [GitHub issues](https://github.com/DerwenAI/pytextrank/issues) (most recommended)
-  - search [related discussions on StackOverflow](https://stackoverflow.com/search?q=pytextrank)
-  - tweet to `#textrank` on [Twitter](https://twitter.com/search?q=%23textrank) (cc `@pacoid`)
-
-For related course materials and training, please check for calendar updates in the article
-["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
-
-Let us know if you find this package useful, tell us about use cases, 
-describe what else you would like to see integrated, etc.
-For inquiries about consulting work in machine learning, natural language,
-knowledge graph, and other AI applications, contact 
-[Derwen, Inc.](https://derwen.ai/contact)
+See the **tutorial notebooks** in the `examples` subdirectory for
+sample code and patterns to use in integrating **PyTextTank** with
+related libraries in Python:
+<https://derwen.ai/docs/ptr/tutorial/>
 
 
-## Links
+<details>
+  <summary>Contributing Code</summary>
 
-  - https://spacy.io/universe/project/spacy-pytextrank
-  - https://pypi.org/project/pytextrank/
+We welcome people getting involved as contributors to this open source
+project!
+
+For detailed instructions please see:
+[CONTRIBUTING.md](https://github.com/DerwenAI/pytextrank/blob/main/CONTRIBUTING.md)
+</details>
+
+<details>
+  <summary>Build Instructions</summary>
+
+<strong>
+Note: unless you are contributing code and updates,
+in most use cases won't need to build this package locally.
+</strong>
+
+Instead, simply install from
+[PyPi](https://pypi.python.org/pypi/pytextrank)
+or use [Conda](https://docs.conda.io/).
+
+To set up the build environment locally, see the 
+["Build Instructions"](https://derwen.ai/docs/ptr/build/)
+section of the online documentation.
+</details>
+
+<details>
+  <summary>Semantic Versioning</summary>
+
+Generally speaking the major release number of <strong>PyTextRank</strong> 
+will track with the major release number of the associated <code>spaCy</code>
+version.
+
+See:
+[changelog.txt](https://github.com/DerwenAI/pytextrank/blob/main/changelog.txt)
+</details>
+
+<img
+ alt="thanks noam!"
+ src="https://raw.githubusercontent.com/DerwenAI/pytextrank/main/docs/assets/noam.jpg"
+ width="231"
+/>
 
 
-## Testing
+## License and Copyright
 
-To run the unit tests:
+Source code for **PyTextRank** plus its logo, documentation, and examples
+have an [MIT license](https://spdx.org/licenses/MIT.html) which is
+succinct and simplifies use in commercial applications.
 
-```
-coverage run -m unittest discover
-```
-
-To generate a coverage report and upload it to the `codecov.io`
-reporting site:
-
-```
-coverage report
-bash <(curl -s https://codecov.io/bash) -t @.cc_token
-```
-
-Test coverage reports can be viewed at
-<https://codecov.io/gh/DerwenAI/pytextrank>
+All materials herein are Copyright &copy; 2016-2021 Derwen, Inc.
 
 
 ## Attribution
 
-**PyTextRank** has an [MIT](https://spdx.org/licenses/MIT.html) license,
-which is succinct and simplifies use in commercial applications.
-
-Please use the following BibTeX entry for citing **PyTextRank** if you use it in your research or software.
-Citations are helpful for the continued development and maintenance of the library.
-
-```
-@Misc{PyTextRank,
-author = {Nathan, Paco},
-title = {PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents},
-    howpublished = {\url{https://github.com/DerwenAI/pytextrank/}},
-    year = {2016}
-    }
+Please use the following BibTeX entry for citing **PyTextRank** if you 
+use it in your research or software:
+```bibtex
+@software{PyTextRank,
+  author = {Paco Nathan},
+  title = {{PyTextRank, a Python implementation of TextRank for phrase extraction and summarization of text documents}},
+  year = 2016,
+  publisher = {Derwen},
+  doi = {10.5281/zenodo.4637885},
+  url = {https://github.com/DerwenAI/pytextrank}
+}
 ```
 
-
-## TODOs
-
-  - build a conda package
-  - show examples of `spacy-wordnet` to enrich the lemma graph
-  - leverage `neuralcoref` to enrich the lemma graph
-  - generate a phrase graph, with entity linking into Wikidata, etc.
-  - include more unit tests
-  - fix Sphinx errors, generate docs
+Citations are helpful for the continued development and maintenance of
+this library.
+For example, see our citations listed on
+[Google Scholar](https://scholar.google.com/scholar?q=related:5tl6J4xZlCIJ:scholar.google.com/&scioq=&hl=en&as_sdt=0,5).
 
 
 ## Kudos
 
-Many thanks to our contributors:
+Many thanks to our open source [sponsors](https://github.com/sponsors/ceteri);
+and to our contributors:
+[@ceteri](https://github.com/ceteri),
+[@louisguitton](https://github.com/louisguitton),
+[@Ankush-Chander](https://github.com/Ankush-Chander),
+[@Lord-V15](https://github.com/Lord-V15),
+[@anna-droid-beep](https://github.com/anna-droid-beep),
+[@dvsrepo](https://github.com/dvsrepo),
+[@kavorite](https://github.com/kavorite),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl),
@@ -209,17 +170,14 @@ Many thanks to our contributors:
 [@HarshGrandeur](https://github.com/HarshGrandeur),
 [@mnowotka](https://github.com/mnowotka),
 [@kjam](https://github.com/kjam),
-[@dvsrepo](https://github.com/dvsrepo),
 [@SaiThejeshwar](https://github.com/SaiThejeshwar),
 [@laxatives](https://github.com/laxatives),
 [@dimmu](https://github.com/dimmu), 
 [@JasonZhangzy1757](https://github.com/JasonZhangzy1757), 
 [@jake-aft](https://github.com/jake-aft),
 [@junchen1992](https://github.com/junchen1992),
-[@Ankush-Chander](https://github.com/Ankush-Chander),
 [@shyamcody](https://github.com/shyamcody),
-[@chikubee](https://github.com/chikubee),
-encouragement from the wonderful folks at [spaCy](https://github.com/explosion/spaCy),
+[@chikubee](https://github.com/chikubee);
+also to [@mihalcea](https://github.com/mihalcea) who leads outstanding NLP research work,
+encouragement from the wonderful folks at Explosion who develop [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
-
-[![thx noam](https://github.com/DerwenAI/pytextrank/blob/master/docs/noam.jpg)](https://memegenerator.net/img/instances/66942896.jpg)
