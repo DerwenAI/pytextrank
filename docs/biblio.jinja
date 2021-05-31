@@ -1,0 +1,30 @@
+# Bibliography
+
+Where possible, the bibliography entries use conventions at
+<https://www.bibsonomy.org/>
+for [*citation keys*](https://bibdesk.sourceforge.io/manual/BibDeskHelp_2.html).
+
+Journal abbreviations come from
+<https://academic-accelerator.com/Journal-Abbreviation/System>
+based on [*ISO 4*](https://en.wikipedia.org/wiki/ISO_4) standards.
+
+Links to online versions of cited works use
+[DOI](https://www.doi.org/)
+for [*persistent identifiers*](https://www.crossref.org/education/metadata/persistent-identifiers/).
+When available, 
+[*open access*](https://peerj.com/preprints/3119v1/)
+URLs are listed as well.
+
+{% for letter, item_list in groups.items() %}
+## – {{ letter.upper() }} –
+{% for item in item_list %}
+### {{ item.citeKey }}
+
+["{{ item.title }}"]({{ item.id }})  
+{% for auth in item.authorList %}{% if loop.index > 1 %}, {% endif %}[**{{ auth.name }}**]({{ auth.id }}){% endfor %}  
+{% if item.isPartOf %}[*{{ item.isPartOf[0].shortTitle }}*]({{ item.isPartOf[0].identifier.id }}){% if item.volume %} **{{ item.volume.value }}**{% endif %}{% if item.issue %} {{ item.issue.value }}{% endif %}{% if item.pageStart %} pp. {{ item.pageStart.value }}-{{ item.pageEnd.value }}{% endif %} {% endif %}({{ item.date.value }})  {% if item.doi %}
+DOI: {{ item.doi.value }}  {% endif %}{% if item.openAccess %}
+open: <{{ item.openAccess.id }}>  {% endif %}
+> {{ item.abstract }}
+{% endfor %}
+{% endfor %}

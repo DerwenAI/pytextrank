@@ -22,73 +22,73 @@ derw:openAccess rdfs:domain bibo:Document ;
 
 
 <https://derwen.ai/s/7zk738z8fn9t>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "David Gleich"@en ;
   dct:identifier <https://orcid.org/0000-0002-8107-6474>
 .
 
 <https://derwen.ai/s/2t2mbms2x4p3>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Mike Williams"@en ;
   dct:identifier <https://scholar.google.com/citations?user=MZ648iUAAAAJ>
 .
 
 <https://derwen.ai/s/v3rq24nf6426>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Cornelia Caragea"@en ;
   dct:identifier <https://dblp.org/pid/69/6680.html>
 .
 
 <https://derwen.ai/s/y3w6mvj2r9wv>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Corina Florescu"@en ;
   dct:identifier <https://dblp.org/pid/195/8141.html>
 .
 
 <https://derwen.ai/s/rjsnrs5jhswk>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Ashkan Kazemi"@en ;
   dct:identifier <https://dblp.org/pid/277/9400.html>
 .
 
 <https://derwen.ai/s/svmndvvnndkv>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Verónica Pérez-Rosas"@en ;
   dct:identifier <https://dblp.org/pid/53/9684.html>
 .
 
 <https://derwen.ai/s/wwrw59tbtzzp>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Rada Mihalcea"@en ;
   dct:identifier <https://dblp.org/pid/m/RadaMihalcea.html>
 .
 
 <https://derwen.ai/s/vnfvsgvc9gfy>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Paul Tarau"@en ;
   dct:identifier <https://dblp.org/pid/t/PaulTarau.html>
 .
 
 <https://derwen.ai/s/mk6xj6cfrrxg>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Lawrence Page"@en ;
   dct:identifier <https://dblp.org/pid/p/LawrencePage.html>
 .
 
 <https://derwen.ai/s/j636dghdyws5>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Sergey Brin"@en ;
   dct:identifier <https://dblp.org/pid/b/SergeyBrin.html>
 .
 
 <https://derwen.ai/s/9hhpmgjs7kwt>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Rajeev Motwani"@en ;
   dct:identifier <https://dblp.org/pid/m/RajeevMotwani.html>
 .
 
 <https://derwen.ai/s/jdxk7fz84nzq>
-  a derw:Author ;
+  a foaf:Person ;
   foaf:name "Terry Winograd"@en ;
   dct:identifier <https://dblp.org/pid/w/TerryWinograd.html>
 .
