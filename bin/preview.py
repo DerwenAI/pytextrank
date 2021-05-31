@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, redirect, send_from_directory, url_for
+from flask import Flask, redirect, send_from_directory, url_for # pylint: disable=E0401
 from pathlib import PurePosixPath
 import os
 
@@ -20,7 +20,7 @@ APP.config["SEND_FILE_MAX_AGE_DEFAULT"] = 3000
 @APP.route(DOCS_ROUTE, methods=["GET"])
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"], defaults={"path": None})
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"])
-def static_proxy (path=""):
+def static_proxy (path=""): # pylint: disable=C0116
     if not path:
         suffix = ""
     else:
@@ -35,7 +35,7 @@ def static_proxy (path=""):
 @APP.route("/index.html")
 @APP.route("/home/")
 @APP.route("/")
-def home_redirects ():
+def home_redirects (): # pylint: disable=C0116
     return redirect(url_for("static_proxy"))
 
 

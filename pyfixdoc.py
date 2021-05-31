@@ -17,7 +17,7 @@ Markdown that can be used with MkDocs.
 You're welcome.
 """
 
-from icecream import ic  # type: ignore
+from icecream import ic  # type: ignore # pylint: disable=E0401
 import inspect
 import os
 import re
