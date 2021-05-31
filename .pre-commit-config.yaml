@@ -31,6 +31,7 @@ repos:
     rev: pylint-2.7.2
     hooks:
     -   id: pylint
+        exclude: pyfixdoc
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.0.0
     hooks:
