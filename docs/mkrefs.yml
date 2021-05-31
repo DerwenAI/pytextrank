@@ -1,0 +1,8 @@
+biblio:
+  graph: mkrefs.ttl
+  page: biblio.md
+  template: biblio.jinja
+  queries:
+    entry: SELECT ?entry ?citeKey WHERE { VALUES ?kind { bibo:Article bibo:Slideshow } ?entry a ?kind . ?entry derw:citeKey ?citeKey }
+    entry_author: SELECT ?entry ?authorList WHERE { VALUES ?kind { bibo:Article bibo:Slideshow } ?entry a ?kind . ?entry bibo:authorList/rdf:rest*/rdf:first ?authorList }
+    entry_publisher: SELECT ?entry ?isPartOf WHERE { VALUES ?kind { bibo:Article bibo:Slideshow } ?entry a ?kind . ?entry dct:isPartOf ?isPartOf }
