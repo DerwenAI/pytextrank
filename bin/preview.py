@@ -4,7 +4,6 @@
 from flask import Flask, redirect, send_from_directory, url_for
 from pathlib import PurePosixPath
 import os
-import sys
 
 DOCS_ROUTE = "/docs/"
 DOCS_FILES = "../site"

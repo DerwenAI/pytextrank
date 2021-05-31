@@ -14,7 +14,7 @@ if __name__ == "__main__":
     sys.path.insert(0, "../")
 
     # customize the following, per use case
-    import pytextrank
+    import pytextrank # pylint: disable=W0611
 
     class_list = [
         "BaseTextRankFactory",
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         class_list,
         )
 
-    # NB: uncomment to analyze/troubleshoot the results of `inspect` 
+    # NB: uncomment to analyze/troubleshoot the results of `inspect`
     #pkg_doc.show_all_elements(); sys.exit(0)
 
     # build the apidocs markdown
