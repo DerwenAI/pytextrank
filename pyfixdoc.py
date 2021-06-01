@@ -486,7 +486,7 @@ apidocs as markdown.
 
         for func_name, func_obj in inspect.getmembers(self.module_obj, inspect.isfunction):
             if not func_name.startswith("_"):
-                _, obj_md = self.document_method([self.module_name], func_name, func_obj, "function")
+                _line_num, obj_md = self.document_method([self.module_name], func_name, func_obj, "function")
                 self.md.extend(obj_md)
 
 
