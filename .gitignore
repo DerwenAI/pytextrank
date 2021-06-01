@@ -1,6 +1,5 @@
 # misc.
 venv/
-.env*
 README.rst
 *~
 
