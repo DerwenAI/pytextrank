@@ -470,7 +470,7 @@ name of the class to document
                 line_num, obj_md = self.document_method(path_list, member_name, member_obj, func_kind)
                 obj_md_pos[line_num] = obj_md
 
-        for _, obj_md in sorted(obj_md_pos.items()):
+        for _pos, obj_md in sorted(obj_md_pos.items()):
             self.md.extend(obj_md)
 
 
