@@ -36,7 +36,11 @@ def static_proxy (path=""):
 @APP.route("/index.html")
 @APP.route("/home/")
 @APP.route("/")
-def home_redirects (): # pylint: disable=C0116
+def home_redirects ():
+    """Serve generated documentation microsite.
+    
+    See build.md for more details.
+    """
     return redirect(url_for("static_proxy"))
 
 
