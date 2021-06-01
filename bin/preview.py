@@ -20,7 +20,8 @@ APP.config["SEND_FILE_MAX_AGE_DEFAULT"] = 3000
 @APP.route(DOCS_ROUTE, methods=["GET"])
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"], defaults={"path": None})
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"])
-def static_proxy (path=""): # pylint: disable=C0116
+def static_proxy (path=""):
+    """Serve static files from the /site directory."""
     if not path:
         suffix = ""
     else:
