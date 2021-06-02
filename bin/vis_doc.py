@@ -105,9 +105,9 @@ Replace the `sys.path` header for example notebooks
         if m_iframe:
             header = """
 !!! note
-    To run this notebook in JupyterLab, load [`examples/{}.ipynb`](https://github.com/DerwenAI/pytextrank/blob/main/examples/{}.ipynb)
+    To run this notebook in JupyterLab, load [`examples/{stem}.ipynb`](https://github.com/DerwenAI/pytextrank/blob/main/examples/{stem}.ipynb)
 
-""".format(stem, stem)  # pylint: disable=W1308
+""".format(stem=stem)
 
             output.append(header)
         else:

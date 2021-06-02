@@ -17,7 +17,7 @@ Markdown that can be used with MkDocs.
 You're welcome.
 """
 
-from icecream import ic  # type: ignore
+from icecream import ic  # type: ignore # pylint: disable=E0401
 import inspect
 import os
 import re
@@ -31,7 +31,7 @@ class PackageDoc:
 Because there doesn't appear to be any other Markdown-friendly
 docstring support in Python.
 
-See also: 
+See also:
 
   * [PEP 256](https://www.python.org/dev/peps/pep-0256/)
   * [`inspect`](https://docs.python.org/3/library/inspect.html)
@@ -141,7 +141,7 @@ a dictionary of class objects which need apidocs generated
         self,
         obj,
         parse=False,
-        arg_dict: dict = {},
+        arg_dict: dict = None,
         ) -> typing.List[str]:
         """
 Get the docstring for the given object.
@@ -158,6 +158,9 @@ optional dictionary of forward references, if parsed
     returns:
 list of lines of markdown
         """
+        if arg_dict is None:
+            arg_dict = {}
+
         local_md: typing.List[str] = []
         raw_docstring = obj.__doc__
 
@@ -237,13 +240,12 @@ fixed forward reference, as markdown; or `None` if no annotation is supplied
 
         if not anno:
             return None
-        else:
-            for term in anno.split(", "):
-                for chunk in self.PAT_FWD_REF.split(term):
-                    if len(chunk) > 0:
-                        results.append(chunk)
+        for term in anno.split(", "):
+            for chunk in self.PAT_FWD_REF.split(term):
+                if len(chunk) > 0:
+                    results.append(chunk)
 
-            return ", ".join(results)
+        return ", ".join(results)
 
 
     def document_method (
@@ -440,7 +442,7 @@ list of classes to be documented
     class_name:
 name of the class to document
         """
-        self.md.append("## [`{}` class](#{})".format(class_name, class_name))
+        self.md.append("## [`{class_name}` class](#{class_name})".format(class_name=class_name))
 
         class_obj = todo_list[class_name]
         docstring = class_obj.__doc__
@@ -458,7 +460,7 @@ name of the class to document
                 if member_name not in class_obj.__dict__:
                     # inherited method
                     continue
-                elif inspect.isfunction(member_obj):
+                if inspect.isfunction(member_obj):
                     func_kind = "method"
                 elif inspect.ismethod(member_obj):
                     func_kind = "classmethod"
@@ -468,7 +470,7 @@ name of the class to document
                 line_num, obj_md = self.document_method(path_list, member_name, member_obj, func_kind)
                 obj_md_pos[line_num] = obj_md
 
-        for pos, obj_md in sorted(obj_md_pos.items()):
+        for _pos, obj_md in sorted(obj_md_pos.items()):
             self.md.extend(obj_md)
 
 
@@ -484,7 +486,7 @@ apidocs as markdown.
 
         for func_name, func_obj in inspect.getmembers(self.module_obj, inspect.isfunction):
             if not func_name.startswith("_"):
-                line_num, obj_md = self.document_method([self.module_name], func_name, func_obj, "function")
+                _line_num, obj_md = self.document_method([self.module_name], func_name, func_obj, "function")
                 self.md.extend(obj_md)
 
 

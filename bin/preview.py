@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, redirect, send_from_directory, url_for
+from flask import Flask, redirect, send_from_directory, url_for # pylint: disable=E0401
 from pathlib import PurePosixPath
 import os
-import sys
 
 DOCS_ROUTE = "/docs/"
 DOCS_FILES = "../site"
@@ -22,6 +21,7 @@ APP.config["SEND_FILE_MAX_AGE_DEFAULT"] = 3000
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"], defaults={"path": None})
 @APP.route(DOCS_ROUTE + "<path:path>", methods=["GET"])
 def static_proxy (path=""):
+    """Serve static files from the /site directory."""
     if not path:
         suffix = ""
     else:
@@ -37,6 +37,10 @@ def static_proxy (path=""):
 @APP.route("/home/")
 @APP.route("/")
 def home_redirects ():
+    """Serve generated documentation microsite.
+
+    See build.md for more details.
+    """
     return redirect(url_for("static_proxy"))
 
 
