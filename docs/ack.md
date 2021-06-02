@@ -7,6 +7,7 @@ and to our contributors:
 [@louisguitton](https://github.com/louisguitton),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@Lord-V15](https://github.com/Lord-V15),
+[@tomaarsen](https://github.com/tomaarsen),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
 [@dvsrepo](https://github.com/dvsrepo),
 [@kavorite](https://github.com/kavorite),

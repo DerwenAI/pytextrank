@@ -3,10 +3,12 @@
 @prefix bibo:		<http://purl.org/ontology/bibo/> .
 @prefix dct:		<http://purl.org/dc/terms/> .
 @prefix foaf:		<http://xmlns.com/foaf/0.1/> .
+@prefix lcsh:		<http://id.loc.gov/authorities/subjects/> .
 @prefix owl:		<http://www.w3.org/2002/07/owl#> .
 @prefix rdf:		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:		<http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos:		<http://www.w3.org/2004/02/skos/core#> .
+@prefix wd:		<http://www.wikidata.org/entity/> .
 @prefix xsd:		<http://www.w3.org/2001/XMLSchema#> .
 
 
@@ -22,73 +24,73 @@ derw:openAccess rdfs:domain bibo:Document ;
 
 
 <https://derwen.ai/s/7zk738z8fn9t>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "David Gleich"@en ;
   dct:identifier <https://orcid.org/0000-0002-8107-6474>
 .
 
 <https://derwen.ai/s/2t2mbms2x4p3>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Mike Williams"@en ;
   dct:identifier <https://scholar.google.com/citations?user=MZ648iUAAAAJ>
 .
 
 <https://derwen.ai/s/v3rq24nf6426>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Cornelia Caragea"@en ;
   dct:identifier <https://dblp.org/pid/69/6680.html>
 .
 
 <https://derwen.ai/s/y3w6mvj2r9wv>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Corina Florescu"@en ;
   dct:identifier <https://dblp.org/pid/195/8141.html>
 .
 
 <https://derwen.ai/s/rjsnrs5jhswk>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Ashkan Kazemi"@en ;
   dct:identifier <https://dblp.org/pid/277/9400.html>
 .
 
 <https://derwen.ai/s/svmndvvnndkv>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Verónica Pérez-Rosas"@en ;
   dct:identifier <https://dblp.org/pid/53/9684.html>
 .
 
 <https://derwen.ai/s/wwrw59tbtzzp>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Rada Mihalcea"@en ;
   dct:identifier <https://dblp.org/pid/m/RadaMihalcea.html>
 .
 
 <https://derwen.ai/s/vnfvsgvc9gfy>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Paul Tarau"@en ;
   dct:identifier <https://dblp.org/pid/t/PaulTarau.html>
 .
 
 <https://derwen.ai/s/mk6xj6cfrrxg>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Lawrence Page"@en ;
   dct:identifier <https://dblp.org/pid/p/LawrencePage.html>
 .
 
 <https://derwen.ai/s/j636dghdyws5>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Sergey Brin"@en ;
   dct:identifier <https://dblp.org/pid/b/SergeyBrin.html>
 .
 
 <https://derwen.ai/s/9hhpmgjs7kwt>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Rajeev Motwani"@en ;
   dct:identifier <https://dblp.org/pid/m/RajeevMotwani.html>
 .
 
 <https://derwen.ai/s/jdxk7fz84nzq>
-  a foaf:Person ;
+  a derw:Author ;
   foaf:name "Terry Winograd"@en ;
   dct:identifier <https://dblp.org/pid/w/TerryWinograd.html>
 .
@@ -234,4 +236,16 @@ derw:openAccess rdfs:domain bibo:Document ;
     <https://derwen.ai/s/2t2mbms2x4p3>
   ) ;
   bibo:abstract "I've recently given a couple of talks (PyGotham video, PyGotham slides, Strata NYC slides) about text summarization. I cover three ways of automatically summarizing text. One is an extremely simple algorithm from the 1950s, one uses Latent Dirichlet Allocation, and one uses skipthoughts and recurrent neural networks. The talk is conceptual, and avoids code and mathematics. So here is a list of resources if you're interested in text summarization and want to dive deeper. This list useful is hopefully also useful if you're interested in topic modelling or neural networks for other reasons."@en
+.
+
+
+derw:topic_Natural_Language
+  a derw:Topic ;
+  skos:prefLabel "Natural Language"@en ;
+  skos:altLabel "NLP"@en ;
+  skos:closeMatch wd:Q30642 ,
+    lcsh:sh88002425 ,
+    <https://plato.stanford.edu/entries/computational-linguistics/> ;
+  skos:broader derw:topic_Artificial_Intelligence ;
+  skos:definition "Intersection of computer science and linguistics, used to leverage data in the form of text, speech, and images to identify structure and meaning. Also used for enabling people and computer-based agents to interact using natural language."@en
 .
