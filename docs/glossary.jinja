@@ -1,0 +1,23 @@
+# Glossary
+
+{% for letter, item_list in groups.items() %}
+## – {{ letter.upper() }} –
+{% for item in item_list %}
+{% if item.redirect %}### {{ item.label }}
+See also: [{{ item.redirect }}](#{{ item.redirect|replace(" ", "-") }})
+{% else %}### {{ item.prefLabel }}
+> {{ item.definition }}
+{% for cite_uri in item.citeKey %}{% if loop.index == 1 %}
+Described in: {% else %}, {% endif %}{{ cite_uri }}{% endfor %}
+{% if item.hypernym|length > 1 %}
+Broader:
+
+{% for hyp_uri in item.hypernym %}  * {{ hyp_uri|safe }}
+{% endfor %}{% endif %}
+{% if item.closeMatch|length > 1 %}
+References:
+
+{% for ref_uri in item.closeMatch %}  * <a href="{{ ref_uri }}" target="_blank">{{ ref_uri }}</a>
+{% endfor %}{% endif %}
+{% endif %}
+{% endfor %}{% endfor %}

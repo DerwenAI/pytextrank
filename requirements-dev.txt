@@ -6,7 +6,7 @@ grayskull
 mkdocs-git-revision-date-plugin
 mkdocs-material
 mknotebooks
-mkrefs
+mkrefs >= 0.2.0
 mypy
 nbconvert
 notebook >= 6.1.5

@@ -1,3 +1,14 @@
+glossary:
+  graph: mkrefs.ttl
+  page: glossary.md
+  template: glossary.jinja
+  queries:
+    entry: SELECT ?entry ?label WHERE { ?entry a derw:Topic . ?entry skos:prefLabel ?label }
+    entry_syn: SELECT ?entry ?synonym WHERE { ?entry a derw:Topic . ?entry skos:altLabel ?synonym }
+    entry_ref: SELECT ?entry ?closeMatch WHERE { ?entry a derw:Topic . ?entry skos:closeMatch ?closeMatch }
+    entry_cite: SELECT ?entry ?citeKey WHERE { ?entry a derw:Topic . ?entry cito:usesMethodIn ?citeKey }
+    entry_hyp: SELECT ?entry ?hypernym WHERE { ?entry a derw:Topic . ?entry skos:broader ?hypernym }
+
 biblio:
   graph: mkrefs.ttl
   page: biblio.md

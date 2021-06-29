@@ -2,7 +2,7 @@
 
 ## 3.1.2
 
-2021-05-??
+2021-07-??
 
   * add `lgtm` code reviews (slow, not integrating into GitHub PRs directly)
   * evaluating `grayskull` to generate a conda-forge recipe
@@ -10,6 +10,8 @@
   * use KG from `biblio.ttl` to generate bibliography
   * fixed overlooked comment from earlier code; kudos @debraj135
   * add visualisation using `altair`; kudos @louisguitton
+  * add scrubber usage in sample notebook; kudos @Ankush-Chander 
+  * integrating use of `MkRefs` to generate semantic reference pages in `docs`
 
 
 ## 3.1.1

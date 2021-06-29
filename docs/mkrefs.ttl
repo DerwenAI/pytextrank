@@ -1,9 +1,11 @@
 @prefix derw:		<https://derwen.ai/ns/v1#> .
 
 @prefix bibo:		<http://purl.org/ontology/bibo/> .
+@prefix cito:		<http://purl.org/spar/cito/> .
 @prefix dct:		<http://purl.org/dc/terms/> .
 @prefix foaf:		<http://xmlns.com/foaf/0.1/> .
 @prefix lcsh:		<http://id.loc.gov/authorities/subjects/> .
+@prefix madsrdf:	<http://www.loc.gov/mads/rdf/v1#> .
 @prefix owl:		<http://www.w3.org/2002/07/owl#> .
 @prefix rdf:		<http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:		<http://www.w3.org/2000/01/rdf-schema#> .
@@ -20,6 +22,14 @@ derw:citeKey rdfs:domain bibo:Document ;
 derw:openAccess rdfs:domain bibo:Document ;
   rdfs:range dct:identifier ;
   skos:definition "open access URL for a cited document"@en ;
+.
+
+derw:Topic a skos:Concept ,
+        madsrdf:Topic ,
+        madsrdf:Authority ;
+    skos:prefLabel "Topic"@en ;
+    dct:identifier wd:Q1969448 ;
+    skos:definition "Subject heading used for classifying content and navigating discovery within it."@en ;
 .
 
 
@@ -114,7 +124,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   a bibo:Proceedings ;
   bibo:shortTitle "EMNLP"@en ;
   dct:title "Proceedings of the 2004 Conference on Empirical Methods in Natural Language Processing"@en ;
-  dct:date "2004" ;
+  dct:Date "2004" ;
   dct:identifier <https://www.aclweb.org/anthology/venues/emnlp/> ;
   dct:publisher <https://www.aclweb.org/portal/>
 .
@@ -141,7 +151,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   dct:title "PositionRank: An Unsupervised Approach to Keyphrase Extraction from Scholarly Documents"@en ;
   dct:isPartOf <urn:issn:0891-2017> ;
   dct:language "en" ;
-  dct:date "2017-07-30" ;
+  dct:Date "2017-07-30" ;
   bibo:pageStart "1105" ;
   bibo:pageEnd "1115" ;
   bibo:authorList (
@@ -158,7 +168,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   derw:openAccess <https://www.cs.purdue.edu/homes/dgleich/publications/Gleich%202015%20-%20prbeyond.pdf> ;
   dct:title "PageRank Beyond the Web"@en ;
   dct:language "en" ;
-  dct:date "2015-08-06" ;
+  dct:Date "2015-08-06" ;
   dct:isPartOf <urn:issn:0036-1445> ;
   bibo:volume "57" ;
   bibo:issue "3" ;
@@ -177,7 +187,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   derw:openAccess <https://www.aclweb.org/anthology/2020.coling-main.144.pdf> ;
   dct:title "Biased TextRank: Unsupervised Graph-Based Content Extraction"@en ;
   dct:language "en" ;
-  dct:date "2020-12-08" ;
+  dct:Date "2020-12-08" ;
   dct:isPartOf <urn:issn:1525-2477> ;
   bibo:volume "28" ;
   bibo:pageStart "1642" ;
@@ -197,7 +207,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   derw:openAccess <http://ilpubs.stanford.edu:8090/422/1/1999-66.pdf> ;
   dct:title "The PageRank Citation Ranking: Bringing Order to the Web"@en ;
   dct:language "en" ;
-  dct:date "1999-11-11" ;
+  dct:Date "1999-11-11" ;
   dct:isPartOf <http://ilpubs.stanford.edu:8090/> ;
   bibo:authorList (
     <https://derwen.ai/s/mk6xj6cfrrxg>
@@ -214,7 +224,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   derw:openAccess <https://web.eecs.umich.edu/~mihalcea/papers/mihalcea.emnlp04.pdf> ;
   dct:title "TextRank: Bringing Order into Text"@en ;
   dct:language "en" ;
-  dct:date "2004-07-25" ;
+  dct:Date "2004-07-25" ;
   dct:isPartOf <https://www.aclweb.org/anthology/venues/emnlp/> ;
   bibo:pageStart "404" ;
   bibo:pageEnd "411" ;
@@ -230,7 +240,7 @@ derw:openAccess rdfs:domain bibo:Document ;
   derw:citeKey "williams2016"@en ;
   dct:title "Summarizing documents"@en ;
   dct:language "en" ;
-  dct:date "2016-09-25" ;
+  dct:Date "2016-09-25" ;
   bibo:presentedAt <https://2016.pygotham.org/> ;
   bibo:authorList (
     <https://derwen.ai/s/2t2mbms2x4p3>
@@ -241,11 +251,180 @@ derw:openAccess rdfs:domain bibo:Document ;
 
 derw:topic_Natural_Language
   a derw:Topic ;
-  skos:prefLabel "Natural Language"@en ;
+  skos:prefLabel "natural language"@en ;
   skos:altLabel "NLP"@en ;
   skos:closeMatch wd:Q30642 ,
     lcsh:sh88002425 ,
     <https://plato.stanford.edu/entries/computational-linguistics/> ;
-  skos:broader derw:topic_Artificial_Intelligence ;
+  skos:broader <https://derwen.ai/d/artificial_intelligence> ;
   skos:definition "Intersection of computer science and linguistics, used to leverage data in the form of text, speech, and images to identify structure and meaning. Also used for enabling people and computer-based agents to interact using natural language."@en
+.
+
+derw:topic_Summarization
+  a derw:Topic ;
+  skos:prefLabel "summarization"@en ;
+  skos:altLabel "text summarization"@en ;
+  skos:closeMatch wd:Q1394144 ,
+    <http://nlpprogress.com/english/summarization.html> ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:definition "Producing a shorter version of one or more documents, while preserving most of the input's meaning."@en
+.
+
+derw:topic_Abstractive_Summarization
+  a derw:Topic ;
+  skos:prefLabel "abstractive summarization"@en ;
+  skos:closeMatch <https://paperswithcode.com/task/abstractive-text-summarization> ;
+  skos:broader derw:topic_Summarization ;
+  skos:definition "Generating a short, concise summary which captures salient ideas of the source text, potentially using new phrases and sentences that may not appear in the source."@en
+.
+
+derw:topic_Extractive_Summarization
+  a derw:Topic ;
+  skos:prefLabel "extractive summarization"@en ;
+  skos:closeMatch <https://paperswithcode.com/task/extractive-summarization> ;
+  skos:broader derw:topic_Summarization ;
+  skos:definition "Summarizing the source text by identifying a subset of the sentences as the most important excerpts, then generating a sequence of them verbatim."@en
+.
+
+derw:topic_Coreference_Resolution
+  a derw:Topic ;
+  skos:prefLabel "coreference resolution"@en ;
+  skos:closeMatch wd:Q63087 ,
+    <https://paperswithcode.com/task/coreference-resolution> ,
+    <http://nlpprogress.com/english/coreference_resolution.html> ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:definition "Clustering mentions within a text that refer to the same underlying entities."@en
+.
+
+derw:topic_Deep_Learning
+  a derw:Topic ;
+  skos:prefLabel "deep learning"@en ;
+  skos:altLabel "DL"@en ;
+  skos:closeMatch wd:Q197536 ,
+    <https://en.wikipedia.org/wiki/Deep_learning> ;
+  skos:broader <https://derwen.ai/d/machine_learning> ;
+  skos:definition "A family of machine learning methods based on artificial neural networks which use representation learning."@en
+.
+
+derw:topic_Graph_Algorithms
+ a derw:Topic ;
+  skos:prefLabel "graph algorithms"@en ;
+  skos:closeMatch lcsh:sh2002004605 ,
+    <https://networkx.org/documentation/stable/reference/algorithms/index.html> ;
+  skos:broader <https://derwen.ai/d/computer_science> ;
+  skos:definition "A family of algorithms that operation on graphs for network analysis, measurement, ranking, partitioning, and other methods that leverage graph theory."@en
+.
+
+derw:topic_Eigenvector_Centrality
+  a derw:Topic ;
+  skos:prefLabel "eigenvector centrality"@en ;
+  skos:closeMatch wd:Q28401090 ,
+    <https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/> ;
+  skos:broader derw:topic_Graph_Algorithms ;
+  skos:definition "Measuring the influence of a node within a network."@en
+.
+
+derw:topic_Personalized_PageRank
+  a derw:Topic ;
+  skos:prefLabel "personalized pagerank"@en ;
+  skos:broader derw:topic_Eigenvector_Centrality ;
+  cito:usesMethodIn "page1998"@en , "gleich15"@en ;
+  skos:definition "Using the *personalized teleportation behaviors* originally described for the PageRank algorithm to focus ranked results within a neighborhood of the graph, given a set of nodes as input."@en
+.
+
+derw:topic_Language_Model
+  a derw:Topic ;
+  skos:prefLabel "language model"@en ;
+  skos:broader derw:topic_Natural_Language ,
+    <https://derwen.ai/d/machine_learning> ;
+  skos:closeMatch wd:Q3621696 ,
+    <http://nlpprogress.com/english/language_modeling.html> ,
+    <https://paperswithcode.com/task/language-modelling> ;
+  skos:definition "A statistical model used for predicting the next word or character within a document."@en
+.
+
+derw:topic_Transformers
+  a derw:Topic ;
+  skos:prefLabel "transformers"@en ;
+  skos:broader derw:topic_Language_Model ,
+    derw:topic_Deep_Learning ;
+  skos:closeMatch wd:Q85810444 ,
+    <https://paperswithcode.com/methods/category/transformers> ;
+  skos:definition "A family of deep learning models, mostly used in NLP, which adopts the mechanism of *attention* to weigh the influence of different parts of the input data."@en
+.
+
+derw:topic_Stop_Words
+  a derw:Topic ;
+  skos:prefLabel "stop words"@en ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:closeMatch wd:Q80735 ,
+      lcsh:sh85046249 ;
+  skos:definition "Words to be filtered out during natural language processing."@en
+.
+
+derw:topic_Phrase_Extraction
+  a derw:Topic ;
+  skos:prefLabel "phrase extraction"@en ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:closeMatch wd:Q66709886 ;
+  skos:definition "Selecting representative phrases from a document as its characteristic entities; in contrast to *keyword* analysis."@en
+.
+
+derw:topic_Named_Entity_Recognition
+  a derw:Topic ;
+  skos:prefLabel "named entity recognition"@en ;
+  skos:altLabel "NER"@en ;
+  skos:broader derw:topic_Phrase_Extraction ;
+  skos:closeMatch wd:Q403574 ,
+    <https://paperswithcode.com/task/named-entity-recognition-ner> ,
+    <http://nlpprogress.com/english/named_entity_recognition.html> ;
+  skos:definition "Extracting mentions of *named entities* from unstructured text, then annotating them with pre-defined categories."@en
+.
+
+derw:topic_Entity_Linking
+  a derw:Topic ;
+  skos:prefLabel "entity linking"@en ;
+  skos:broader derw:topic_Named_Entity_Recognition ,
+    derw:topic_Knowledge_Graph ;
+  skos:closeMatch wd:Q17012245 , 
+    <http://nlpprogress.com/english/entity_linking.html> ,
+    <https://paperswithcode.com/task/entity-linking> ;
+  skos:definition "Recognizing named entities within a text, then disambiguating them by linking to specific contexts in a knowledge graph."@en
+.
+
+derw:topic_Knowledge_Graph
+  a derw:Topic ;
+  skos:prefLabel "knowledge graph"@en ;
+  skos:altLabel "KG"@en ;
+  skos:closeMatch wd:Q33002955 ,
+    <https://www.poolparty.biz/what-is-a-knowledge-graph/> ;
+  skos:broader <https://derwen.ai/d/artificial_intelligence> ;
+  skos:definition "A knowledge base that uses a graph-structured data model, representing and annotating interlinked descriptions of entities, with an overlay of semantic metadata."@en
+.
+
+derw:topic_Semantic_Relations
+  a derw:Topic ;
+  skos:prefLabel "semantic relations"@en ;
+  skos:closeMatch wd:Q2268906 ;
+  skos:broader derw:topic_Knowledge_Graph ;
+  skos:definition "Associations that exist between the meanings of phrases."@en
+.
+
+derw:topic_Textgraphs
+  a derw:Topic ;
+  skos:prefLabel "textgraphs"@en ;
+  skos:closeMatch wd:Q18388823 ,
+    <http://www.gabormelli.com/RKB/Text_Graph> ,
+    <http://www.textgraphs.org/> ;
+  skos:broader derw:topic_Natural_Language ,
+    derw:topic_Graph_Algorithms ;
+  skos:definition "Use of graph algorithms for NLP, based on a graph representation of a source text."@en
+.
+
+derw:topic_Lemma_Graph
+  a derw:Topic ;
+  skos:prefLabel "lemma graph"@en ;
+  skos:broader derw:topic_Textgraphs ;
+  cito:usesMethodIn "mihalcea04textrank"@en ;
+  skos:definition "A graph data structure used to represent links among phrase extracted from a source text, during the operation of the TextRank algorithm."@en
 .
