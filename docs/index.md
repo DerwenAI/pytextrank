@@ -48,7 +48,7 @@ notably, through
 additional AI techniques.
 There have been many amazing innovations since late 2017 
 in the application of *deep learning* for
-[*language models*](glossary/#language-models).
+[*language models*](glossary/#language-model).
 Most certainly these kinds of DL models get leveraged by
 **PyTextRank**, within `spaCy` 3.x during the earlier stages of
 processing.
