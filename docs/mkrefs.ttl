@@ -24,14 +24,6 @@ derw:openAccess rdfs:domain bibo:Document ;
   skos:definition "open access URL for a cited document"@en ;
 .
 
-derw:Topic a skos:Concept ,
-        madsrdf:Topic ,
-        madsrdf:Authority ;
-    skos:prefLabel "Topic"@en ;
-    dct:identifier wd:Q1969448 ;
-    skos:definition "Subject heading used for classifying content and navigating discovery within it."@en ;
-.
-
 
 <https://derwen.ai/s/7zk738z8fn9t>
   a derw:Author ;
@@ -249,25 +241,12 @@ derw:Topic a skos:Concept ,
 .
 
 
-derw:topic_Natural_Language
-  a derw:Topic ;
-  skos:prefLabel "natural language"@en ;
-  skos:altLabel "NLP"@en ;
-  skos:closeMatch wd:Q30642 ,
-    lcsh:sh88002425 ,
-    <https://plato.stanford.edu/entries/computational-linguistics/> ;
-  skos:broader <https://derwen.ai/d/artificial_intelligence> ;
-  skos:definition "Intersection of computer science and linguistics, used to leverage data in the form of text, speech, and images to identify structure and meaning. Also used for enabling people and computer-based agents to interact using natural language."@en
-.
-
-derw:topic_Summarization
-  a derw:Topic ;
-  skos:prefLabel "summarization"@en ;
-  skos:altLabel "text summarization"@en ;
-  skos:closeMatch wd:Q1394144 ,
-    <http://nlpprogress.com/english/summarization.html> ;
-  skos:broader derw:topic_Natural_Language ;
-  skos:definition "Producing a shorter version of one or more documents, while preserving most of the input's meaning."@en
+derw:Topic a skos:Concept ,
+        madsrdf:Topic ,
+        madsrdf:Authority ;
+    skos:prefLabel "Topic"@en ;
+    dct:identifier wd:Q1969448 ;
+    skos:definition "Subject heading used for classifying content and navigating discovery within it."@en ;
 .
 
 derw:topic_Abstractive_Summarization
@@ -278,12 +257,24 @@ derw:topic_Abstractive_Summarization
   skos:definition "Generating a short, concise summary which captures salient ideas of the source text, potentially using new phrases and sentences that may not appear in the source."@en
 .
 
-derw:topic_Extractive_Summarization
-  a derw:Topic ;
-  skos:prefLabel "extractive summarization"@en ;
-  skos:closeMatch <https://paperswithcode.com/task/extractive-summarization> ;
-  skos:broader derw:topic_Summarization ;
-  skos:definition "Summarizing the source text by identifying a subset of the sentences as the most important excerpts, then generating a sequence of them verbatim."@en
+derw:topic_Cloud_Computing a derw:Topic ;
+    skos:prefLabel "cloud computing"@en ;
+    skos:altLabel "cloud"@en ;
+    skos:closeMatch wd:Q483639 ,
+        lcsh:sh2008004883 ,
+        <https://csrc.nist.gov/publications/detail/sp/800-145/final> ,
+        <https://rise.cs.berkeley.edu/blog/a-berkeley-view-on-serverless-computing/> ;
+    skos:broader <https://derwen.ai/d/computer_science> ;
+    skos:definition "The on-demand availability of computing resources over the Internet without direct active management by the user, often paid for on a short-term basis, giving the illusion of infinite computing resources available and thereby eliminating the need to plan far ahead for provisioning."@en
+.
+
+derw:topic_Computable_Content a derw:Topic ;
+    skos:prefLabel "computable content"@en ;
+    skos:closeMatch <https://www.slideshare.net/pacoid/computable-content> ,
+        <https://youtu.be/EPftGvsXonc> ,
+        <https://www.wolfram.com/cdf/> ;
+    skos:broader <https://derwen.ai/d/computer_science> ;
+    skos:definition "Interactive learning materials which leverage remote computation, e.g., Jupyter notebooks."@en
 .
 
 derw:topic_Coreference_Resolution
@@ -296,6 +287,23 @@ derw:topic_Coreference_Resolution
   skos:definition "Clustering mentions within a text that refer to the same underlying entities."@en
 .
 
+derw:topic_Data_Science a derw:Topic ;
+    skos:prefLabel "data science"@en ;
+    skos:closeMatch wd:Q2374463 ,
+    <https://projecteuclid.org/euclid.aoms/1177704711> ,
+    <https://ischoolonline.berkeley.edu/data-science/what-is-data-science/> ,
+    <https://hbr.org/2018/11/curiosity-driven-data-science> ,
+    <https://community.ibm.com/community/user/datascience/blogs/paco-nathan/2019/03/04/what-is-data-science> ;
+    skos:broader <https://derwen.ai/d/artificial_intelligence> ;
+    skos:definition "An interdisciplinary field which emerged from industry not academia, focused on deriving insights from data, emphasizing how to leverage curiosity and domain expertise, and applying increasingly advanced mathematics for novel business cases in response to surges in data rates and compute resources."@en
+.
+
+derw:topic_Data_Strategy a derw:Topic ;
+    skos:prefLabel "data strategy"@en ;
+    skos:broader <https://derwen.ai/d/computer_science> ;
+    skos:definition "The tools, processes, and practices that define how to manage and leverage data to make informed decisions."@en
+.
+
 derw:topic_Deep_Learning
   a derw:Topic ;
   skos:prefLabel "deep learning"@en ;
@@ -306,15 +314,6 @@ derw:topic_Deep_Learning
   skos:definition "A family of machine learning methods based on artificial neural networks which use representation learning."@en
 .
 
-derw:topic_Graph_Algorithms
- a derw:Topic ;
-  skos:prefLabel "graph algorithms"@en ;
-  skos:closeMatch lcsh:sh2002004605 ,
-    <https://networkx.org/documentation/stable/reference/algorithms/index.html> ;
-  skos:broader <https://derwen.ai/d/computer_science> ;
-  skos:definition "A family of algorithms that operation on graphs for network analysis, measurement, ranking, partitioning, and other methods that leverage graph theory."@en
-.
-
 derw:topic_Eigenvector_Centrality
   a derw:Topic ;
   skos:prefLabel "eigenvector centrality"@en ;
@@ -322,63 +321,6 @@ derw:topic_Eigenvector_Centrality
     <https://demonstrations.wolfram.com/NetworkCentralityUsingEigenvectors/> ;
   skos:broader derw:topic_Graph_Algorithms ;
   skos:definition "Measuring the influence of a node within a network."@en
-.
-
-derw:topic_Personalized_PageRank
-  a derw:Topic ;
-  skos:prefLabel "personalized pagerank"@en ;
-  skos:broader derw:topic_Eigenvector_Centrality ;
-  cito:usesMethodIn "page1998"@en , "gleich15"@en ;
-  skos:definition "Using the *personalized teleportation behaviors* originally described for the PageRank algorithm to focus ranked results within a neighborhood of the graph, given a set of nodes as input."@en
-.
-
-derw:topic_Language_Model
-  a derw:Topic ;
-  skos:prefLabel "language model"@en ;
-  skos:broader derw:topic_Natural_Language ,
-    <https://derwen.ai/d/machine_learning> ;
-  skos:closeMatch wd:Q3621696 ,
-    <http://nlpprogress.com/english/language_modeling.html> ,
-    <https://paperswithcode.com/task/language-modelling> ;
-  skos:definition "A statistical model used for predicting the next word or character within a document."@en
-.
-
-derw:topic_Transformers
-  a derw:Topic ;
-  skos:prefLabel "transformers"@en ;
-  skos:broader derw:topic_Language_Model ,
-    derw:topic_Deep_Learning ;
-  skos:closeMatch wd:Q85810444 ,
-    <https://paperswithcode.com/methods/category/transformers> ;
-  skos:definition "A family of deep learning models, mostly used in NLP, which adopts the mechanism of *attention* to weigh the influence of different parts of the input data."@en
-.
-
-derw:topic_Stop_Words
-  a derw:Topic ;
-  skos:prefLabel "stop words"@en ;
-  skos:broader derw:topic_Natural_Language ;
-  skos:closeMatch wd:Q80735 ,
-      lcsh:sh85046249 ;
-  skos:definition "Words to be filtered out during natural language processing."@en
-.
-
-derw:topic_Phrase_Extraction
-  a derw:Topic ;
-  skos:prefLabel "phrase extraction"@en ;
-  skos:broader derw:topic_Natural_Language ;
-  skos:closeMatch wd:Q66709886 ;
-  skos:definition "Selecting representative phrases from a document as its characteristic entities; in contrast to *keyword* analysis."@en
-.
-
-derw:topic_Named_Entity_Recognition
-  a derw:Topic ;
-  skos:prefLabel "named entity recognition"@en ;
-  skos:altLabel "NER"@en ;
-  skos:broader derw:topic_Phrase_Extraction ;
-  skos:closeMatch wd:Q403574 ,
-    <https://paperswithcode.com/task/named-entity-recognition-ner> ,
-    <http://nlpprogress.com/english/named_entity_recognition.html> ;
-  skos:definition "Extracting mentions of *named entities* from unstructured text, then annotating them with pre-defined categories."@en
 .
 
 derw:topic_Entity_Linking
@@ -392,6 +334,23 @@ derw:topic_Entity_Linking
   skos:definition "Recognizing named entities within a text, then disambiguating them by linking to specific contexts in a knowledge graph."@en
 .
 
+derw:topic_Extractive_Summarization
+  a derw:Topic ;
+  skos:prefLabel "extractive summarization"@en ;
+  skos:closeMatch <https://paperswithcode.com/task/extractive-summarization> ;
+  skos:broader derw:topic_Summarization ;
+  skos:definition "Summarizing the source text by identifying a subset of the sentences as the most important excerpts, then generating a sequence of them verbatim."@en
+.
+
+derw:topic_Graph_Algorithms
+ a derw:Topic ;
+  skos:prefLabel "graph algorithms"@en ;
+  skos:closeMatch lcsh:sh2002004605 ,
+    <https://networkx.org/documentation/stable/reference/algorithms/index.html> ;
+  skos:broader <https://derwen.ai/d/computer_science> ;
+  skos:definition "A family of algorithms that operation on graphs for network analysis, measurement, ranking, partitioning, and other methods that leverage graph theory."@en
+.
+
 derw:topic_Knowledge_Graph
   a derw:Topic ;
   skos:prefLabel "knowledge graph"@en ;
@@ -402,12 +361,106 @@ derw:topic_Knowledge_Graph
   skos:definition "A knowledge base that uses a graph-structured data model, representing and annotating interlinked descriptions of entities, with an overlay of semantic metadata."@en
 .
 
+derw:topic_Knowledge_Graph_Conference a derw:Topic ;
+    skos:prefLabel "knowledge graph conference"@en ;
+    skos:altLabel "KGC"@en ;
+    skos:closeMatch <https://www.knowledgegraph.tech/> ;
+    skos:broader derw:topic_Knowledge_Graph ;
+    skos:definition "Founded in 2019 at Columbia University, The Knowledge Graphs Conference is emerging as the premiere source of learning around knowledge graph technologies. We believe knowledge graphs are an underutilized yet essential force for solving complex societal challenges like climate change, democratizing access to knowledge and opportunity, and capturing business value made possible by the AI revolution."@en
+.
+
+derw:topic_Language_Model
+  a derw:Topic ;
+  skos:prefLabel "language model"@en ;
+  skos:broader derw:topic_Natural_Language ,
+    <https://derwen.ai/d/machine_learning> ;
+  skos:closeMatch wd:Q3621696 ,
+    <http://nlpprogress.com/english/language_modeling.html> ,
+    <https://paperswithcode.com/task/language-modelling> ;
+  skos:definition "A statistical model used for predicting the next word or character within a document."@en
+.
+
+derw:topic_Lemma_Graph
+  a derw:Topic ;
+  skos:prefLabel "lemma graph"@en ;
+  skos:broader derw:topic_Textgraphs ;
+  cito:usesMethodIn "mihalcea04textrank"@en ;
+  skos:definition "A graph data structure used to represent links among phrase extracted from a source text, during the operation of the TextRank algorithm."@en
+.
+
+derw:topic_Natural_Language
+  a derw:Topic ;
+  skos:prefLabel "natural language"@en ;
+  skos:altLabel "NLP"@en ;
+  skos:closeMatch wd:Q30642 ,
+    lcsh:sh88002425 ,
+    <https://plato.stanford.edu/entries/computational-linguistics/> ;
+  skos:broader <https://derwen.ai/d/artificial_intelligence> ;
+  skos:definition "Intersection of computer science and linguistics, used to leverage data in the form of text, speech, and images to identify structure and meaning. Also used for enabling people and computer-based agents to interact using natural language."@en
+.
+
+derw:topic_Named_Entity_Recognition
+  a derw:Topic ;
+  skos:prefLabel "named entity recognition"@en ;
+  skos:altLabel "NER"@en ;
+  skos:broader derw:topic_Phrase_Extraction ;
+  skos:closeMatch wd:Q403574 ,
+    <https://paperswithcode.com/task/named-entity-recognition-ner> ,
+    <http://nlpprogress.com/english/named_entity_recognition.html> ;
+  skos:definition "Extracting mentions of *named entities* from unstructured text, then annotating them with pre-defined categories."@en
+.
+
+derw:topic_Personalized_PageRank
+  a derw:Topic ;
+  skos:prefLabel "personalized pagerank"@en ;
+  skos:broader derw:topic_Eigenvector_Centrality ;
+  cito:usesMethodIn "page1998"@en , "gleich15"@en ;
+  skos:definition "Using the *personalized teleportation behaviors* originally described for the PageRank algorithm to focus ranked results within a neighborhood of the graph, given a set of nodes as input."@en
+.
+
+derw:topic_Phrase_Extraction
+  a derw:Topic ;
+  skos:prefLabel "phrase extraction"@en ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:closeMatch wd:Q66709886 ;
+  skos:definition "Selecting representative phrases from a document as its characteristic entities; in contrast to *keyword* analysis."@en
+.
+
+derw:topic_Reinforcement_Learning a derw:Topic ;
+    skos:prefLabel "reinforcement learning"@en ;
+    skos:altLabel "RL"@en ;
+    skos:closeMatch wd:Q830687 ,
+        lcsh:sh92000704 ,
+        <https://docs.ray.io/en/master/rllib-models.html> ;
+    skos:broader <https://derwen.ai/d/machine_learning> ;
+    skos:definition "Optimal control theory mixed with deep learning where software agents learn to take actions within an environment and make sequences of decisions to maximize a cumulative reward -- typically stated in terms of markov decision process -- finding a balance between exploration (uncharted territory) and exploitation (current knowledge). Generally a reverse engineering of various psychological learning processes."@en
+.
+
 derw:topic_Semantic_Relations
   a derw:Topic ;
   skos:prefLabel "semantic relations"@en ;
   skos:closeMatch wd:Q2268906 ;
   skos:broader derw:topic_Knowledge_Graph ;
   skos:definition "Associations that exist between the meanings of phrases."@en
+.
+
+derw:topic_Stop_Words
+  a derw:Topic ;
+  skos:prefLabel "stop words"@en ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:closeMatch wd:Q80735 ,
+      lcsh:sh85046249 ;
+  skos:definition "Words to be filtered out during natural language processing."@en
+.
+
+derw:topic_Summarization
+  a derw:Topic ;
+  skos:prefLabel "summarization"@en ;
+  skos:altLabel "text summarization"@en ;
+  skos:closeMatch wd:Q1394144 ,
+    <http://nlpprogress.com/english/summarization.html> ;
+  skos:broader derw:topic_Natural_Language ;
+  skos:definition "Producing a shorter version of one or more documents, while preserving most of the input's meaning."@en
 .
 
 derw:topic_Textgraphs
@@ -421,10 +474,12 @@ derw:topic_Textgraphs
   skos:definition "Use of graph algorithms for NLP, based on a graph representation of a source text."@en
 .
 
-derw:topic_Lemma_Graph
+derw:topic_Transformers
   a derw:Topic ;
-  skos:prefLabel "lemma graph"@en ;
-  skos:broader derw:topic_Textgraphs ;
-  cito:usesMethodIn "mihalcea04textrank"@en ;
-  skos:definition "A graph data structure used to represent links among phrase extracted from a source text, during the operation of the TextRank algorithm."@en
+  skos:prefLabel "transformers"@en ;
+  skos:broader derw:topic_Language_Model ,
+    derw:topic_Deep_Learning ;
+  skos:closeMatch wd:Q85810444 ,
+    <https://paperswithcode.com/methods/category/transformers> ;
+  skos:definition "A family of deep learning models, mostly used in NLP, which adopts the mechanism of *attention* to weigh the influence of different parts of the input data."@en
 .
