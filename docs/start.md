@@ -9,7 +9,7 @@ python3 -m spacy download en_core_web_sm
 ```
 
 If you work directly from this Git repo, be sure to install the 
-[dependencies](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format):
+[dependencies](https://pip.pypa.io/en/stable/cli/pip_install/#requirements-file-format):
 ```
 python3 -m pip install -r requirements.txt
 ```

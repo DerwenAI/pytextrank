@@ -5,11 +5,11 @@
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
 for graph-based natural language work -- and related knowledge graph practices.
-This includes the [*textgraphs*](http://www.textgraphs.org/) algorithms:
+This includes the family of [*textgraph*](glossary/#textgraphs) algorithms:
 
-  - *TextRank* by [[mihalcea04textrank]](https://derwen.ai/docs/ptr/biblio/#mihalcea04textrank)
-  - *PositionRank* by [[florescuc17]](https://derwen.ai/docs/ptr/biblio/#florescuc17)
-  - *Biased TextRank* by [[kazemi-etal-2020-biased]](https://derwen.ai/docs/ptr/biblio/#kazemi-etal-2020-biased)
+  - *TextRank* by [[mihalcea04textrank]](biblio/#mihalcea04textrank)
+  - *PositionRank* by [[florescuc17]](biblio/#florescuc17)
+  - *Biased TextRank* by [[kazemi-etal-2020-biased]](biblio/#kazemi-etal-2020-biased)
 
 Popular use cases for this library include:
 

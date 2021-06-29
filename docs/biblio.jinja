@@ -22,9 +22,9 @@ URLs are listed as well.
 
 ["{{ item.title }}"]({{ item.id }})  
 {% for auth in item.authorList %}{% if loop.index > 1 %}, {% endif %}[**{{ auth.name }}**]({{ auth.id }}){% endfor %}  
-{% if item.isPartOf %}[*{{ item.isPartOf[0].shortTitle }}*]({{ item.isPartOf[0].identifier.id }}){% if item.volume %} **{{ item.volume.value }}**{% endif %}{% if item.issue %} {{ item.issue.value }}{% endif %}{% if item.pageStart %} pp. {{ item.pageStart.value }}-{{ item.pageEnd.value }}{% endif %} {% endif %}({{ item.date.value }})  {% if item.doi %}
+{% if item.isPartOf %}[*{{ item.isPartOf[0].shortTitle }}*]({{ item.isPartOf[0].identifier.id }}){% if item.volume %} **{{ item.volume.value }}**{% endif %}{% if item.issue %} {{ item.issue.value }}{% endif %}{% if item.pageStart %} pp. {{ item.pageStart.value }}-{{ item.pageEnd.value }}{% endif %} {% endif %}({{ item.Date.value }})  {% if item.doi %}
 DOI: {{ item.doi.value }}  {% endif %}{% if item.openAccess %}
-open: <{{ item.openAccess.id }}>  {% endif %}
+open: <a href="{{ item.openAccess.id }}" target="_blank">{{ item.openAccess.id }}</a>  {% endif %}
 > {{ item.abstract }}
 {% endfor %}
 {% endfor %}
