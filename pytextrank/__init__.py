@@ -30,67 +30,74 @@ _DEFAULT_CONFIG = {
     }
 
 
-@Language.factory("textrank", default_config=_DEFAULT_CONFIG)
-def _create_component_tr (
-    nlp: Language,  # pylint: disable=W0613
-    name: str,  # pylint: disable=W0613
-    edge_weight: float,
-    pos_kept: typing.List[str],
-    token_lookback: int,
-    scrubber: typing.Optional[typing.Callable],
-    stopwords: typing.Optional[StopWordsLike],
-    ) -> BaseTextRankFactory:
-    """
+# wrap these factory definitions in a try-catch, so they don't cause
+# exceptions during programmatic loading with `importlib`
+
+try:
+    @Language.factory("textrank", default_config=_DEFAULT_CONFIG)
+    def _create_component_tr (
+        nlp: Language,  # pylint: disable=W0613
+        name: str,  # pylint: disable=W0613
+        edge_weight: float,
+        pos_kept: typing.List[str],
+        token_lookback: int,
+        scrubber: typing.Optional[typing.Callable],
+        stopwords: typing.Optional[StopWordsLike],
+        ) -> BaseTextRankFactory:
+        """
 Component factory for the `TextRank` base class.
-    """
-    return BaseTextRankFactory(
-        edge_weight = edge_weight,
-        pos_kept = pos_kept,
-        token_lookback = token_lookback,
-        scrubber = scrubber,
-        stopwords = stopwords,
+        """
+        return BaseTextRankFactory(
+            edge_weight = edge_weight,
+            pos_kept = pos_kept,
+            token_lookback = token_lookback,
+            scrubber = scrubber,
+            stopwords = stopwords,
         )
 
 
-@Language.factory("positionrank", default_config=_DEFAULT_CONFIG)
-def _create_component_pr (
-    nlp: Language,  # pylint: disable=W0613
-    name: str,  # pylint: disable=W0613
-    edge_weight: float,
-    pos_kept: typing.List[str],
-    token_lookback: int,
-    scrubber: typing.Optional[typing.Callable],
-    stopwords: typing.Optional[StopWordsLike],
-    ) -> PositionRankFactory:
-    """
+    @Language.factory("positionrank", default_config=_DEFAULT_CONFIG)
+    def _create_component_pr (
+        nlp: Language,  # pylint: disable=W0613
+        name: str,  # pylint: disable=W0613
+        edge_weight: float,
+        pos_kept: typing.List[str],
+        token_lookback: int,
+        scrubber: typing.Optional[typing.Callable],
+        stopwords: typing.Optional[StopWordsLike],
+        ) -> PositionRankFactory:
+        """
 Component factory for the `PositionRank` extended class.
-    """
-    return PositionRankFactory(
-        edge_weight = edge_weight,
-        pos_kept = pos_kept,
-        token_lookback = token_lookback,
-        scrubber = scrubber,
-        stopwords = stopwords,
+        """
+        return PositionRankFactory(
+            edge_weight = edge_weight,
+            pos_kept = pos_kept,
+            token_lookback = token_lookback,
+            scrubber = scrubber,
+            stopwords = stopwords,
         )
 
 
-@Language.factory("biasedtextrank", default_config=_DEFAULT_CONFIG)
-def _create_component_br (
-    nlp: Language,  # pylint: disable=W0613
-    name: str,  # pylint: disable=W0613
-    edge_weight: float,
-    pos_kept: typing.List[str],
-    token_lookback: int,
-    scrubber: typing.Optional[typing.Callable],
-    stopwords: typing.Optional[StopWordsLike],
-    ) -> BiasedTextRankFactory:
-    """
+    @Language.factory("biasedtextrank", default_config=_DEFAULT_CONFIG)
+    def _create_component_br (
+        nlp: Language,  # pylint: disable=W0613
+        name: str,  # pylint: disable=W0613
+        edge_weight: float,
+        pos_kept: typing.List[str],
+        token_lookback: int,
+        scrubber: typing.Optional[typing.Callable],
+        stopwords: typing.Optional[StopWordsLike],
+        ) -> BiasedTextRankFactory:
+        """
 Component factory for the `BiasedTextRank` extended class.
-    """
-    return BiasedTextRankFactory(
-        edge_weight = edge_weight,
-        pos_kept = pos_kept,
-        token_lookback = token_lookback,
-        scrubber = scrubber,
-        stopwords = stopwords,
+        """
+        return BiasedTextRankFactory(
+            edge_weight = edge_weight,
+            pos_kept = pos_kept,
+            token_lookback = token_lookback,
+            scrubber = scrubber,
+            stopwords = stopwords,
         )
+
+except Exception:  # pylint: disable=W0703
+    print("ERROR: it appears that `spaCy` 3.x has not been imported?")
