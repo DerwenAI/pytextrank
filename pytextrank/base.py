@@ -591,12 +591,15 @@ the raw phrase list
     returns:
 an ordered list of ranked phrases
         """
+
         try:
-            data: typing.List[typing.Tuple[str, float, Span]] = [
+            # Span based scrubber
+            data: typing.List[typing.Tuple[typing.Union[Span, str], float, Span]] = [
                 (self.scrubber(span), rank, span) for span, rank in all_phrases.items()
             ]
-        except AttributeError as err:
-            data: typing.List[typing.Tuple[str, float, Span]] = [
+        except AttributeError:
+            # text based scrubber
+            data = [
                 (self.scrubber(span.text), rank, span) for span, rank in all_phrases.items()
             ]
 
