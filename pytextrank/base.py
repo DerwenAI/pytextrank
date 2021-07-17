@@ -7,28 +7,28 @@ Implements the base class for `TextRank` –
 with placeholder methods to be used by the subclasses for algorithm extensions.
 """
 
-from .util import groupby_apply, default_scrubber
-
 from collections import Counter, defaultdict, OrderedDict
 from dataclasses import dataclass
-from icecream import ic  # type: ignore # pylint: disable=E0401,W0611 # lgtm[py/unused-import]
-from spacy.tokens import Doc, Span, Token  # type: ignore # pylint: disable=E0401
-import graphviz  # type: ignore # pylint: disable=E0401
 import json
 import math
-import networkx as nx  # type: ignore # pylint: disable=E0401
 import pathlib
 import time
 import typing
 
+from icecream import ic  # type: ignore # pylint: disable=E0401,W0611 # lgtm[py/unused-import]
+from spacy.tokens import Doc, Span, Token  # type: ignore # pylint: disable=E0401
+import graphviz  # type: ignore # pylint: disable=E0401
+import networkx as nx  # type: ignore # pylint: disable=E0401
+
+from .util import groupby_apply, default_scrubber
+
 try:
-    import pandas as pd  # type: ignore # pylint: disable=E0401
     import altair as alt  # type: ignore # pylint: disable=E0401
+    import pandas as pd  # type: ignore # pylint: disable=E0401
 except ImportError:
     _has_altair_and_pandas = False
 else:
     _has_altair_and_pandas = True
-
 
 # parameter type annotation for a *stop words* source
 StopWordsLike = typing.Union[ str, pathlib.Path, typing.Dict[str, typing.List[str]] ]
@@ -151,7 +151,7 @@ parts of speech tags to be kept; adjust this if strings representing the POS tag
 the window for neighboring tokens – similar to a *skip gram*
 
     scrubber:
-optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`; when running, PyTextRank will throw a `FutureWarning` warning if the configuration uses a deprecated approach for a scrubber function
 
     stopwords:
 optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags; may be a file name (string) or a [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) for a JSON file; otherwise throws a `TypeError` exception
@@ -585,19 +585,22 @@ Group the phrases by their text content, selecting the span with the
 maximum rank within each group, then collect the ranked phrases into
 an ordered list.
 
+Throws a `FutureWarning` warning if the configuration uses a
+deprecated approach for a scrubber function
+
     all_phrases:
 the raw phrase list
 
     returns:
 an ordered list of ranked phrases
-        """
 
+        """
         try:
             data: typing.List[typing.Tuple[Span, float, Span]] = [
                 (self.scrubber(span), rank, span) for span, rank in all_phrases.items()
             ]
         except AttributeError:
-            raise FutureWarning("Text based scrubbers are deprecated. Use Span instead.")
+            raise FutureWarning("Text-based scrubbers are deprecated. Use a `Span` instead.")
 
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: list((rank, spans) for text, rank, spans in g)

@@ -114,7 +114,7 @@ will track with the major release number of the associated <code>spaCy</code>
 version.
 
 See:
-[changelog.txt](https://github.com/DerwenAI/pytextrank/blob/main/changelog.txt)
+[CHANGELOG.md](https://github.com/DerwenAI/pytextrank/blob/main/CHANGELOG.md)
 </details>
 
 <img

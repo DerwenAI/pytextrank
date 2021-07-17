@@ -1,0 +1,45 @@
+# Package Reference: `{{ groups.package[0].package }}`
+{{ groups.package[0].docstring }}
+
+{% for class_name, class_item in groups.package[0].class.items() %}
+## [`{{ class_name }}` class](#{{ class_name }})
+{{ class_item.docstring | safe }}
+
+{% for method_name, method_item in class_item.method.items() %}
+---
+#### [`{{ method_name }}` method](#{{ method_item.ns_path }})
+[*\[source\]*]({{ groups.package[0].git_url }}{{ method_item.file }}#L{{ method_item.line_num }})
+
+```python
+{{ method_name }}({{ method_item.arg_list_str | safe }})
+```
+{{ method_item.docstring | safe }}
+{{ method_item.arg_docstring | safe }}
+{% endfor %}
+{% endfor %}
+
+---
+## [module functions](#{{ groups.package[0].package }}_functions)
+
+{% for func_name, func_item in groups.package[0].function.items() %}
+---
+#### [`{{ func_name }}` method](#{{ func_item.ns_path }})
+[*\[source\]*]({{ groups.package[0].git_url }}{{ func_item.file }}#L{{ func_item.line_num }})
+
+```python
+{{ func_name }}({{ func_item.arg_list_str | safe }})
+```
+{{ func_item.docstring | safe }}
+{{ func_item.arg_docstring | safe }}
+{% endfor %}
+
+---
+## [module types](#{{ groups.package[0].package }}_types)
+
+{% for type_name, type_item in groups.package[0].type.items() %}
+#### [`{{ type_name }}` type](#{{ type_item.ns_path }})
+```python
+{{ type_name }} = {{ type_item.obj | safe }}
+```
+{{ type_item.docstring | safe }}
+{% endfor %}

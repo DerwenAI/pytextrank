@@ -6,8 +6,9 @@
 Implements the *PositionRank* algorithm.
 """
 
-from spacy.tokens import Doc  # type: ignore # pylint: disable=E0401
 import typing
+
+from spacy.tokens import Doc  # type: ignore # pylint: disable=E0401
 
 from .base import BaseTextRankFactory, BaseTextRank, Lemma
 from .util import groupby_apply

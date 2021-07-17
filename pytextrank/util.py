@@ -4,10 +4,11 @@
 
 import itertools
 import re
-from spacy.tokens import Span  # type: ignore # pylint: disable=E0401
 import string
 import typing
 import unicodedata
+
+from spacy.tokens import Span  # type: ignore # pylint: disable=E0401
 
 
 def groupby_apply (
@@ -52,8 +53,8 @@ def default_scrubber (
 Removes spurious punctuation from the given text.
 Note: this is intended for documents in English.
 
-    text:
-input text
+    span:
+input text `Span`
 
     returns:
 scrubbed text
@@ -62,7 +63,7 @@ scrubbed text
 
 
 def maniacal_scrubber (
-    text: str
+    span: Span
     ) -> str:
     """
 Applies multiple approaches for aggressively removing garbled Unicode
@@ -70,8 +71,8 @@ and spurious punctuation from the given text.
 
 OH: "It scrubs the garble from its stream... or it gets the debugger again!"
 
-    text:
-input text
+    span:
+input text `Span`
 
     returns:
 scrubbed text
@@ -80,6 +81,7 @@ scrubbed text
     # ostensibly this is no longer possible in Py 3.x ...
     # even so some crazy-making "mixed modes" of character encodings
     # have been found in the wild -- YMMV
+    text = span.text
 
     if type(text).__name__ != "str":
         print("not a string?", type(text), text)
