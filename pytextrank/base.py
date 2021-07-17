@@ -591,9 +591,13 @@ the raw phrase list
     returns:
 an ordered list of ranked phrases
         """
-        data: typing.List[typing.Tuple[str, float, Span]] = [
-            (self.scrubber(span.text), rank, span) for span, rank in all_phrases.items()
-        ]
+
+        try:
+            data: typing.List[typing.Tuple[Span, float, Span]] = [
+                (self.scrubber(span), rank, span) for span, rank in all_phrases.items()
+            ]
+        except AttributeError:
+            raise FutureWarning("Text based scrubbers are deprecated. Use Span instead.")
 
         keyfunc = lambda x: x[0]
         applyfunc = lambda g: list((rank, spans) for text, rank, spans in g)

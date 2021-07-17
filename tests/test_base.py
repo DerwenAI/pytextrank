@@ -4,7 +4,7 @@
 
 """Unit tests for BaseTextRank."""
 from spacy.language import Language  # pylint: disable=E0401
-from spacy.tokens import Doc  # pylint: disable=E0401
+from spacy.tokens import Span, Doc  # pylint: disable=E0401
 import spacy  # pylint: disable=E0401
 
 import sys
@@ -152,29 +152,82 @@ def test_stop_words ():
     """
 Works as a pipeline component and can be disabled.
     """
-    # given
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+    nlp1 = spacy.load("en_core_web_sm")
+    nlp1.add_pipe("textrank")
 
-    # when
-    _expected_phrases = [
-        "sentences",
-        "Mihalcea et al",
-        "text summarization",
-        "gensim implements",
-        "Okapi BM25 function",
-        ]
-
-    # add `"word": ["NOUN"]` to the *stop words*, to remove instances
-    # of `"word"` or `"words"` then see how the ranked phrases differ?
-
-    # then
+    # "words" is in top phrases
     with open("dat/gen.txt", "r") as f:
-        doc = nlp(f.read())
+        doc = nlp1(f.read())
 
         phrases = [
             phrase.text
             for phrase in doc._.phrases[:5]
             ]
 
-        assert phrases == _expected_phrases
+        assert "words" in phrases
+
+    # add `"word": ["NOUN"]` to the *stop words*, to remove instances
+    # of `"word"` or `"words"` then see how the ranked phrases differ?
+
+    nlp2 = spacy.load("en_core_web_sm")
+    nlp2.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+
+    with open("dat/gen.txt", "r") as f:
+        doc = nlp2(f.read())
+
+        phrases = [
+            phrase.text
+            for phrase in doc._.phrases[:5]
+            ]
+
+        assert "words" not in phrases
+
+
+def test_scrubber ():
+    """
+Works as a pipeline component and can be disabled.
+    """
+    # given
+
+    text = "This is a test for scrubber."
+
+    nlp1 = spacy.load("en_core_web_sm")
+    nlp1.add_pipe("textrank", last=True)
+
+    doc = nlp1(text)
+
+    phrases = [
+        phrase.text
+        for phrase in doc._.phrases
+    ]
+
+    assert "a test" in phrases
+
+    @spacy.registry.misc("articles_scrubber")
+    def articles_scrubber():  # pylint: disable=W0612
+        def scrubber_func(text_span: Span) -> str:
+            for token in text_span:
+                if token.pos_ != "DET":
+                    break
+                text_span = text_span[1:]
+            return text_span.text
+
+        return scrubber_func
+
+
+    # add "articles_scrubber" to config
+    # then see if phrases have `articles` in it?
+
+    nlp2 = spacy.load("en_core_web_sm")
+    nlp2.add_pipe("textrank", config={"stopwords": {"test": ["NOUN"]}, "scrubber": {"@misc": "articles_scrubber"}}, last=True)
+
+
+    # then
+    doc = nlp2(text)
+
+    phrases = [
+        phrase.text
+        for phrase in doc._.phrases
+    ]
+
+    assert "test" in phrases and "a test" not in phrases

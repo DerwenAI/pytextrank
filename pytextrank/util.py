@@ -4,6 +4,7 @@
 
 import itertools
 import re
+from spacy.tokens import Span  # type: ignore # pylint: disable=E0401
 import string
 import typing
 import unicodedata
@@ -45,7 +46,7 @@ an iterable with the accumulated values
 ## utility functions
 
 def default_scrubber (
-    text: str
+    span: Span
     ) -> str:
     """
 Removes spurious punctuation from the given text.
@@ -57,7 +58,7 @@ input text
     returns:
 scrubbed text
     """
-    return text.replace("'", "")
+    return span.text.replace("'", "")
 
 
 def maniacal_scrubber (
