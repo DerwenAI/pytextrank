@@ -4,7 +4,7 @@
 
 """Unit tests for BaseTextRank."""
 from spacy.language import Language  # pylint: disable=E0401
-from spacy.tokens import Doc  # pylint: disable=E0401
+from spacy.tokens import Span, Doc  # pylint: disable=E0401
 import spacy  # pylint: disable=E0401
 
 import sys
@@ -178,3 +178,53 @@ Works as a pipeline component and can be disabled.
             ]
 
         assert phrases == _expected_phrases
+
+
+def test_scrubber ():
+    """
+Works as a pipeline component and can be disabled.
+    """
+    # given
+
+    text = "This is a test for scrubber."
+
+    nlp1 = spacy.load("en_core_web_sm")
+    nlp1.add_pipe("textrank", last=True)
+
+    doc = nlp1(text)
+
+    phrases = [
+        phrase.text
+        for phrase in doc._.phrases
+    ]
+
+    assert "a test" in phrases
+
+    @spacy.registry.misc("articles_scrubber")
+    def articles_scrubber():
+        def scrubber_func(text_span: Span) -> str:
+            for token in text_span:
+                if token.pos_ != "DET":
+                    break
+                text_span = text_span[1:]
+            return text_span.text
+
+        return scrubber_func
+
+
+    # add "articles_scrubber" to config
+    # then see if phrases have `articles` in it?
+
+    nlp2 = spacy.load("en_core_web_sm")
+    nlp2.add_pipe("textrank", config={"stopwords": {"test": ["NOUN"]}, "scrubber": {"@misc": "articles_scrubber"}}, last=True)
+
+
+    # then
+    doc = nlp2(text)
+
+    phrases = [
+        phrase.text
+        for phrase in doc._.phrases
+    ]
+
+    assert "test" in phrases and "a test" in phrases
