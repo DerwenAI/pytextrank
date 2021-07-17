@@ -4,7 +4,7 @@
 
 import itertools
 import re
-from spacy.tokens import Span
+from spacy.tokens import Span  # type: ignore # pylint: disable=E0401
 import string
 import typing
 import unicodedata
