@@ -5,7 +5,7 @@ import pathlib
 import sys
 import traceback
 
-import kglab  # pylint: disable=W0611
+import kglab  # pylint: disable=E0401,W0611
 import rdflib  # pylint: disable=E0401,W0611
 
 from mkrefs import PackageDoc  # pylint: disable=E0401
