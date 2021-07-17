@@ -1,9 +1,11 @@
 # PyTextRank changelog
 
-## 3.1.2
+## 3.2.0
 
-2021-07-??
+2021-07-17
 
+  * **NB: THIS SCRUBBER UPDATE WILL BREAK PREVIOUS RELEASES**
+  * allow `Span` as scrubber argument, to align with `spaCy` 3.1.x; kudos @Ankush-Chander
   * add `lgtm` code reviews (slow, not integrating into GitHub PRs directly)
   * evaluating `grayskull` to generate a conda-forge recipe
   * add use of `pipdeptree` to analyze dependencies

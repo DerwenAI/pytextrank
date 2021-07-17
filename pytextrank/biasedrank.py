@@ -6,8 +6,9 @@
 Implements the *Biased TextRank* algorithm.
 """
 
-from spacy.tokens import Doc, Token  # type: ignore # pylint: disable=E0401
 import typing
+
+from spacy.tokens import Doc, Token  # type: ignore # pylint: disable=E0401
 
 from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase
 

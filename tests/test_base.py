@@ -84,20 +84,19 @@ and more.
 def test_summary (nlp: Language):
     """
 Summarization produces the expected results.
+Limit evaluation to Top-K
     """
     # given
+    LIMIT_PHRASES = 10
+    TOP_K = 5
+
     expected_trace = [
-        [0, [0, 2, 6, 7, 8]],
-        [1, [8]],
+        [0, [0, 9, 2, 6]],
+        [1, [9]],
         [2, [2]],
-        [7, [8, 4]],
-        [8, [8]],
-        [11, [2]],
-        [12, [1]],
-        [14, [2, 5]],
-        [15, [9, 3, 7]],
-        [17, [2]],
-        ]
+        [3, [7]],
+        [4, [8]],
+    ]
 
     with open("dat/lee.txt", "r") as f:
         text = f.read()
@@ -108,12 +107,12 @@ Summarization produces the expected results.
         # when
         trace = [
             [ sent_dist.sent_id, list(sent_dist.phrases) ]
-            for sent_dist in tr.calc_sent_dist(limit_phrases=10)
+            for sent_dist in tr.calc_sent_dist(limit_phrases=LIMIT_PHRASES)
             if not sent_dist.empty()
             ]
 
         # then
-        assert trace == expected_trace
+        assert trace[:TOP_K] == expected_trace
 
 
 def test_multiple_summary (nlp: Language):

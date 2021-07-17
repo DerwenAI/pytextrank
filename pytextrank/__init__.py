@@ -2,24 +2,20 @@
 # -*- coding: utf-8 -*-
 # see license https://github.com/DerwenAI/pytextrank#license-and-copyright
 
+import pathlib
+import typing
+
+from spacy.language import Language  # type: ignore # pylint: disable=E0401
+
 from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, VectorElem, StopWordsLike
-
-from .positionrank import PositionRankFactory, PositionRank
-
 from .biasedrank import BiasedTextRankFactory, BiasedTextRank
-
+from .positionrank import PositionRankFactory, PositionRank
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
-
 from .version import MIN_PY_VERSION, _versify, _check_version, __version__
 
 
 ######################################################################
 ## add component factories to the spaCy pipeline namespace
-
-from spacy.language import Language  # type: ignore # pylint: disable=E0401
-import pathlib
-import typing
-
 
 _DEFAULT_CONFIG = {
     "edge_weight": BaseTextRankFactory._EDGE_WEIGHT,  # pylint: disable=W0212
