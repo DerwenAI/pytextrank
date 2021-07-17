@@ -152,32 +152,35 @@ def test_stop_words ():
     """
 Works as a pipeline component and can be disabled.
     """
-    # given
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+    nlp1 = spacy.load("en_core_web_sm")
+    nlp1.add_pipe("textrank")
 
-    # when
-    _expected_phrases = [
-        "sentences",
-        "Mihalcea et al",
-        "text summarization",
-        "gensim implements",
-        "Okapi BM25 function",
-        ]
-
-    # add `"word": ["NOUN"]` to the *stop words*, to remove instances
-    # of `"word"` or `"words"` then see how the ranked phrases differ?
-
-    # then
+    # "words" is in top phrases
     with open("dat/gen.txt", "r") as f:
-        doc = nlp(f.read())
+        doc = nlp1(f.read())
 
         phrases = [
             phrase.text
             for phrase in doc._.phrases[:5]
             ]
 
-        assert phrases == _expected_phrases
+        assert "words" in phrases
+
+    # add `"word": ["NOUN"]` to the *stop words*, to remove instances
+    # of `"word"` or `"words"` then see how the ranked phrases differ?
+
+    nlp2 = spacy.load("en_core_web_sm")
+    nlp2.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+
+    with open("dat/gen.txt", "r") as f:
+        doc = nlp2(f.read())
+
+        phrases = [
+            phrase.text
+            for phrase in doc._.phrases[:5]
+            ]
+
+        assert "words" not in phrases
 
 
 def test_scrubber ():
@@ -227,4 +230,4 @@ Works as a pipeline component and can be disabled.
         for phrase in doc._.phrases
     ]
 
-    assert "test" in phrases and "a test" in phrases
+    assert "test" in phrases and "a test" not in phrases
