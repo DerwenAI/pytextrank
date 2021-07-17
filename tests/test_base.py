@@ -201,7 +201,7 @@ Works as a pipeline component and can be disabled.
     assert "a test" in phrases
 
     @spacy.registry.misc("articles_scrubber")
-    def articles_scrubber():  # pylint: disable=E0401
+    def articles_scrubber():  # pylint: disable=W0612
         def scrubber_func(text_span: Span) -> str:
             for token in text_span:
                 if token.pos_ != "DET":
