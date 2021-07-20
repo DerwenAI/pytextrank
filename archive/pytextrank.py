@@ -472,10 +472,11 @@ class TextRank:
             f.write(dot.source)
 
 
-    def summary (self, limit_phrases=10, limit_sentences=4, preserve_order=False):
+    def summary (self, limit_phrases=10, limit_sentences=4, preserve_order=False, module="sentence"):
         """
         run extractive summarization, based on vector distance 
-        per sentence from the top-ranked phrases
+        per sentence from the top-ranked phrases,
+        when module set as 'paragraph', the func get the average score per paragraph then sort the paragraphs
         """
         unit_vector = []
 
@@ -540,25 +541,62 @@ class TextRank:
             sent_rank[sent_id] = sqrt(sum_sq)
             sent_id += 1
 
-        # extract the sentences with the lowest distance
+        if module == "sentence":
+            # extract the sentences with the lowest distance
 
-        sent_text = {}
-        sent_id = 0
+            sent_text = {}
+            sent_id = 0
 
-        for sent in self.doc.sents:
-            sent_text[sent_id] = sent
-            sent_id += 1
+            for sent in self.doc.sents:
+                sent_text[sent_id] = sent
+                sent_id += 1
 
-        # build a list of sentence indices, sorted according to their
-        # corresponding rank
-        top_sent_ids = list(range(len(sent_rank)))
-        top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
-        # truncate to the given limit
-        top_sent_ids = top_sent_ids[:limit_sentences]
-        # sort in ascending order of index to preserve the order in which the
-        # sentences appear in the original text
-        if preserve_order:
-            top_sent_ids.sort()
-        # yield results, up to the limit requested
-        for sent_id in top_sent_ids:
-            yield sent_text[sent_id]
+            # build a list of sentence indices, sorted according to their
+            # corresponding rank
+            top_sent_ids = list(range(len(sent_rank)))
+            top_sent_ids.sort(key=lambda sent_id: sent_rank[sent_id])
+            # truncate to the given limit
+            top_sent_ids = top_sent_ids[:limit_sentences]
+            # sort in ascending order of index to preserve the order in which the
+            # sentences appear in the original text
+            if preserve_order:
+                top_sent_ids.sort()
+            # yield results, up to the limit requested
+            for sent_id in top_sent_ids:
+                yield sent_text[sent_id]
+
+        elif module == "paragraph":
+            # input a section include paragraphs separated by "\n\n",
+            # get the average score per paragraph then sort the paragraphs
+            limit_paragraphs = limit_sentences
+            paragraph_text_dict = {}
+            paragrapy_rank = {}
+            sent_id = 0
+            score = 0
+            p_text = ""
+            for num, sent in enumerate(self.doc.sents):
+                p_text += sent.text
+                score += sent_rank[num]
+
+                # separate every paragraph then reset score
+                if sent.text.endswith("\n\n") or (num + 1) == len(sent_rank):
+                    paragraph_text_dict[sent_id] = p_text
+                    paragrapy_rank[sent_id] = score / len(p_text.split("."))
+                    sent_id += 1
+                    p_text = ""
+                    score = 0
+
+            # build a list of paragraph indices, sorted according to their
+            # corresponding rank
+
+            # truncate to the given limit
+            top_sent_ids = sorted(paragrapy_rank.items(), key=lambda x: x[1])[:limit_paragraphs]
+            top_sent_ids = [i[0] for i in top_sent_ids]
+
+            # sort in ascending order of index to preserve the order in which the
+            # paragraphs appear in the original text
+            if preserve_order:
+                top_sent_ids.sort()
+            # yield results, up to the limit requested
+            for sent_id in top_sent_ids:
+                yield paragraph_text_dict[sent_id]
