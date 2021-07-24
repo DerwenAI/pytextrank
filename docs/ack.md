@@ -6,8 +6,9 @@ Many thanks to our open source [sponsors](https://github.com/sponsors/ceteri);
 and to our contributors:
 [@louisguitton](https://github.com/louisguitton),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
-[@Lord-V15](https://github.com/Lord-V15),
 [@tomaarsen](https://github.com/tomaarsen),
+[@CaptXiong](https://github.com/CaptXiong),
+[@Lord-V15](https://github.com/Lord-V15),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
 [@dvsrepo](https://github.com/dvsrepo),
 [@kavorite](https://github.com/kavorite),
