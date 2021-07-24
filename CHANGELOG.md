@@ -2,9 +2,9 @@
 
 ## 3.2.1
 
-2021-07-??
+2021-07-24
 
-  * add "paragraph" module into summary function; kudos @CaptXiong
+  * add "paragraph" option into `summary()` function; kudos @CaptXiong
 
 
 ## 3.2.0
@@ -19,7 +19,7 @@
   * use KG from `biblio.ttl` to generate bibliography
   * fixed overlooked comment from earlier code; kudos @debraj135
   * add visualisation using `altair`; kudos @louisguitton
-  * add scrubber usage in sample notebook; kudos @Ankush-Chander 
+  * add scrubber usage in sample notebook; kudos @Ankush-Chander
   * integrating use of `MkRefs` to generate semantic reference pages in `docs`
 
 
