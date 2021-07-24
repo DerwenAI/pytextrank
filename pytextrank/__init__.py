@@ -7,7 +7,7 @@ import typing
 
 from spacy.language import Language  # type: ignore # pylint: disable=E0401
 
-from .base import BaseTextRankFactory, BaseTextRank, Lemma, Phrase, Sentence, VectorElem, StopWordsLike
+from .base import BaseTextRankFactory, BaseTextRank, Lemma, Paragraph, Phrase, Sentence, VectorElem, StopWordsLike
 from .biasedrank import BiasedTextRankFactory, BiasedTextRank
 from .positionrank import PositionRankFactory, PositionRank
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes

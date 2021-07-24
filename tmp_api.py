@@ -23,6 +23,7 @@ if __name__ == "__main__":
         "BiasedTextRankFactory",
         "BiasedTextRank",
         "Lemma",
+        "Paragraph",
         "Phrase",
         "Sentence",
         "VectorElem",

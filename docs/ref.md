@@ -11,7 +11,7 @@ A factory class that provides the document with its instance of
 
 ---
 #### [`__call__` method](#pytextrank.BaseTextRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L216)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L227)
 
 ```python
 __call__(doc)
@@ -28,7 +28,7 @@ a document container, providing the annotations produced by earlier stages of th
 
 ---
 #### [`__init__` method](#pytextrank.BaseTextRankFactory.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L132)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L143)
 
 ```python
 __init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None)
@@ -65,7 +65,7 @@ instead.
 
 ---
 #### [`__init__` method](#pytextrank.BaseTextRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L256)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L267)
 
 ```python
 __init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords)
@@ -93,7 +93,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L671)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L682)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -110,7 +110,7 @@ a list of sentence distance measures
 
 ---
 #### [`calc_textrank` method](#pytextrank.BaseTextRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L321)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L332)
 
 ```python
 calc_textrank()
@@ -127,7 +127,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L365)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L376)
 
 ```python
 get_personalization()
@@ -144,7 +144,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L627)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L638)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -165,7 +165,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`plot_keyphrases` method](#pytextrank.BaseTextRank.plot_keyphrases)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L797)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L890)
 
 ```python
 plot_keyphrases()
@@ -181,7 +181,7 @@ the `altair` chart being rendered
 
 ---
 #### [`reset` method](#pytextrank.BaseTextRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L307)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L318)
 
 ```python
 reset()
@@ -191,11 +191,27 @@ Reinitialize the data structures needed for extracting phrases,
 removing any pre-existing state.
 
 ---
-#### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L720)
+#### [`segment_paragraphs` method](#pytextrank.BaseTextRank.segment_paragraphs)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L731)
 
 ```python
-summary(limit_phrases=10, limit_sentences=4, preserve_order=False)
+segment_paragraphs(sent_dist)
+```
+
+Segment a ranked document into paragraphs.
+
+  * `sent_dist` : `typing.List[pytextrank.base.Sentence]`  
+a list of ranked Sentence data objects
+
+  * *returns* : `typing.List[pytextrank.base.Paragraph]`  
+a list of Paragraph data objects
+
+---
+#### [`summary` method](#pytextrank.BaseTextRank.summary)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L786)
+
+```python
+summary(limit_phrases=10, limit_sentences=4, preserve_order=False, level="sentence")
 ```
 
 Run an
@@ -211,12 +227,15 @@ total number of sentences to yield for the extractive summarization
   * `preserve_order` : `bool`  
 flag to preserve the order of sentences as they originally occurred in the source text; defaults to `False`
 
+  * `level` : `str`  
+default extractive summarization with `"sentence"` value; when set as `"paragraph`" get the average score per paragraph then sort the paragraphs to produce the summary
+
   * *yields* :  
 texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L767)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Users/paco/src/pytextrank/pytextrank/base.py#L860)
 
 ```python
 write_dot(path="graph.dot")
@@ -489,6 +508,43 @@ provides.
 
   * *returns* : `str`  
 string representation
+
+
+## [`Paragraph` class](#Paragraph)
+
+A data class representing the distance measure for one paragraph.
+    
+
+
+---
+#### [`__eq__` method](#pytextrank.Paragraph.__eq__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main&lt;string&gt;#L2)
+
+```python
+__eq__(other)
+```
+
+
+
+---
+#### [`__init__` method](#pytextrank.Paragraph.__init__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main&lt;string&gt;#L2)
+
+```python
+__init__(start, end, para_id, distance)
+```
+
+
+
+---
+#### [`__repr__` method](#pytextrank.Paragraph.__repr__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/dataclasses.py#L350)
+
+```python
+__repr__()
+```
+
+
 
 
 ## [`Phrase` class](#Phrase)

@@ -118,6 +118,17 @@ A data class representing one element in the *unit vector* of the document.
     coord: float
 
 
+@dataclass
+class Paragraph:
+    """
+A data class representing the distance measure for one paragraph.
+    """
+    start: int
+    end: int
+    para_id: int
+    distance: float
+
+
 class BaseTextRankFactory:
     """
 A factory class that provides the document with its instance of
@@ -717,12 +728,68 @@ a list of sentence distance measures
         return sent_dist
 
 
+    def segment_paragraphs (
+        self,
+        sent_dist: typing.List[Sentence],
+        ) -> typing.List[Paragraph]:
+        """
+Segment a ranked document into paragraphs.
+
+    sent_dist:
+a list of ranked Sentence data objects
+
+    returns:
+a list of Paragraph data objects
+        """
+        para_elem: typing.List[int] = []
+        para_bounds: typing.List[typing.List[int]] = []
+
+        # first, determine the paragraph boundaries
+        for sent_id, s in enumerate(self.doc.sents):
+            toke_0 = str(s.__getitem__(0))
+            ret_count = sum(map(lambda c: 1 if c == "\n" else 0, toke_0))
+
+            # test for a paragraph boundary
+            if ret_count > 1:
+                if len(para_elem) > 0:
+                    para_bounds.append(para_elem)
+
+                para_elem = []
+
+            # include this sentence
+            para_elem.append(sent_id)
+
+        # then finalize
+        if len(para_elem) > 0:
+            para_bounds.append(para_elem)
+
+        # second, aggregate the distance measures and construct the
+        # Paragraph data objects
+        para_list: typing.List[Paragraph] = []
+
+        for para_id, para_elem in enumerate(para_bounds):
+            sum_dist = [
+                sent_dist[sent_id].distance
+                for sent_id in para_elem
+                ]
+
+            para_list.append(Paragraph(
+                para_id = para_id,
+                start = para_elem[0],
+                end = para_elem[-1],
+                distance = sum(sum_dist) / float(len(sum_dist)),
+                ))
+
+        return para_list
+
+
     def summary (
         self,
         *,
         limit_phrases: int = 10,
         limit_sentences: int = 4,
         preserve_order: bool = False,
+        level: str="sentence",
         ) -> typing.Iterator[str]:
         """
 Run an
@@ -738,30 +805,56 @@ total number of sentences to yield for the extractive summarization
     preserve_order:
 flag to preserve the order of sentences as they originally occurred in the source text; defaults to `False`
 
+    level:
+default extractive summarization with `"sentence"` value; when set as `"paragraph`" get the average score per paragraph then sort the paragraphs to produce the summary
+
     yields:
 texts for sentences, in order
         """
         # build a list of sentence indices sorted by distance
         sent_dist: typing.List[Sentence] = self.calc_sent_dist(limit_phrases)
 
-        top_sent_ids: typing.List[int] = [
-            sent.sent_id
-            for sent in sorted(sent_dist, key=lambda sent: sent.distance)
+        if level == "sentence":
+            top_sent_ids: typing.List[int] = [
+                sent.sent_id
+                for sent in sorted(sent_dist, key=lambda sent: sent.distance)
+                ]
+
+            # truncated to the specified limit
+            limit = min(limit_sentences, len(top_sent_ids))
+            top_sent_ids = top_sent_ids[:limit]
+
+            # optional: sort in ascending order of index to preserve
+            # the order in which sentences appear in the original text
+            if preserve_order:
+                top_sent_ids.sort()
+
+            # extract sentences with the least distance, up to the limit
+            # requested
+            for sent_id in top_sent_ids:
+                yield sent_dist[sent_id].text(self.doc)
+
+        if level == "paragraph":
+            top_sent_ids = [
+                sent_id
+                for p in sorted(self.segment_paragraphs(sent_dist), key=lambda x: x.distance)
+                for sent_id in range(p.start, p.end + 1)
             ]
 
-        # truncated to the specified limit
-        limit = min(limit_sentences, len(top_sent_ids))
-        top_sent_ids = top_sent_ids[:limit]
+            # truncate to the specified limit
+            limit_para = min(limit_sentences, len(top_sent_ids))
+            top_sent_ids = top_sent_ids[:limit_para]
 
-        # optional: sort in ascending order of index to preserve the
-        # order in which sentences appear in the original text
-        if preserve_order:
-            top_sent_ids.sort()
+            # optional: sort in ascending order of index to preserve
+            # the order in which the sentences appear in the original
+            # text
+            if preserve_order:
+                top_sent_ids.sort()
 
-        # extract sentences with the least distance, up to the limit
-        # requested
-        for sent_id in top_sent_ids:
-            yield sent_dist[sent_id].text(self.doc)
+            # extract sentences with the least distance, up to the limit
+            # requested
+            for sent_id in top_sent_ids:
+                yield sent_dist[sent_id].text(self.doc)
 
 
     def write_dot (
