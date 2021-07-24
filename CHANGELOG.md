@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 3.2.1
+
+2021-07-??
+
+  * add "paragraph" module into summary function; kudos @CaptXiong
+
+
 ## 3.2.0
 
 2021-07-17

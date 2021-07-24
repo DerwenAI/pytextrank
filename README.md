@@ -162,6 +162,7 @@ and to our contributors:
 [@louisguitton](https://github.com/louisguitton),
 [@Ankush-Chander](https://github.com/Ankush-Chander),
 [@tomaarsen](https://github.com/tomaarsen),
+[@CaptXiong](https://github.com/CaptXiong),
 [@Lord-V15](https://github.com/Lord-V15),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
 [@dvsrepo](https://github.com/dvsrepo),
