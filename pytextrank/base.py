@@ -710,7 +710,7 @@ a list of sentence distance measures
         for elem in unit_vector:
             for chunk in elem.phrase.chunks:
                 for sent in sent_dist:
-                    if chunk.start >= sent.start and chunk.start <= sent.end:
+                    if chunk.start >= sent.start and chunk.end <= sent.end:
                         sent.phrases.add(elem.phrase_id)
                         break
 
