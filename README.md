@@ -8,6 +8,8 @@
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DerwenAI/pytextrank.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DerwenAI/pytextrank/context:python)
 ![CI](https://github.com/DerwenAI/pytextrank/workflows/CI/badge.svg)
+![downloads](https://img.shields.io/pypi/dm/pytextrank)
+![sponsor](https://img.shields.io/github/sponsors/ceteri)
 
 **PyTextRank** is a Python implementation of *TextRank* as a
 [spaCy pipeline extension](https://spacy.io/universe/project/spacy-pytextrank),
