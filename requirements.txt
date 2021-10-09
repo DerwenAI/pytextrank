@@ -1,5 +1,5 @@
 graphviz >= 0.13
 icecream >= 2.1
-networkx >= 2.2
+networkx >= 2.6
 pygments >= 2.7.4
 spacy >= 3.0
