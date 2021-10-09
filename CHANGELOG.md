@@ -2,9 +2,9 @@
 
 ## 3.2.2
 
-2021-07-??
+2021-10-??
 
-  * ???
+  * adjust for changes in NetworkX, where they are removing SciPy as a dependency
 
 
 ## 3.2.1
