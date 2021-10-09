@@ -9,5 +9,6 @@ dependencies:
   - altair >= 4.1
   - networkx >= 2.6
   - spacy >= 3.0
+  - scipy >= 1.7
   - pip:
     - icecream >= 2.0

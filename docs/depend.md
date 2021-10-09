@@ -10,3 +10,4 @@ include:
 - [icecream](https://github.com/gruns/icecream)
 - [NetworkX](https://networkx.org/)
 - [spaCy](https://spacy.io/)
+- [SciPy](https://github.com/scipy/scipy/)

@@ -168,6 +168,7 @@ and to our contributors:
 [@Lord-V15](https://github.com/Lord-V15),
 [@anna-droid-beep](https://github.com/anna-droid-beep),
 [@dvsrepo](https://github.com/dvsrepo),
+[@clabornd](https://github.com/clabornd),
 [@kavorite](https://github.com/kavorite),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
