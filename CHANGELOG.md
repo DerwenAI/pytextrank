@@ -2,7 +2,7 @@
 
 ## 3.2.2
 
-2021-10-??
+2021-10-09
 
   * adjust for changes in `NetworkX` where they are removing `SciPy` as a dependency; kudos @clabornd, @tomaarsen, @duarteocarmo
   * more scrubber examples; kudos @dayalstrub-cma
