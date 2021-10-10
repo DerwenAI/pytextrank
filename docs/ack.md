@@ -12,6 +12,7 @@ and to our contributors:
 [@anna-droid-beep](https://github.com/anna-droid-beep),
 [@dvsrepo](https://github.com/dvsrepo),
 [@clabornd](https://github.com/clabornd),
+[@dayalstrub-cma](https://github.com/dayalstrub-cma),
 [@kavorite](https://github.com/kavorite),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
