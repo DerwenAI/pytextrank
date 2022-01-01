@@ -27,8 +27,13 @@ KEYWORDS = [
 
 def parse_requirements_file (filename: str) -> typing.List:
     """read and parse a Python `requirements.txt` file, returning as a list of str"""
+    results: list = []
+
     with pathlib.Path(filename).open() as f:
-        return [ l.strip().replace(" ", "") for l in f.readlines() ]
+        for l in f.readlines():
+            results.append(l.strip().replace(" ", "").split("#")[0])
+
+    return results
 
 
 if __name__ == "__main__":
@@ -51,7 +56,7 @@ if __name__ == "__main__":
         extras_require = {
             "base": base_packages,
             "docs": docs_packages,
-            "viz": viz_packages
+            "viz": viz_packages,
             },
 
         author="Paco Nathan",
