@@ -349,7 +349,7 @@ list of ranked phrases, in descending order
         # to run the algorithm, we use the NetworkX implementation
         # for PageRank (i.e., based on eigenvector centrality)
         # to calculate a rank for each node in the lemma graph
-        self.ranks = nx.pagerank_scipy(
+        self.ranks = nx.pagerank(
             self.lemma_graph,
             personalization = self.get_personalization(),
             )

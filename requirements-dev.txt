@@ -3,6 +3,7 @@ codespell
 coverage
 flask
 grayskull
+mistune >= 2.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
 mkdocs-git-revision-date-plugin
 mkdocs-material
 mknotebooks
@@ -18,4 +19,4 @@ pymdown-extensions
 selenium
 twine
 wheel
-mistune>=2.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
+
