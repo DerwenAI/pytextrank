@@ -19,27 +19,85 @@ Language shared fixture.
     return nlp
 
 
+def get_doc (nlp: Language, file_path: str) -> Doc:  # pylint: disable=W0621
+    """
+Doc shared fixture.
+
+    file_path:
+String specifying the path to the doc of interest.
+
+    returns:
+spaCy EN doc containing the data from ``file_path``.
+    """
+    text = pathlib.Path(file_path).read_text()
+    doc = nlp(text)  # pylint: disable=W0621
+    return doc
+
+
 @pytest.fixture(scope="session")
-def doc (nlp: Language) -> Doc:  # pylint: disable=W0621
+def doc_ars (nlp: Language) -> Doc:  # pylint: disable=W0621
+    """
+Doc shared fixture.
+
+    returns:
+spaCy EN doc containing a piece of weather research.
+    """
+    return get_doc(nlp, "dat/ars.txt")
+
+
+@pytest.fixture(scope="session")
+def doc_cfc (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
 
     returns:
 spaCy EN doc containing a piece of football news.
     """
-    text = pathlib.Path("dat/cfc.txt").read_text()
-    doc = nlp(text)  # pylint: disable=W0621
-    return doc
+    return get_doc(nlp, "dat/cfc.txt")
 
 
 @pytest.fixture(scope="session")
-def long_doc (nlp: Language) -> Doc:  # pylint: disable=W0621
+def doc_gen (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
 
     returns:
-spaCy EN doc containing a long text.
+spaCy EN doc containing a bit of information on TextRank.
     """
-    text = pathlib.Path("dat/lee.txt").read_text()
-    doc = nlp(text)  # pylint: disable=W0621
-    return doc
+    return get_doc(nlp, "dat/gen.txt")
+
+
+@pytest.fixture(scope="session")
+def doc_lee (nlp: Language) -> Doc:  # pylint: disable=W0621
+    """
+Doc shared fixture.
+
+    returns:
+spaCy EN doc containing a bit of news on Google's AlphaGo AI.
+    """
+    return get_doc(nlp, "dat/lee.txt")
+
+
+@pytest.fixture(scope="session")
+def doc_mih (nlp: Language) -> Doc:  # pylint: disable=W0621
+    """
+Doc shared fixture.
+
+    returns:
+spaCy EN doc containing a bit of math text.
+    """
+    return get_doc(nlp, "dat/mih.txt")
+
+
+@pytest.fixture(scope="session")
+def doc_suz (nlp: Language) -> Doc:  # pylint: disable=W0621
+    """
+Doc shared fixture.
+
+    returns:
+spaCy EN doc containing a bit of text with chemistry terms.
+    """
+    return get_doc(nlp, "dat/suz.txt")
+
+doc = doc_cfc
+long_doc = doc_lee
