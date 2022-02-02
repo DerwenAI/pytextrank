@@ -8,7 +8,7 @@ repo_name: DerwenAI/pytextrank
 
 mkrefs_config: mkrefs.yml
 
-copyright: Source code and documentation are <strong><a href="https://github.com/DerwenAI/pytextrank/blob/main/LICENSE" target="_blank">licensed</a></strong> under an MIT License; Copyright &copy; 2016-2021 <strong><a href="https://derwen.ai/" target="_blank">Derwen, Inc.</a></strong>
+copyright: Source code and documentation are <strong><a href="https://github.com/DerwenAI/pytextrank/blob/main/LICENSE" target="_blank">licensed</a></strong> under an MIT License; Copyright &copy; 2016-2022 <strong><a href="https://derwen.ai/" target="_blank">Derwen, Inc.</a></strong>
 
 nav:
     - Home: index.md
