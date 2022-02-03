@@ -51,10 +51,10 @@ Works as a pipeline component and can be disabled.
 
     # identifies phrases not in noun chunks
     # when
-    text = """
-everything you need to know about student loan interest rates variable
-and fixed rates capitalization amortization student loan refinancing
-and more.
+    text = """\
+everything you need to know about student loan interest rates variable \
+and fixed rates capitalization amortization student loan refinancing \
+and more.\
 """
 
     doc = nlp(text)
