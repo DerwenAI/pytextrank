@@ -10,6 +10,7 @@ from spacy.language import Language  # type: ignore # pylint: disable=E0401
 from .base import BaseTextRankFactory, BaseTextRank, Lemma, Paragraph, Phrase, Sentence, VectorElem, StopWordsLike
 from .biasedrank import BiasedTextRankFactory, BiasedTextRank
 from .positionrank import PositionRankFactory, PositionRank
+from .topicrank import TopicRankFactory, TopicRank
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
 from .version import MIN_PY_VERSION, _versify, _check_version, __version__
 
@@ -23,6 +24,12 @@ _DEFAULT_CONFIG = {
     "token_lookback": BaseTextRankFactory._TOKEN_LOOKBACK,  # pylint: disable=W0212
     "scrubber": None,
     "stopwords": None,
+    }
+
+_TOPIC_DEFAULT_CONFIG = {
+    **_DEFAULT_CONFIG,
+    "threshold": TopicRankFactory._CLUSTER_THRESHOLD,  # pylint: disable=W0212
+    "method": TopicRankFactory._CLUSTER_METHOD,  # pylint: disable=W0212
     }
 
 
@@ -93,6 +100,32 @@ Component factory for the `BiasedTextRank` extended class.
             token_lookback = token_lookback,
             scrubber = scrubber,
             stopwords = stopwords,
+        )
+
+
+    @Language.factory("topicrank", default_config=_TOPIC_DEFAULT_CONFIG)
+    def _create_component_tor (
+        nlp: Language,  # pylint: disable=W0613
+        name: str,  # pylint: disable=W0613
+        edge_weight: float,
+        pos_kept: typing.List[str],
+        token_lookback: int,
+        scrubber: typing.Optional[typing.Callable],
+        stopwords: typing.Optional[StopWordsLike],
+        threshold: float,
+        method: str,
+        ) -> TopicRankFactory:
+        """
+Component factory for the `TopicRank` extended class.
+        """
+        return TopicRankFactory(
+            edge_weight = edge_weight,
+            pos_kept = pos_kept,
+            token_lookback = token_lookback,
+            scrubber = scrubber,
+            stopwords = stopwords,
+            threshold = threshold,
+            method = method,
         )
 
 except Exception:  # pylint: disable=W0703
