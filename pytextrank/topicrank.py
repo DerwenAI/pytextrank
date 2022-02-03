@@ -316,15 +316,18 @@ list of ranked phrases, in descending order
         # the number candidate keyphrases that make up the topic.
         raw_phrase_list = [
             Phrase(
-                text=min(
-                    ((chunk.text, chunk.start) for chunk in chunks),
-                    key=lambda tup: tup[1],
-                )[0],
-                chunks=list(chunks),
-                count=len(chunks),
+                text=self.scrubber(
+                    # get first occurring keyphrase for topic
+                    min(
+                        ((keyphrase, keyphrase.start) for keyphrase in topic),
+                        key=lambda tup: tup[1],
+                    )[0]
+                ),
+                chunks=list(topic),
+                count=len(topic),
                 rank=score,
             )
-            for chunks, score in self.ranks.items()
+            for topic, score in self.ranks.items()
         ]
         phrase_list: typing.List[Phrase] = sorted(
             raw_phrase_list, key=lambda p: p.rank, reverse=True
