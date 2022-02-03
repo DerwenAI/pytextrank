@@ -3,15 +3,28 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  lint-and-test:
+  pre-commit:
+    name: Run pre-commit
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: pre-commit/action@v2.0.0
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, 3.10]
+    needs: pre-commit
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.7
+
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -19,7 +32,6 @@ jobs:
           spacy download en_core_web_sm
           pip install pre-commit pytest
 
-      - uses: pre-commit/action@v2.0.2
       - name: Run tests
         run: |
           pytest
