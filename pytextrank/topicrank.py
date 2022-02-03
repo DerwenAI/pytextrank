@@ -11,10 +11,10 @@ import typing
 from collections import defaultdict
 from functools import lru_cache
 
-import networkx as nx
-from scipy.cluster.hierarchy import fcluster, linkage
-from scipy.spatial.distance import pdist
-from spacy.tokens import Doc, Span
+import networkx as nx  # type: ignore # pylint: disable=E0401
+from scipy.cluster.hierarchy import fcluster, linkage  # type: ignore # pylint: disable=E0401
+from scipy.spatial.distance import pdist  # type: ignore # pylint: disable=E0401
+from spacy.tokens import Doc, Span  # type: ignore # pylint: disable=E0401
 
 from .base import BaseTextRank, BaseTextRankFactory, Phrase, StopWordsLike
 
@@ -211,7 +211,7 @@ list of clusters of candidates.
         for cluster_id, candidate in zip(cluster_ids, candidates):
             clusters[cluster_id].append(candidate)
 
-        return clusters.values()
+        return list(clusters.values())
 
     def _get_candidates(self) -> typing.List[Span]:
         """
@@ -233,9 +233,9 @@ list of candidate spans
 
         return candidates
 
-    @property
+    @property  # type: ignore
     @lru_cache
-    def node_list(self) -> typing.List[typing.List[Span]]:
+    def node_list(self) -> typing.List[typing.Tuple[Span, ...]]:  # type: ignore
         """
 Build a list of vertices for the graph, cached for efficiency.
 
@@ -256,7 +256,7 @@ list of nodes
         return clustered
 
     @property
-    def edge_list(
+    def edge_list(  # type: ignore
         self,
     ) -> typing.List[
         typing.Tuple[typing.List[Span], typing.List[Span], typing.Dict[str, float]]
@@ -269,8 +269,8 @@ list of weighted edges
         """
 
         weighted_edges = []
-        for i, source_topic in enumerate(self.node_list):
-            for target_topic in self.node_list[i + 1 :]:
+        for i, source_topic in enumerate(self.node_list):  # type: ignore
+            for target_topic in self.node_list[i + 1 :]:  # type: ignore
                 weight = 0.0
                 for source_member in source_topic:
                     for target_member in target_topic:
@@ -303,7 +303,7 @@ list of ranked phrases, in descending order
         # to run the algorithm, we use the NetworkX implementation
         # for PageRank (i.e., based on eigenvector centrality)
         # to calculate a rank for each node in the lemma graph
-        self.ranks: typing.Dict[typing.List[Span], float] = nx.pagerank(
+        self.ranks: typing.Dict[typing.List[Span], float] = nx.pagerank(  # type: ignore
             self.lemma_graph,
             personalization=self.get_personalization(),
         )
@@ -344,4 +344,4 @@ Reinitialize the data structures needed for extracting phrases,
 removing any pre-existing state.
         """
         super().reset()
-        TopicRank.node_list.fget.cache_clear()
+        TopicRank.node_list.fget.cache_clear()  # type: ignore # pylint: disable=E1101
