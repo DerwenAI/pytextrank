@@ -198,6 +198,8 @@ list of clusters of candidates.
         # using a threshold of 0.01 below 1 - threshold.
         # So, 0.74 for the default 0.25 threshold.
         pairwise_dist = pdist(matrix, "jaccard")
+        if not pairwise_dist.size:
+            return [[candidate] for candidate in candidates]
         raw_clusters = linkage(pairwise_dist, method=self.method)
         cluster_ids = fcluster(
             raw_clusters, t=0.99 - self.threshold, criterion="distance"
