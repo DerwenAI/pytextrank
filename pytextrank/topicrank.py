@@ -234,7 +234,7 @@ list of candidate spans
         return candidates
 
     @property  # type: ignore
-    @lru_cache
+    @lru_cache(maxsize=1)
     def node_list(self) -> typing.List[typing.Tuple[Span, ...]]:  # type: ignore
         """
 Build a list of vertices for the graph, cached for efficiency.
