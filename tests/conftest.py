@@ -10,7 +10,7 @@ from spacy.language import Language  # pylint: disable=E0401
 from spacy.tokens import Doc  # pylint: disable=E0401
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def nlp () -> Language:
     """
 Language shared fixture.
@@ -19,7 +19,7 @@ Language shared fixture.
     return nlp
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -32,7 +32,7 @@ spaCy EN doc containing a piece of football news.
     return doc
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def long_doc (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
