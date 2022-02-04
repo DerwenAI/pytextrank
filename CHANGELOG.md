@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 3.2.3
+
+2022-02-??
+
+  * improved test suite; fixed tests for newer spacy releases; kudos @tomaarsen
+
+
 ## 3.2.2
 
 2021-10-09
