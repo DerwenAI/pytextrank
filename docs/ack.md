@@ -114,7 +114,7 @@ Source code for **pytextrank** plus its logo, documentation, and examples
 have an [MIT license](https://spdx.org/licenses/MIT.html) which is
 succinct and simplifies use in commercial applications.
 
-All materials herein are Copyright &copy; 2016-2021 Derwen, Inc.
+All materials herein are Copyright &copy; 2016-2022 Derwen, Inc.
 
 [![logo for Derwen, Inc.](https://derwen.ai/static/block_logo.png)](https://derwen.ai/)
 
