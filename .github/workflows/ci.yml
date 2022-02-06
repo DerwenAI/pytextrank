@@ -12,7 +12,7 @@ jobs:
       - uses: pre-commit/action@v2.0.0
 
   test:
-    name: Tests for Python ${{ matrix.python-version }
+    name: Tests for Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
