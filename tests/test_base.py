@@ -81,7 +81,7 @@ and more.\
         assert len(doc._.phrases) == 0
 
 
-def test_summary (nlp: Language):
+def test_summary (long_doc: Doc):
     """
 Summarization produces the expected results.
 Limit evaluation to Top-K
@@ -90,57 +90,43 @@ Limit evaluation to Top-K
     LIMIT_PHRASES = 10
     TOP_K = 5
 
+    # expected for spacy==3.2.1 and en-core-web-sm==3.2.0
     expected_trace = [
-        [0, [0, 9, 2, 6]],
-        [1, [9]],
-        [2, [2]],
-        [3, [7]],
-        [4, [8]],
+        [0, {0, 1, 6, 8, 9}],
+        [1, {9}],
+        [2, {1}],
+        [3, {7}],
+        [6, {9, 4}],
     ]
 
-    with open("dat/lee.txt", "r") as f:
-        text = f.read()
-        doc = nlp(text)
-        tr = doc._.textrank
+    tr = long_doc._.textrank
 
-        # calculates *unit vector* and sentence distance measures
-        # when
-        trace = [
-            [ sent_dist.sent_id, list(sent_dist.phrases) ]
-            for sent_dist in tr.calc_sent_dist(limit_phrases=LIMIT_PHRASES)
-            if not sent_dist.empty()
-            ]
+    # calculates *unit vector* and sentence distance measures
+    # when
+    trace = [
+        [ sent_dist.sent_id, sent_dist.phrases ]
+        for sent_dist in tr.calc_sent_dist(limit_phrases=LIMIT_PHRASES)
+        if not sent_dist.empty()
+        ]
 
-        # then
-        assert trace[:TOP_K] == expected_trace
+    # then
+    assert trace[:TOP_K] == expected_trace
 
 
-def test_multiple_summary (nlp: Language):
+def test_multiple_summary (doc_lee: Doc, doc_mih: Doc):
     """
 Summarization produces consistent results when called across multiple
 docs.
     """
-    texts = []
-
-    with open("dat/lee.txt", "r") as f:
-        text = f.read()
-        texts.append(text)
-
-    with open("dat/mih.txt", "r") as f:
-        text = f.read()
-        texts.append(text)
-
-    docs = [nlp(text) for text in texts]
-
     trace1 = [
-        [sent_dist.sent_id, list(sent_dist.phrases)]
-        for sent_dist in docs[0]._.textrank.calc_sent_dist(limit_phrases=10)
+        [sent_dist.sent_id, sent_dist.phrases]
+        for sent_dist in doc_lee._.textrank.calc_sent_dist(limit_phrases=10)
         if not sent_dist.empty()
     ]
 
     trace2 = [
-        [sent_dist.sent_id, list(sent_dist.phrases)]
-        for sent_dist in docs[1]._.textrank.calc_sent_dist(limit_phrases=10)
+        [sent_dist.sent_id, sent_dist.phrases]
+        for sent_dist in doc_mih._.textrank.calc_sent_dist(limit_phrases=10)
         if not sent_dist.empty()
     ]
 
@@ -213,13 +199,11 @@ Works as a pipeline component and can be disabled.
 
         return scrubber_func
 
-
     # add "articles_scrubber" to config
     # then see if phrases have `articles` in it?
 
     nlp2 = spacy.load("en_core_web_sm")
     nlp2.add_pipe("textrank", config={"stopwords": {"test": ["NOUN"]}, "scrubber": {"@misc": "articles_scrubber"}}, last=True)
-
 
     # then
     doc = nlp2(text)

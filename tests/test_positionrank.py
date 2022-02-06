@@ -39,5 +39,5 @@ does.
 
     assert "Chelsea" in [p.text for p in phrases[:10]]
     assert "Chelsea" not in [p.text for p in comparison_phrases[:10]]
-    assert "Shanghai Shenhua" not in [p.text for p in phrases[:10]]
-    assert "Shanghai Shenhua" in [p.text for p in comparison_phrases[:10]]
+    assert "Shanghai Shenhua" not in ";".join(p.text for p in phrases[:10])
+    assert "Shanghai Shenhua" in ";".join(p.text for p in comparison_phrases[:10])
