@@ -10,7 +10,7 @@ from spacy.language import Language  # pylint: disable=E0401
 from spacy.tokens import Doc  # pylint: disable=E0401
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def nlp () -> Language:
     """
 Language shared fixture.
@@ -34,7 +34,7 @@ spaCy EN doc containing the data from ``file_path``.
     return doc
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_ars (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -45,7 +45,7 @@ spaCy EN doc containing a piece of weather research.
     return get_doc(nlp, "dat/ars.txt")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_cfc (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -56,7 +56,7 @@ spaCy EN doc containing a piece of football news.
     return get_doc(nlp, "dat/cfc.txt")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_gen (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -67,7 +67,7 @@ spaCy EN doc containing a bit of information on TextRank.
     return get_doc(nlp, "dat/gen.txt")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_lee (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -78,7 +78,7 @@ spaCy EN doc containing a bit of news on Google's AlphaGo AI.
     return get_doc(nlp, "dat/lee.txt")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_mih (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
@@ -89,7 +89,7 @@ spaCy EN doc containing a bit of math text.
     return get_doc(nlp, "dat/mih.txt")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def doc_suz (nlp: Language) -> Doc:  # pylint: disable=W0621
     """
 Doc shared fixture.
