@@ -10,6 +10,7 @@ This includes the family of [*textgraph*](glossary/#textgraphs) algorithms:
   - *TextRank* by [[mihalcea04textrank]](biblio/#mihalcea04textrank)
   - *PositionRank* by [[florescuc17]](biblio/#florescuc17)
   - *Biased TextRank* by [[kazemi-etal-2020-biased]](biblio/#kazemi-etal-2020-biased)
+  - *TopicRank* by [[bougouin-etal-2013-topicrank]](https://derwen.ai/docs/ptr/biblio/#bougouin-etal-2013-topicrank)
 
 Popular use cases for this library include:
 
