@@ -238,14 +238,19 @@ with POS tags that we wish to ignore.
     returns:
 list of candidate spans
         """
-        noun_chunks = list(self.doc.noun_chunks)
         candidates = []
 
-        for chunk in noun_chunks:
-            for token in chunk:
-                if self._keep_token(token):
-                    candidates.append(self.doc[token.i : chunk.end])
-                    break
+        try:
+            noun_chunks = list(self.doc.noun_chunks)
+
+            for chunk in noun_chunks:
+                for token in chunk:
+                    if self._keep_token(token):
+                        candidates.append(self.doc[token.i : chunk.end])
+                        break
+        except AttributeError:
+            # some languages do not have `noun_chunks` support in spaCy models
+            pass
 
         return candidates
 

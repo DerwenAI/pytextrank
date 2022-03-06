@@ -357,7 +357,14 @@ list of ranked phrases, in descending order
         # agglomerate the lemmas ranked in the lemma graph into ranked
         # phrases, leveraging information from earlier stages of the
         # pipeline: noun chunks and named entities
-        nc_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.noun_chunks, self.ranks)
+        nc_phrases: typing.Dict[Span, float] = {}
+
+        try:
+            nc_phrases = self._collect_phrases(self.doc.noun_chunks, self.ranks)
+        except AttributeError:
+            # some languages do not have `noun_chunks` support in spaCy models
+            pass
+
         ent_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.ents, self.ranks)
         all_phrases: typing.Dict[Span, float] = { **nc_phrases, **ent_phrases }
 
