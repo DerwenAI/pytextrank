@@ -250,6 +250,130 @@ the `altair` chart being rendered
 
 
 
+## [`TopicRankFactory` class](#TopicRankFactory)
+
+A factory class that provides the document with its instance of
+`TopicRank`
+    
+---
+#### [`__init__` method](#pytextrank.TopicRankFactory.__init__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L31)
+
+```python
+__init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None, threshold=0.25, method="average")
+```
+Constructor for the factory class.
+
+
+
+---
+#### [`__call__` method](#pytextrank.TopicRankFactory.__call__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L58)
+
+```python
+__call__(doc)
+```
+Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
+document to create a *pipeline component* for `TopicRank` as
+a stateful component, invoked when the document gets processed.
+
+See: <https://spacy.io/usage/processing-pipelines#pipelines>
+
+  * `doc` : `spacy.tokens.doc.Doc`  
+a document container, providing the annotations produced by earlier stages of the `spaCy` pipeline
+
+
+
+## [`TopicRank` class](#TopicRank)
+
+Implements the *TopicRank* algorithm described by
+[[bougouin-etal-2013-topicrank]](https://derwen.ai/docs/ptr/biblio/#bougouin-etal-2013-topicrank)
+deployed as a `spaCy` pipeline component.
+
+This class does not get called directly; instantiate its factory
+instead.
+
+Algorithm Overview:
+
+1. Preprocessing: Sentence segmentation, word tokenization, POS tagging.
+   After this stage, we have preprocessed text.
+2. Candidate extraction: Extract sequences of nouns and adjectives (i.e. noun chunks)
+   After this stage, we have a list of keyphrases that may be topics.
+3. Candidate clustering: Hierarchical Agglomerative Clustering algorithm with average
+   linking using simple set-based overlap of lemmas. Similarity is achieved at > 25%
+   overlap. **Note**: PyTextRank deviates from the original algorithm here, which uses
+   stems rather than lemmas.
+   After this stage, we have a list of topics.
+4. Candidate ranking: Apply *TextRank* on a complete graph, with topics as nodes
+   (i.e. clusters derived in the last step), where edge weights are higher between
+   topics that appear closer together within the document.
+   After this stage, we have a ranked list of topics.
+5. Candidate selection: Select the first occurring keyphrase from each topic to
+   represent that topic.
+   After this stage, we have a ranked list of topics, with a keyphrase to represent
+   the topic.
+    
+---
+#### [`__init__` method](#pytextrank.TopicRank.__init__)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L120)
+
+```python
+__init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords, threshold, method)
+```
+Constructor for a factory used to instantiate the PyTextRank pipeline components.
+
+  * `edge_weight` : `float`  
+default weight for an edge
+
+  * `pos_kept` : `typing.List[str]`  
+parts of speech tags to be kept; adjust this if strings representing the POS tags change
+
+  * `token_lookback` : `int`  
+the window for neighboring tokens – similar to a *skip gram*
+
+  * `scrubber` : `typing.Callable`  
+optional "scrubber" function to clean up punctuation from a token; if `None` then defaults to `pytextrank.default_scrubber`; when running, PyTextRank will throw a `FutureWarning` warning if the configuration uses a deprecated approach for a scrubber function
+
+  * `stopwords` : `typing.Dict[str, typing.List[str]]`  
+optional dictionary of `lemma: [pos]` items to define the *stop words*, where each item has a key as a lemmatized token and a value as a list of POS tags; may be a file name (string) or a [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html) for a JSON file; otherwise throws a `TypeError` exception
+
+  * `threshold` : `float`  
+threshold used in *TopicRank* candidate clustering; the original algorithm uses 0.25
+
+  * `method` : `str`  
+clustering method used in *TopicRank* candidate clustering: see [`scipy.cluster.hierarchy.linkage`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html) for valid methods; the original algorithm uses "average"
+
+
+
+---
+#### [`calc_textrank` method](#pytextrank.TopicRank.calc_textrank)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L307)
+
+```python
+calc_textrank()
+```
+Construct a complete graph using potential topics as nodes,
+then apply the *TextRank* algorithm to return the top-ranked phrases.
+
+This method represents the heart of the *TopicRank* algorithm.
+
+  * *returns* : `typing.List[pytextrank.base.Phrase]`  
+list of ranked phrases, in descending order
+
+
+
+---
+#### [`reset` method](#pytextrank.TopicRank.reset)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L367)
+
+```python
+reset()
+```
+Reinitialize the data structures needed for extracting phrases,
+removing any pre-existing state.
+
+
+
 ## [`PositionRankFactory` class](#PositionRankFactory)
 
 A factory class that provides the document with its instance of

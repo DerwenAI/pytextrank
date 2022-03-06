@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from icecream import ic  # pylint: disable=E0401
 import pathlib
-import pytextrank  # pylint: disable=W0611
-import spacy  # pylint: disable=E0401
 import sys  # pylint: disable=W0611
+
+from icecream import ic  # pylint: disable=E0401
+import spacy  # pylint: disable=E0401
+
+import pytextrank  # pylint: disable=W0611
 
 
 ######################################################################
@@ -15,7 +17,7 @@ import sys  # pylint: disable=W0611
 nlp = spacy.load("en_core_web_sm")
 
 # add PyTextRank into the spaCy pipeline
-#nlp.add_pipe("positionrank")
+# NB: substitute `"textrank"` with the name of other algorithms, e.g., `"positionrank"`
 nlp.add_pipe("textrank")
 
 # parse the document
@@ -36,28 +38,32 @@ for phrase in doc._.phrases:
     print("{:.4f} {:5d}  {}".format(phrase.rank, phrase.count, phrase.text))
     ic(phrase.chunks)
 
-print("\n----\n")
 
 # switch to a longer text document...
+print("\n----\n")
+print("dat/lee.txt:")
+
 text = pathlib.Path("dat/lee.txt").read_text()
 doc = nlp(text)
 
 for phrase in doc._.phrases[:20]:
     ic(phrase)
 
-print("\n----\n")
 
 # to show use of stopwords: first we output a baseline...
+print("\n----\n")
+print("dat/gen.txt:")
+
 text = pathlib.Path("dat/gen.txt").read_text()
 doc = nlp(text)
 
 for phrase in doc._.phrases[:10]:
     ic(phrase)
 
-print("\n----\n")
-
 # now add `"word": ["NOUN"]` to the stop words, to remove instances
 # of `"word"` or `"words"` then see how the ranked phrases differ...
+print("\n----\n")
+print("stop words:")
 
 nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
@@ -67,29 +73,69 @@ doc = nlp(text)
 for phrase in doc._.phrases[:10]:
     ic(phrase)
 
-print("\n----\n")
 
 # generate a GraphViz doc to visualize the lemma graph
 tr = doc._.textrank
 tr.write_dot(path="lemma_graph.dot")
 
+
 # summarize the document based on its top 15 phrases,
 # yielding its top 5 sentences...
+print("\n----\n")
+print("extractive summarization:")
+
 for sent in tr.summary(limit_phrases=15, limit_sentences=5):
     ic(sent)
 
-print("\n----\n")
 
-# show use of Biased TextRank algorithm
+# compare results among the implemented textgraph algorithms
 EXPECTED_PHRASES = [
     "grandmaster Lee Sedol",
     "Lee Sedol",
     "Deep Blue",
     "world chess champion Gary Kasparov",
+    "chess",
     "Gary Kasparov",
     "the following year",
     "Kasparov",
 ]
+
+
+# show use of TopicRank algorithm
+print("\n----\n")
+print("TopicRank:")
+
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("topicrank")
+
+text = pathlib.Path("dat/lee.txt").read_text()
+doc = nlp(text)
+
+for phrase in doc._.phrases[:len(EXPECTED_PHRASES)]:
+    ic(phrase)
+
+tr = doc._.textrank
+
+
+# show use of PositionRank algorithm
+print("\n----\n")
+print("PositionRank:")
+
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("positionrank")
+
+text = pathlib.Path("dat/lee.txt").read_text()
+doc = nlp(text)
+
+for phrase in doc._.phrases[:len(EXPECTED_PHRASES)]:
+    ic(phrase)
+
+tr = doc._.textrank
+
+
+# show use of Biased TextRank algorithm
+print("\n----\n")
+print("Biased TextRank:")
 
 nlp = spacy.load("en_core_web_sm")
 nlp.add_pipe("biasedtextrank")
@@ -100,11 +146,9 @@ doc = nlp(text)
 for phrase in doc._.phrases[:len(EXPECTED_PHRASES)]:
     ic(phrase)
 
-print("\n----\n")
+# note how the bias parameters get set here, to help emphasize
+# the *focus set*
 tr = doc._.textrank
-
-# note how the bias parameters get set here, to help emphasize the
-# *focus set*
 
 phrases = tr.change_focus(
     focus="It wasn't until the following year that Deep Blue topped Kasparov over the course of a six-game contest.",
@@ -112,6 +156,9 @@ phrases = tr.change_focus(
     default_bias=0.0,
     )
 
+print("\n----\n")
+ic(EXPECTED_PHRASES)
+
 for phrase in phrases[:len(EXPECTED_PHRASES)]:
     ic(phrase.text)
-    assert phrase.text in EXPECTED_PHRASES  # nosec
+    ic(phrase.text in EXPECTED_PHRASES)

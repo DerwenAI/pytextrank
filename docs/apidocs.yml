@@ -3,4 +3,4 @@ apidocs:
   template: ref.jinja
   package: pytextrank
   git: https://github.com/DerwenAI/pytextrank/blob/main
-  includes: BaseTextRankFactory, BaseTextRank, PositionRankFactory, PositionRank, BiasedTextRankFactory, BiasedTextRank, Lemma, Phrase, Sentence, VectorElem
+  includes: BaseTextRankFactory, BaseTextRank, TopicRankFactory, TopicRank, PositionRankFactory, PositionRank, BiasedTextRankFactory, BiasedTextRank, Lemma, Phrase, Sentence, VectorElem

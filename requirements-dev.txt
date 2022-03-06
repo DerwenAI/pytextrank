@@ -3,13 +3,15 @@ codespell
 coverage
 flask
 grayskull
-mistune >= 2.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
+jupyterlab >= 3.1.4
+mistune
 mkdocs-git-revision-date-plugin
 mkdocs-material
 mknotebooks
 mkrefs >= 0.2.0
 mypy
-nbconvert
+nbconvert >= 6.4
+nbmake >= 1.0
 notebook >= 6.1.5
 pipdeptree
 pre-commit

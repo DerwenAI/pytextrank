@@ -2,8 +2,10 @@
 
 ## 3.2.3
 
-2022-02-??
+2022-03-06
 
+  * handles missing `noun_chunks` in some language models (e.g., "ru")
+  * add *TopicRank* algorithm; kudos @tomaarsen
   * improved test suite; fixed tests for newer spacy releases; kudos @tomaarsen
 
 
