@@ -19,6 +19,8 @@ if __name__ == "__main__":
     class_list = [
         "BaseTextRankFactory",
         "BaseTextRank",
+        "TopicRankFactory",
+        "TopicRank",
         "PositionRankFactory",
         "PositionRank",
         "BiasedTextRankFactory",

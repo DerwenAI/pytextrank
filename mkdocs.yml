@@ -6,8 +6,6 @@ site_author: pytextrank contributors, with Derwen, Inc.
 repo_url: https://github.com/DerwenAI/pytextrank
 repo_name: DerwenAI/pytextrank
 
-mkrefs_config: mkrefs.yml
-
 copyright: Source code and documentation are <strong><a href="https://github.com/DerwenAI/pytextrank/blob/main/LICENSE" target="_blank">licensed</a></strong> under an MIT License; Copyright &copy; 2016-2022 <strong><a href="https://derwen.ai/" target="_blank">Derwen, Inc.</a></strong>
 
 nav:
@@ -43,7 +41,6 @@ theme:
 plugins:
   - git-revision-date
   - mknotebooks
-  - mkrefs
 
 extra_css:
   - stylesheets/extra.css

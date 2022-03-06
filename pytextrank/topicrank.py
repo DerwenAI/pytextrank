@@ -6,15 +6,15 @@
 Implements the *TopicRank* algorithm.
 """
 
-import time
-import typing
 from collections import defaultdict
 from functools import lru_cache
+import time
+import typing
 
-import networkx as nx  # type: ignore # pylint: disable=E0401
 from scipy.cluster.hierarchy import fcluster, linkage  # type: ignore # pylint: disable=E0401
 from scipy.spatial.distance import pdist  # type: ignore # pylint: disable=E0401
 from spacy.tokens import Doc, Span  # type: ignore # pylint: disable=E0401
+import networkx as nx  # type: ignore # pylint: disable=E0401
 
 from .base import BaseTextRank, BaseTextRankFactory, Phrase, StopWordsLike
 
@@ -28,7 +28,7 @@ A factory class that provides the document with its instance of
     _CLUSTER_THRESHOLD: float = 0.25
     _CLUSTER_METHOD: str = "average"
 
-    def __init__(
+    def __init__ (
         self,
         *,
         edge_weight: float = BaseTextRankFactory._EDGE_WEIGHT,
@@ -37,8 +37,11 @@ A factory class that provides the document with its instance of
         scrubber: typing.Optional[typing.Callable] = None,
         stopwords: typing.Optional[StopWordsLike] = None,
         threshold: float = _CLUSTER_THRESHOLD,
-        method: str = _CLUSTER_METHOD
-    ) -> None:
+        method: str = _CLUSTER_METHOD,
+        ) -> None:
+        """
+Constructor for the factory class.
+        """
         super().__init__(
             edge_weight=edge_weight,
             pos_kept=pos_kept,
@@ -51,10 +54,11 @@ A factory class that provides the document with its instance of
         self.threshold: float = threshold
         self.method: str = method
 
-    def __call__(
+
+    def __call__ (
         self,
         doc: Doc,
-    ) -> Doc:
+        ) -> Doc:
         """
 Set the extension attributes on a `spaCy` [`Doc`](https://spacy.io/api/doc)
 document to create a *pipeline component* for `TopicRank` as
@@ -84,10 +88,10 @@ a document container, providing the annotations produced by earlier stages of th
 
 
 class TopicRank (BaseTextRank):
-    """Implements the *TopicRank* algorithm described by
-TODO, deployed as a `spaCy` pipeline component.
-
-https://aclanthology.org/I13-1062.pdf
+    """
+Implements the *TopicRank* algorithm described by
+[[bougouin-etal-2013-topicrank]](https://derwen.ai/docs/ptr/biblio/#bougouin-etal-2013-topicrank)
+deployed as a `spaCy` pipeline component.
 
 This class does not get called directly; instantiate its factory
 instead.
@@ -123,7 +127,7 @@ Algorithm Overview:
         stopwords: typing.Dict[str, typing.List[str]],
         threshold: float,
         method: str,
-    ) -> None:
+        ) -> None:
         """
 Constructor for a factory used to instantiate the PyTextRank pipeline components.
 
@@ -156,7 +160,11 @@ clustering method used in *TopicRank* candidate clustering: see [`scipy.cluster.
         self.threshold: float = threshold
         self.method: str = method
 
-    def _cluster(self, candidates: typing.List[Span]) -> typing.List[typing.List[Span]]:
+
+    def _cluster (
+        self,
+        candidates: typing.List[Span],
+        ) -> typing.List[typing.List[Span]]:
         """
 Cluster candidates using Hierarchical Agglomerative Clustering (HAC),
 where similarity is defined by overlap of lemmas in candidates.
@@ -185,8 +193,10 @@ list of clusters of candidates.
         # |candidates|x|bag_of_words| matrix
         # matrix = [[0] * len(bag_of_words) for _ in candidates]
         matrix = []
+
         for candidate in candidates:
             matrix.append([0] * len(bag_of_words))
+
             for term in candidate:
                 if not term.is_stop:
                     try:
@@ -198,8 +208,10 @@ list of clusters of candidates.
         # using a threshold of 0.01 below 1 - threshold.
         # So, 0.74 for the default 0.25 threshold.
         pairwise_dist = pdist(matrix, "jaccard")
+
         if not pairwise_dist.size:
             return [[candidate] for candidate in candidates]
+
         raw_clusters = linkage(pairwise_dist, method=self.method)
         cluster_ids = fcluster(
             raw_clusters, t=0.99 - self.threshold, criterion="distance"
@@ -208,12 +220,16 @@ list of clusters of candidates.
         # Map cluster_ids to the corresponding candidates, and then
         # ignore the cluster id keys.
         clusters = defaultdict(list)
+
         for cluster_id, candidate in zip(cluster_ids, candidates):
             clusters[cluster_id].append(candidate)
 
         return list(clusters.values())
 
-    def _get_candidates(self) -> typing.List[Span]:
+
+    def _get_candidates (
+        self
+        ) -> typing.List[Span]:
         """
 Return a list of spans with candidate topics, such that the start of
 each candidate is a noun chunk that was trimmed of stopwords or tokens
@@ -223,8 +239,8 @@ with POS tags that we wish to ignore.
 list of candidate spans
         """
         noun_chunks = list(self.doc.noun_chunks)
-
         candidates = []
+
         for chunk in noun_chunks:
             for token in chunk:
                 if self._keep_token(token):
@@ -233,16 +249,18 @@ list of candidate spans
 
         return candidates
 
+
     @property  # type: ignore
     @lru_cache(maxsize=1)
-    def node_list(self) -> typing.List[typing.Tuple[Span, ...]]:  # type: ignore
+    def node_list (  # type: ignore
+        self
+        ) -> typing.List[typing.Tuple[Span, ...]]:
         """
 Build a list of vertices for the graph, cached for efficiency.
 
     returns:
 list of nodes
         """
-
         # Rely on spaCy to perform *preprocessing* and *candidate extraction*
         # through ``noun_chunks``, thus completing the first two steps of
         # the *TopicRank* algorithm.
@@ -255,35 +273,40 @@ list of nodes
 
         return clustered
 
+
     @property
-    def edge_list(  # type: ignore
+    def edge_list (  # type: ignore
         self,
-    ) -> typing.List[
-        typing.Tuple[typing.List[Span], typing.List[Span], typing.Dict[str, float]]
-    ]:
+        ) -> typing.List[typing.Tuple[typing.List[Span], typing.List[Span], typing.Dict[str, float]]]:
         """
 Build a list of weighted edges for the graph.
 
     returns:
 list of weighted edges
         """
-
         weighted_edges = []
+
         for i, source_topic in enumerate(self.node_list):  # type: ignore
             for target_topic in self.node_list[i + 1 :]:  # type: ignore
                 weight = 0.0
+
                 for source_member in source_topic:
                     for target_member in target_topic:
                         distance = abs(source_member.start - target_member.start)
+
                         if distance:
                             weight += 1.0 / distance
+
                 weight_dict = {"weight": weight * self.edge_weight}
                 weighted_edges.append((source_topic, target_topic, weight_dict))
                 weighted_edges.append((target_topic, source_topic, weight_dict))
 
         return weighted_edges
 
-    def calc_textrank(self) -> typing.List[Phrase]:
+
+    def calc_textrank (
+        self
+        ) -> typing.List[Phrase]:
         """
 Construct a complete graph using potential topics as nodes,
 then apply the *TextRank* algorithm to return the top-ranked phrases.
@@ -295,6 +318,7 @@ list of ranked phrases, in descending order
         """
         t0 = time.time()
         self.reset()
+
         # for *TopicRank*, the constructed graph is complete
         # with topics as nodes and a distance measure between
         # two topics as the weights for the edge between them.
@@ -329,6 +353,7 @@ list of ranked phrases, in descending order
             )
             for topic, score in self.ranks.items()
         ]
+
         phrase_list: typing.List[Phrase] = sorted(
             raw_phrase_list, key=lambda p: p.rank, reverse=True
         )
@@ -338,7 +363,10 @@ list of ranked phrases, in descending order
 
         return phrase_list
 
-    def reset(self) -> None:
+
+    def reset (
+        self
+        ) -> None:
         """
 Reinitialize the data structures needed for extracting phrases,
 removing any pre-existing state.
