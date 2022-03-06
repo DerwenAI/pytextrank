@@ -22,6 +22,7 @@ KEYWORDS = [
     "text analytics",
     "textgraphs",
     "textrank",
+    "topicrank",
     ]
 
 

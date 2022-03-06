@@ -1,5 +1,12 @@
 # PyTextRank changelog
 
+## 3.2.?
+
+2022-03-??
+
+  * updated example notebook to illustrate `TopicRank` algorithm
+
+
 ## 3.2.3
 
 2022-03-06
