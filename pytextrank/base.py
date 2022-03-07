@@ -361,9 +361,11 @@ list of ranked phrases, in descending order
 
         try:
             nc_phrases = self._collect_phrases(self.doc.noun_chunks, self.ranks)
-        except AttributeError:
-            # some languages do not have `noun_chunks` support in spaCy models
-            pass
+        except NotImplementedError as ex:
+            # some languages don't have `noun_chunks` support in spaCy models, e.g. "ru"
+            ic.disable()
+            ic(ex)
+            ic.enable()
 
         ent_phrases: typing.Dict[Span, float] = self._collect_phrases(self.doc.ents, self.ranks)
         all_phrases: typing.Dict[Span, float] = { **nc_phrases, **ent_phrases }

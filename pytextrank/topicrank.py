@@ -11,6 +11,7 @@ from functools import lru_cache
 import time
 import typing
 
+from icecream import ic  # type: ignore # pylint: disable=E0401,W0611 # lgtm[py/unused-import]
 from scipy.cluster.hierarchy import fcluster, linkage  # type: ignore # pylint: disable=E0401
 from scipy.spatial.distance import pdist  # type: ignore # pylint: disable=E0401
 from spacy.tokens import Doc, Span  # type: ignore # pylint: disable=E0401
@@ -238,7 +239,7 @@ with POS tags that we wish to ignore.
     returns:
 list of candidate spans
         """
-        candidates = []
+        candidates: typing.List[Span] = []
 
         try:
             noun_chunks = list(self.doc.noun_chunks)
@@ -248,9 +249,11 @@ list of candidate spans
                     if self._keep_token(token):
                         candidates.append(self.doc[token.i : chunk.end])
                         break
-        except AttributeError:
-            # some languages do not have `noun_chunks` support in spaCy models
-            pass
+        except NotImplementedError as ex:
+            # some languages don't have `noun_chunks` support in spaCy models, e.g. "ru"
+            ic.disable()
+            ic(ex)
+            ic.enable()
 
         return candidates
 

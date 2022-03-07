@@ -1,9 +1,10 @@
 # PyTextRank changelog
 
-## 3.2.?
+## 3.2.4
 
 2022-03-??
 
+  * better support for "ru" and other languages without `noun_chunks` support in spaCy
   * updated example notebook to illustrate `TopicRank` algorithm
 
 
