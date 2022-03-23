@@ -96,12 +96,6 @@ topics.
   * [community Slack](https://knowledgegraphconf.slack.com/ssb/redirect) – specifically on the `#ask` channel
   * [*Graph-Based Data Science*](https://www.linkedin.com/groups/6725785/) group on LinkedIn – join to receive related updates, news, conference coupons, etc.
 
-[KGC](glossary/#knowledge-graph-conference)
-also hosts 
-["knowledge espresso"](https://www.notion.so/KG-Community-Events-Calendar-8aacbe22efa94d9b8b39b7288e22c2d3)
-(monthly office hours) with [Paco Nathan](ack/#project-lead) 
-and others involved in this open source project.
-
 For related course materials and training, please check for calendar
 updates in the article
 ["Natural Language Processing in Python"](https://medium.com/derwen/natural-language-processing-in-python-832b0a99791b).
