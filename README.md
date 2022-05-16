@@ -190,3 +190,7 @@ and to our contributors:
 also to [@mihalcea](https://github.com/mihalcea) who leads outstanding NLP research work,
 encouragement from the wonderful folks at Explosion who develop [spaCy](https://github.com/explosion/spaCy),
 plus general support from [Derwen, Inc.](https://derwen.ai/)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=derwenai/pytextrank&type=Date)](https://star-history.com/#derwenai/pytextrank&Date)
