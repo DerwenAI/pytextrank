@@ -89,10 +89,10 @@ Limit evaluation to Top-K
     TOP_K = 5
 
     expected_trace = [
-        [0, [2, 7]],
+        [0, [2, 6]],
         [1, [0, 1]],
-        [2, [2]],
-        [3, [8, 7]],
+        [2, [0, 2]],
+        [3, [8, 6]],
         [4, [5]]
     ]
 
@@ -226,3 +226,19 @@ Works as a pipeline component and can be disabled.
     # we expect the "test" to be filtered away (due to stopwords),
     # and "scrubber" to be replaced with "modified scrubber"
     assert set(phrases) == {"modified scrubber"}
+
+def test_empty_candidates ():
+    """
+Works as a pipeline component with an empty document.
+    """
+    # given
+    nlp = spacy.load("en_core_web_sm")
+    nlp.add_pipe("topicrank", last=True)
+
+    # works as a pipeline component
+    # when
+    text = ""
+    doc = nlp(text)
+
+    # then
+    assert len(doc._.phrases) == 0
