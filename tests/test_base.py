@@ -90,13 +90,13 @@ Limit evaluation to Top-K
     LIMIT_PHRASES = 10
     TOP_K = 5
 
-    # expected for spacy==3.2.1 and en-core-web-sm==3.2.0
+    # expected for spacy==3.3.1 and en-core-web-sm==3.3.0
     expected_trace = [
-        [0, {0, 1, 6, 8, 9}],
-        [1, {9}],
-        [2, {1}],
-        [3, {7}],
-        [6, {9, 4}],
+        [0, {8, 1, 3, 7}],
+        [2, {3}],
+        [4, {9}],
+        [6, {5}],
+        [10, {0, 2, 3}]
     ]
 
     tr = long_doc._.textrank

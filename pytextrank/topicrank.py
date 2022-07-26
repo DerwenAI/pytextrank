@@ -181,6 +181,9 @@ list of spans, where each span is a candidate topic.
     returns:
 list of clusters of candidates.
         """
+        if not candidates:
+            return []
+
         bag_of_words = list(
             {
                 word.text
