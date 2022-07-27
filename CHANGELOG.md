@@ -2,10 +2,13 @@
 
 ## 3.2.4
 
-2022-03-??
+2022-07-27
 
   * better support for "ru" and other languages without `noun_chunks` support in spaCy
   * updated example notebook to illustrate `TopicRank` algorithm
+  * made the node bias setting case-independent for `Biased Textrank` algorithm; kudos @Ankush-Chander
+  * updated summarization tests; kudos @tomaarsen
+  * reworked some unit tests to be less brittle, less dependent on specific spaCy point releases
 
 
 ## 3.2.3
@@ -14,7 +17,7 @@
 
   * handles missing `noun_chunks` in some language models (e.g., "ru")
   * add *TopicRank* algorithm; kudos @tomaarsen
-  * improved test suite; fixed tests for newer spacy releases; kudos @tomaarsen
+  * improved test suite; fixed tests for newer spaCy releases; kudos @tomaarsen
 
 
 ## 3.2.2
