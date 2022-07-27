@@ -1,4 +1,5 @@
 bandit
+check-manifest >= 0.48
 codespell
 coverage
 flask
