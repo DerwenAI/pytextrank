@@ -76,10 +76,10 @@ other nodes get the default (`1.0`) value.
     returns:
 bias to apply for the *node weight*
         """
-        if token.text in self.focus_tokens:
+        if token.text.lower() in self.focus_tokens:
             return self.node_bias
 
-        if token.lemma_ in self.focus_tokens:
+        if token.lemma_.lower() in self.focus_tokens:
             return self.node_bias
 
         return self.default_bias

@@ -31,6 +31,31 @@ Biasedrank should behave like base textrank by default.
     assert tuple(p.text for p in phrases) == tuple(p.text for p in comparison_phrases)
 
 
+def test_focus_biased_rank (doc: Doc):
+    """
+Biasedrank should lead to different results from base textrank when focus is provided.
+    """
+    # given
+    biased_rank = BiasedTextRankFactory()
+    base_text_rank = BaseTextRankFactory()
+
+    # when
+    processed_doc = base_text_rank(doc)
+    phrases = processed_doc._.phrases
+
+    comparison_doc = biased_rank(doc)
+    tr = comparison_doc._.textrank
+    tr.change_focus(
+        "Manchester United",
+        bias=10.0,
+        default_bias=0.0)
+    comparison_phrases = comparison_doc._.phrases
+
+    # then
+    assert tuple(p.text for p in phrases[:3]) != tuple(p.text for p in comparison_phrases[:3])
+
+
+
 def test_biased_rank (long_doc: Doc):
     """
 Rank phrases close to 'focus' higher.
