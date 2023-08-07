@@ -14,6 +14,7 @@ and to our contributors:
 [@clabornd](https://github.com/clabornd),
 [@dayalstrub-cma](https://github.com/dayalstrub-cma),
 [@kavorite](https://github.com/kavorite),
+[@0dB](https://github.com/0dB),
 [@htmartin](https://github.com/htmartin),
 [@williamsmj](https://github.com/williamsmj/),
 [@mattkohl](https://github.com/mattkohl),
@@ -114,7 +115,7 @@ Source code for **pytextrank** plus its logo, documentation, and examples
 have an [MIT license](https://spdx.org/licenses/MIT.html) which is
 succinct and simplifies use in commercial applications.
 
-All materials herein are Copyright &copy; 2016-2022 Derwen, Inc.
+All materials herein are Copyright &copy; 2016-2023 Derwen, Inc.
 
 [![logo for Derwen, Inc.](https://derwen.ai/static/block_logo.png)](https://derwen.ai/)
 

@@ -20,6 +20,6 @@ pylint >= 2.7.0
 pytest
 pymdown-extensions
 selenium
+setuptools >= 65.5.1
 twine
-wheel
-
+wheel >= 0.38.0
