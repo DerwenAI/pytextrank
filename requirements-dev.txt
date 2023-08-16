@@ -23,3 +23,4 @@ selenium
 setuptools >= 65.5.1
 twine
 wheel >= 0.38.0
+tornado>=6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
