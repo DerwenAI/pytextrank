@@ -6,7 +6,6 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/DerwenAI/pytextrank?style=plastic)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DerwenAI/pytextrank.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DerwenAI/pytextrank/context:python)
 ![CI](https://github.com/DerwenAI/pytextrank/workflows/CI/badge.svg)
 ![downloads](https://img.shields.io/pypi/dm/pytextrank)
 ![sponsor](https://img.shields.io/github/sponsors/ceteri)
