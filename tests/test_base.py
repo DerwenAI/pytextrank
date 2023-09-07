@@ -154,13 +154,13 @@ Works as a pipeline component and can be disabled.
             for phrase in doc._.phrases[:5]
             ]
 
-        assert "words" in phrases
+        assert "sentences" in phrases
 
     # add `"word": ["NOUN"]` to the *stop words*, to remove instances
     # of `"word"` or `"words"` then see how the ranked phrases differ?
 
     nlp2 = spacy.load("en_core_web_sm")
-    nlp2.add_pipe("textrank", config={ "stopwords": { "word": ["NOUN"] } })
+    nlp2.add_pipe("textrank", config={ "stopwords": { "sentence": ["NOUN"] } })
 
     with open("dat/gen.txt", "r") as f:
         doc = nlp2(f.read())
