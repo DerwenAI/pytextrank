@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+requires-python = ">=3.11"
+name = "foobar"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.in"] }
+optional-dependencies.dev = { file = ["requirements-dev.in"] }
+optional-dependencies.viz = { file = ["requirements-viz.in"] }
+optional-dependencies.docs = { file = ["requirements-docs.in"] }
+optional-dependencies.cicd = { file = ["requirements-cicd.in"] }
+
+[tool.pip-tools]
+generate-hashes = true
+generate_hashes = true

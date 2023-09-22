@@ -1,0 +1,17 @@
+# graphviz >= 0.13
+graphviz >= 0.13
+
+# icecream >= 2.1
+icecream >= 2.1
+
+# networkx[default] >= 2.6
+networkx[default]
+
+# pygments >= 2.7.4
+pygments >= 2.7.4
+
+# scipy >= 1.7
+scipy >= 1.7
+
+# spacy >= 3.0
+spacy >= 3.1

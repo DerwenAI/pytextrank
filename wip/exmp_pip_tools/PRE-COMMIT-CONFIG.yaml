@@ -1,0 +1,39 @@
+
+
+repos:
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 7.3.0
+    hooks:
+      - id: pip-compile
+      
+      
+# Example adding agrs or specific files
+repos:
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 7.3.0
+    hooks:
+      - id: pip-compile
+        files: ^requirements/production\.(in|txt)$
+        args: [--index-url=https://example.com, requirements/production.in]
+        
+        
+# Example Multipule REQUIREMENTS files
+repos:
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 7.3.0
+    hooks:
+      - id: pip-compile
+        name: pip-compile setup.py
+        files: ^(setup\.py|requirements\.txt)$
+      - id: pip-compile
+        name: pip-compile z_requirements-dev.in
+        args: [z_requirements-dev.in]
+        files: ^requirements-dev\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements-lint.in
+        args: [requirements-lint.in]
+        files: ^requirements-lint\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.in
+        args: [requirements.in]
+        files: ^requirements\.(in|txt)$

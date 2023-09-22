@@ -1,0 +1,28 @@
+# Use requirements.txt
+-c requirements.txt
+bandit
+check-manifest >= 0.48
+codespell
+coverage
+flask
+grayskull
+jupyterlab >= 3.1.4
+mistune
+mkdocs-git-revision-date-plugin
+mkdocs-material
+mknotebooks
+mkrefs >= 0.2.0
+mypy
+nbconvert >= 6.4
+nbmake >= 1.0
+notebook >= 6.1.5
+pipdeptree
+pre-commit
+pylint >= 2.7.0
+pytest
+pymdown-extensions
+selenium
+setuptools >= 65.5.1
+twine
+wheel >= 0.38.0
+tornado>=6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
