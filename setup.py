@@ -27,7 +27,7 @@ KEYWORDS = [
 
 
 def parse_requirements_file (filename: str) -> typing.List:
-    """read and parse a Python `requirements.txt` file, returning as a list of str"""
+    """read and parse a Python `requirements.in` file, returning as a list of str"""
     results: list = []
 
     with pathlib.Path(filename).open() as f:

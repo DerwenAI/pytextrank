@@ -36,3 +36,5 @@ coverage.xml
 .eggs/
 /*.egg-info
 /*.egg
+/Pipfile
+/Pipfile.lock

@@ -16,7 +16,7 @@ extraction:
   python:
     python_setup:
       requirements_files:
-        - requirements.txt
+        - requirements.in
       version: 3
     index:
       exclude:
