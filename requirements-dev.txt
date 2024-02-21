@@ -5,6 +5,7 @@ coverage
 flask
 grayskull
 jupyterlab >= 3.1.4
+jupyter-server >= 2.11.2 # not directly required, pinned by Snyk to avoid a vulnerability
 mistune
 mkdocs-git-revision-date-plugin
 mkdocs-material
@@ -22,6 +23,6 @@ pymdown-extensions
 selenium
 setuptools >= 65.5.1
 twine
+tornado >= 6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
+werkzeug >= 3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
 wheel >= 0.38.0
-tornado>=6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
-jupyter-server>=2.11.2 # not directly required, pinned by Snyk to avoid a vulnerability
