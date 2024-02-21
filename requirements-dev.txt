@@ -21,7 +21,7 @@ pylint >= 2.7.0
 pytest
 pymdown-extensions
 selenium >= 4.16
-setuptools >= 69.0
+setuptools >= 68.0
 twine
 tornado >= 6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
 werkzeug >= 3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
