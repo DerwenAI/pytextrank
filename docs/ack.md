@@ -47,8 +47,7 @@ Computer Science (advisor: [Douglas Lenat](https://en.wikipedia.org/wiki/Douglas
 with additional work in Design and Linguistics.
 His business experience includes: 
 Director, VP, and CTO positions leading data teams and machine learning projects;
-former CTO/Board member at two publicly-traded tech firms on NASDAQ OTC:BB;
-and an equity partner at [Amplify Partners](https://derwen.ai/s/hcxhybks9nbh).
+former CTO/Board member at two publicly-traded tech firms on NASDAQ OTC:BB.
 Cited in 2015 as one of the 
 [Top 30 People in Big Data and Analytics](http://www.kdnuggets.com/2015/02/top-30-people-big-data-analytics.html)
 by Innovation Enterprise.
@@ -67,16 +66,15 @@ by Innovation Enterprise.
     [Cascading](https://www.cascading.org/)
   * consultant to enterprise organizations for [data strategy](../glossary/#data-strategy);
     advisor to several AI start-ups, including
-    [Recognai](https://derwen.ai/s/hk4g),
+    [Argilla](https://derwen.ai/s/mz2xj9bsz2jx),
     [KUNGFU.AI](https://derwen.ai/s/rwg8prbgqp36),
-    [Primer](https://derwen.ai/s/tm9jxzcm67hc)
+    [DataSpartan](https://derwen.ai/s/hxsfttck3dkx)
 
 As an author/speaker/instructor, Paco has taught many people (+9000) 
 in industry across a range of topics –
 [*data science*](../glossary/#data-science),
 [*natural language*](../glossary/#natural-language),
 [*cloud computing*](../glossary/#cloud-computing),
-[*reinforcement learning*](../glossary/#reinforcement-learning),
 [*computable content*](../glossary/#computable-content),
 etc. –
 and through guest lectures at 
@@ -115,9 +113,9 @@ Source code for **pytextrank** plus its logo, documentation, and examples
 have an [MIT license](https://spdx.org/licenses/MIT.html) which is
 succinct and simplifies use in commercial applications.
 
-All materials herein are Copyright &copy; 2016-2023 Derwen, Inc.
+All materials herein are Copyright &copy; 2016-2024 Derwen, Inc.
 
-[![logo for Derwen, Inc.](https://derwen.ai/static/block_logo.png)](https://derwen.ai/)
+[![logo for Derwen, Inc.](https://derwen.ai/static/design/block_logo.png)](https://derwen.ai/)
 
 
 ## Production Use Cases

@@ -1,4 +1,7 @@
 # Reference: `pytextrank` package
+Package definitions for the `pytextrank` library.
+
+
 ## [`BaseTextRankFactory` class](#BaseTextRankFactory)
 
 A factory class that provides the document with its instance of
@@ -118,7 +121,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`get_personalization` method](#pytextrank.BaseTextRank.get_personalization)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L376)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L385)
 
 ```python
 get_personalization()
@@ -136,7 +139,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
 ---
 #### [`get_unit_vector` method](#pytextrank.BaseTextRank.get_unit_vector)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L638)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L649)
 
 ```python
 get_unit_vector(limit_phrases)
@@ -158,7 +161,7 @@ the unit vector, as a list of `VectorElem` objects
 
 ---
 #### [`calc_sent_dist` method](#pytextrank.BaseTextRank.calc_sent_dist)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L682)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L693)
 
 ```python
 calc_sent_dist(limit_phrases)
@@ -176,7 +179,7 @@ a list of sentence distance measures
 
 ---
 #### [`segment_paragraphs` method](#pytextrank.BaseTextRank.segment_paragraphs)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L731)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L742)
 
 ```python
 segment_paragraphs(sent_dist)
@@ -193,7 +196,7 @@ a list of Paragraph data objects
 
 ---
 #### [`summary` method](#pytextrank.BaseTextRank.summary)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L786)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L797)
 
 ```python
 summary(limit_phrases=10, limit_sentences=4, preserve_order=False, level="sentence")
@@ -221,7 +224,7 @@ texts for sentences, in order
 
 ---
 #### [`write_dot` method](#pytextrank.BaseTextRank.write_dot)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L860)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L871)
 
 ```python
 write_dot(path="graph.dot")
@@ -235,7 +238,7 @@ path for the output file; defaults to `"graph.dot"`
 
 ---
 #### [`plot_keyphrases` method](#pytextrank.BaseTextRank.plot_keyphrases)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L890)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/base.py#L901)
 
 ```python
 plot_keyphrases()
@@ -257,7 +260,7 @@ A factory class that provides the document with its instance of
     
 ---
 #### [`__init__` method](#pytextrank.TopicRankFactory.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L31)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L32)
 
 ```python
 __init__(edge_weight=1.0, pos_kept=None, token_lookback=3, scrubber=None, stopwords=None, threshold=0.25, method="average")
@@ -268,7 +271,7 @@ Constructor for the factory class.
 
 ---
 #### [`__call__` method](#pytextrank.TopicRankFactory.__call__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L58)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L59)
 
 ```python
 __call__(doc)
@@ -315,7 +318,7 @@ Algorithm Overview:
     
 ---
 #### [`__init__` method](#pytextrank.TopicRank.__init__)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L120)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L121)
 
 ```python
 __init__(doc, edge_weight, pos_kept, token_lookback, scrubber, stopwords, threshold, method)
@@ -347,7 +350,7 @@ clustering method used in *TopicRank* candidate clustering: see [`scipy.cluster.
 
 ---
 #### [`calc_textrank` method](#pytextrank.TopicRank.calc_textrank)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L307)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L318)
 
 ```python
 calc_textrank()
@@ -364,7 +367,7 @@ list of ranked phrases, in descending order
 
 ---
 #### [`reset` method](#pytextrank.TopicRank.reset)
-[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L367)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/topicrank.py#L378)
 
 ```python
 reset()
@@ -674,6 +677,21 @@ flag for whether the text comes from an email message;
 
   * *returns* : `typing.List[str]`  
 the filtered text representing as a list of lines
+
+
+
+---
+#### [`get_repo_version` function](#pytextrank.get_repo_version)
+[*\[source\]*](https://github.com/DerwenAI/pytextrank/blob/main/pytextrank/version.py#L49)
+
+```python
+get_repo_version()
+```
+Access the Git repository information and return items to identify
+the version/commit running in production.
+
+  * *returns* : `typing.Tuple[str, str]`  
+version tag and commit hash
 
 
 

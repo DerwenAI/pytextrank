@@ -2,17 +2,27 @@
 # -*- coding: utf-8 -*-
 # see license https://github.com/DerwenAI/pytextrank#license-and-copyright
 
+"""
+Package definitions for the `pytextrank` library.
+"""
+
 import pathlib
 import typing
 
 from spacy.language import Language  # type: ignore # pylint: disable=E0401
 
 from .base import BaseTextRankFactory, BaseTextRank, Lemma, Paragraph, Phrase, Sentence, VectorElem, StopWordsLike
+
 from .biasedrank import BiasedTextRankFactory, BiasedTextRank
+
 from .positionrank import PositionRankFactory, PositionRank
+
 from .topicrank import TopicRankFactory, TopicRank
+
 from .util import groupby_apply, default_scrubber, maniacal_scrubber, split_grafs, filter_quotes
-from .version import MIN_PY_VERSION, _versify, _check_version, __version__
+
+from .version import get_repo_version, \
+    __version__, __version_major__, __version_minor__, __version_patch__
 
 
 ######################################################################

@@ -1,11 +1,17 @@
+include CITATION
+include LICENSE
+include README.md
+include pyproject.toml
+include requirements.txt
+include setup.py
+include tests/*.py
+prune .ipynb_checkpoints
 # added by check-manifest
 include *.md
 include *.py
 include *.txt
 include *.yaml
 include *.yml
-include CITATION
-include LICENSE
 include pylintrc
 recursive-include bin *.py
 recursive-include bin *.sh
