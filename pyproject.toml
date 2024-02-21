@@ -1,0 +1,120 @@
+[build-system]
+
+build-backend = "setuptools.build_meta"
+
+requires = [
+    "setuptools >= 68.0",
+    "setuptools_scm[toml] >= 6.2",
+    "wheel >= 0.42",
+]
+
+
+[tool.setuptools]
+
+packages = [ "pytextrank" ]
+
+
+[tool.setuptools_scm]
+
+# required section; empty contents is fine
+
+
+[project.urls]
+
+home = "https://derwen.ai/docs/ptr/"
+DOI = "https://doi.org/10.5281/zenodo.4637885"
+code = "http://github.com/DerwenAI/pytextrank"
+forum = "https://www.linkedin.com/groups/6725785/"
+issues = "https://github.com/DerwenAI/pytextrank/issues"
+spaCy_uniVerse = "https://spacy.io/universe/project/spacy-pytextrank"
+StackOverflow = "https://stackoverflow.com/search?q=pytextrank"
+citations = "https://scholar.google.com/scholar?q=related:5tl6J4xZlCIJ:scholar.google.com/&scioq=&hl=en&as_sdt=0,5"
+
+
+[project]
+
+name = "pytextrank"
+dynamic = ["version"]
+
+authors = [
+    { name = "derwen.ai", email = "info@derwen.ai" },
+]
+
+description = "Python implementation of TextRank as a spaCy pipeline extension, for graph-based natural language work plus related knowledge graph practices; used for for phrase extraction of text documents."
+
+readme = "README.md"
+license = { file = "LICENSE" }
+
+requires-python = ">=3.7"
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: General",
+    "Topic :: Text Processing :: Indexing",
+    "Topic :: Text Processing :: Linguistic",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "GitPython >= 3.1",
+    "graphviz >= 0.13",
+    "icecream >= 2.1",
+    "networkx[default] >= 2.6",
+    "pygments >= 2.7.4",
+    "scipy >= 1.7",
+    "spacy >= 3.0",
+]
+
+
+[project.optional-dependencies]
+
+dev = [
+    "bandit >= 1.7.5",
+    "build >= 1.0",
+    "check-manifest >= 0.48",
+    "codespell",
+    "flask >= 3.0",
+    "grayskull",
+    "jupyterlab >= 3.1.4",
+    "mistune",
+    "mkdocs-git-revision-date-plugin >= 0.3",
+    "mkdocs-material >= 9.5",
+    "mknotebooks >= 0.8",
+    "mkrefs >= 0.2.0",
+    "mypy",
+    "nbconvert >= 6.4",
+    "nbmake >= 1.0",
+    "notebook >= 6.1.5",
+    "pipdeptree",
+    "pre-commit >= 3.5",
+    "pylint >= 2.7.0",
+    "pymdown-extensions",
+    "selenium >= 4.11",
+    "tornado >= 6.2",
+    "twine >= 4.0",
+    "werkzeug >= 2.2.3",
+]
+
+test = [
+    "coverage",
+    "pytest >= 7.4",
+]
+
+demo = [
+    "ipywidgets >= 8.1",
+    "jupyterlab_execute_time >= 3.1",
+    "jupyterlab >= 4.0",
+    "watermark >= 2.4",
+]

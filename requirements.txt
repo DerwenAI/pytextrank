@@ -1,3 +1,4 @@
+GitPython >= 3.1
 graphviz >= 0.13
 icecream >= 2.1
 networkx[default] >= 2.6

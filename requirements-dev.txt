@@ -1,11 +1,10 @@
-bandit
+bandit >= 1.7.5
 check-manifest >= 0.48
 codespell
 coverage
 flask
 grayskull
 jupyterlab >= 3.1.4
-jupyter-server >= 2.11.2 # not directly required, pinned by Snyk to avoid a vulnerability
 mistune
 mkdocs-git-revision-date-plugin
 mkdocs-material
@@ -20,9 +19,9 @@ pre-commit
 pylint >= 2.7.0
 pytest
 pymdown-extensions
-selenium
-setuptools >= 65.5.1
+selenium >= 4.11
+setuptools >= 68.0
 twine
-tornado >= 6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
-werkzeug >= 3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
-wheel >= 0.38.0
+tornado >= 6.2
+werkzeug >= 2.2.3
+wheel >= 0.42

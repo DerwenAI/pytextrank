@@ -78,8 +78,6 @@ complementary, hybrid AI solutions.
 Links for other open source community resources:
 
   * [Issue Tracker](https://github.com/DerwenAI/pytextrank/issues)
-  * [Project Board](https://github.com/DerwenAI/pytextrank/projects/1)
-  * [Milestones](https://github.com/DerwenAI/pytextrank/milestones)
   * [spaCy uniVerse](https://spacy.io/universe/project/spacy-pytextrank)
 
 Other good ways to help troubleshoot issues:
@@ -94,7 +92,7 @@ get help about **pytextrank** and related
 topics.
 
   * [community Slack](https://knowledgegraphconf.slack.com/ssb/redirect) – specifically on the `#ask` channel
-  * [*Graph-Based Data Science*](https://www.linkedin.com/groups/6725785/) group on LinkedIn – join to receive related updates, news, conference coupons, etc.
+  * [*Graph Data Science*](https://www.linkedin.com/groups/6725785/) group on LinkedIn – join to receive related updates, news, conference coupons, etc.
 
 For related course materials and training, please check for calendar
 updates in the article

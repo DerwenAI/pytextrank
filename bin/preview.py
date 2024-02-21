@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, redirect, send_from_directory, url_for # pylint: disable=E0401
+from flask import Flask, redirect, send_from_directory, url_for  # pylint: disable=E0401
 from pathlib import PurePosixPath
 import os
 

@@ -1,8 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash -e -x
 
-## debugging the uploaded README:
-# pandoc README.md --from markdown --to rst -s -o README.rst
+rm -rf dist build pytextrank.egg-info
+python3 -m build
+twine check dist/*
 
-rm -rf dist
-python setup.py sdist bdist_wheel
-twine upload --verbose dist/*
+# this assumes the use of `~/.pypirc`
+# https://packaging.python.org/en/latest/specifications/pypirc/
+
+twine upload ./dist/* --verbose

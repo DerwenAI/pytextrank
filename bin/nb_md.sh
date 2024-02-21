@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -e -x
 
 for notebook_path in examples/*.ipynb; do
     [ -e "$notebook_path" ] || continue
@@ -8,6 +8,6 @@ for notebook_path in examples/*.ipynb; do
 
     cp $notebook_path docs/$notebook
     jupyter nbconvert docs/$notebook --to markdown
-    python bin/vis_doc.py docs/"$stem".md
+    python3 bin/vis_doc.py docs/"$stem".md
     rm docs/$notebook
 done
