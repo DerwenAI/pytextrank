@@ -309,7 +309,7 @@ optional dictionary of `lemma: [pos]` items to define the *stop words*, where ea
         # effectively, performs the same work as the `reset()` method;
         # called explicitly here for the sake of type annotations
         self.elapsed_time: float = 0.0
-        self.lemma_graph: nx.DiGraph = nx.DiGraph()
+        self.lemma_graph: nx.Graph = nx.Graph()
         self.phrases: typing.List[Phrase] = []
         self.ranks: typing.Dict[Lemma, float] = {}
         self.seen_lemma: typing.Dict[Lemma, typing.Set[int]] = OrderedDict()
@@ -323,7 +323,7 @@ Reinitialize the data structures needed for extracting phrases,
 removing any pre-existing state.
         """
         self.elapsed_time = 0.0
-        self.lemma_graph = nx.DiGraph()
+        self.lemma_graph = nx.Graph()
         self.phrases = []
         self.ranks = {}
         self.seen_lemma = OrderedDict()
@@ -400,7 +400,7 @@ Defaults to a no-op for the base *TextRank* algorithm.
 
     def _construct_graph (
         self
-        ) -> nx.DiGraph:
+        ) -> nx.Graph:
         """
 Construct the
 [*lemma graph*](https://derwen.ai/docs/ptr/glossary/#lemma-graph).
@@ -408,7 +408,7 @@ Construct the
     returns:
 a directed graph representing the lemma graph
         """
-        g = nx.DiGraph()
+        g = nx.Graph()
 
         # add nodes made of Lemma(lemma, pos)
         g.add_nodes_from(self.node_list)
@@ -571,6 +571,8 @@ sum of the ranks for each token within this span
     returns:
 normalized rank metric
         """
+        if len(span) < 1 :
+            return 0.0
         non_lemma = len([tok for tok in span if tok.pos_ not in self.pos_kept])
         non_lemma_discount = len(span) / (len(span) + (2.0 * non_lemma) + 1.0)
 
@@ -877,7 +879,7 @@ Serialize the lemma graph in the `Dot` file format.
     path:
 path for the output file; defaults to `"graph.dot"`
         """
-        dot = graphviz.Digraph()
+        dot = graphviz.Graph()
 
         for lemma in self.lemma_graph.nodes():
             rank = self.ranks[lemma]
