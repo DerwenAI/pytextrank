@@ -25,3 +25,4 @@ twine
 tornado >= 6.2
 werkzeug >= 2.2.3
 wheel >= 0.42
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
