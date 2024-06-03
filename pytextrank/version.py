@@ -12,6 +12,7 @@ import pathlib
 import typing
 
 from git import Repo  # pylint: disable=E0401  # type: ignore
+from git.exc import InvalidGitRepositoryError
 
 
 ## use the local Git info for version info, if available
@@ -24,9 +25,8 @@ try:
 
     REPO_HASH = str(repo.head.commit)
     REPO_TAGS = repo.tags
-except Exception as ex:  # pylint: disable=W0703
-    print(ex)
-
+except InvalidGitRepositoryError:
+    pass
 
 # cast version string into a float
 try:
