@@ -498,7 +498,7 @@ Build a list of weighted edges for the lemma graph.
     returns:
 list of weighted edges
         """
-        edges: typing.List[typing.Tuple[Lemma, Lemma]] = []
+        edges: typing.List[typing.Tuple[Lemma, ...]] = []
 
         for sent in self.doc.sents:
             h = [
@@ -510,11 +510,12 @@ list of weighted edges
             for hop in range(self.token_lookback):
                 for idx, node in enumerate(h[: -1 - hop]):
                     nbor = h[hop + idx + 1]
-                    edges.append((node, nbor))
+                    sorted_edge = tuple(sorted([node, nbor], key=lambda x: x.lemma))
+                    edges.append(sorted_edge)
 
         # include weight on the edge: (2, 3, {'weight': 3.1415})
         weighted_edges: typing.List[typing.Tuple[Lemma, Lemma, typing.Dict[str, float]]] = [
-            (*n, {"weight": w * self.edge_weight}) for n, w in Counter(edges).items()
+            (node1, node2, {"weight": w * self.edge_weight}) for (node1, node2), w in Counter(edges).items()
         ]
 
         return weighted_edges
