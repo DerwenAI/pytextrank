@@ -11,7 +11,7 @@ mkdocs-material
 mknotebooks
 mkrefs >= 0.2.0
 mypy
-nbconvert >= 6.4
+nbconvert>=7.17.0
 nbmake >= 1.0
 notebook >= 6.1.5
 pipdeptree
